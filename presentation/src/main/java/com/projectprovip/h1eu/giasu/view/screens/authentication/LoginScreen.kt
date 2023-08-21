@@ -34,13 +34,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
     val fontFamily = FontFamily(
         Font(R.font.mont_bold, FontWeight.Bold),
         Font(R.font.mont_regular, FontWeight.Normal)

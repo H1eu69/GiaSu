@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.projectprovip.h1eu.giasu.ui.theme.GiaSuTheme
+import com.projectprovip.h1eu.giasu.view.navigation.Navigation
 import com.projectprovip.h1eu.giasu.view.screens.authentication.LoginScreen
 import com.projectprovip.h1eu.giasu.view.screens.splash.SplashScreen
 
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginScreen()
+                    Navigation()
                 }
             }
         }
@@ -35,6 +36,5 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     GiaSuTheme {
-        SplashScreen()
     }
 }

@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.view.screens.splash
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,22 +17,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.projectprovip.h1eu.giasu.R
+import com.projectprovip.h1eu.giasu.view.navigation.Screens
 
-@Preview
 @Composable
-fun SplashScreen() {
+fun SplashScreen(navController: NavController) {
     val fontFamily = FontFamily(
         Font(R.font.mont_bold, FontWeight.Bold),
         Font(R.font.mont_regular, FontWeight.Normal)
     )
-    Surface() {
+    Surface {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Text(
+                modifier = Modifier.clickable {
+                    navController.navigate(Screens.Authentication.route)
+                },
                 text = "EduSmart",
                 style = TextStyle(
                     Color(95, 207, 128, 255),
