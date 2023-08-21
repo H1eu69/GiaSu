@@ -1,3 +1,3 @@
 # GiaSu
-Do an 2
-Apply Clean Architecture
+
+Applied Clean Architecture with Jetpack Compose
