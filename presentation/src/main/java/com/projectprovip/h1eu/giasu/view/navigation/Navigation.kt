@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.projectprovip.h1eu.giasu.view.screens.authentication.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.view.screens.authentication.LoginScreen
 import com.projectprovip.h1eu.giasu.view.screens.authentication.SignUpScreen
 import com.projectprovip.h1eu.giasu.view.screens.splash.SplashScreen
@@ -30,6 +31,9 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
         }
         composable(Screens.Authentication.Signup.route) {
             SignUpScreen(navController)
+        }
+        composable(Screens.Authentication.ForgetPassword.route) {
+            ForgetPasswordScreen(navController)
         }
     }
 }

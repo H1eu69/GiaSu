@@ -1,5 +1,7 @@
 package com.projectprovip.h1eu.giasu.view.screens.authentication
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -32,7 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.projectprovip.h1eu.giasu.R
+import com.projectprovip.h1eu.giasu.ui.composes.MainTextField
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
+import com.projectprovip.h1eu.giasu.view.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,6 +60,7 @@ fun SignUpScreen(navController: NavController) {
     val passTextField = remember{
         mutableStateOf("")
     }
+    val interactionSource = remember { MutableInteractionSource() }
 
     Surface {
         Column(
@@ -79,72 +84,38 @@ fun SignUpScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                OutlinedTextField(
-                    value = firstNameTextField.value,
-                    onValueChange = {
-                        firstNameTextField.value = it
-                    },
-                    label = { Text("First name") },
-                    shape = RoundedCornerShape(8.dp),
-                    singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = primaryColor,
-                        focusedLabelColor = primaryColor
-                    )
-                )
+                MainTextField(value = firstNameTextField.value, label = "First name", onValueChange = {
+                    firstNameTextField.value = it
+                })
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                OutlinedTextField(
-                    value = lastNameTextField.value,
-                    onValueChange = {
-                        lastNameTextField.value = it
-                    },
-                    label = { Text("Last name") },
-                    shape = RoundedCornerShape(8.dp),
-                    singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = primaryColor,
-                        focusedLabelColor = primaryColor
-                    )
-                )
+                MainTextField(value = lastNameTextField.value, label = "Last name", onValueChange = {
+                    lastNameTextField.value = it
+                })
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                OutlinedTextField(
-                    value = emailTextField.value,
-                    onValueChange = {
-                        emailTextField.value = it
-                    },
-                    label = { Text("Email") },
-                    shape = RoundedCornerShape(8.dp),
-                    singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = primaryColor,
-                        focusedLabelColor = primaryColor
-                    )
-                )
+                MainTextField(value = emailTextField.value, label = "Email", onValueChange = {
+                    emailTextField.value = it
+                })
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                OutlinedTextField(
-                    value = passTextField.value,
-                    onValueChange = {
-                        passTextField.value = it
-                    },
-                    label = { Text("Password") },
-                    shape = RoundedCornerShape(8.dp),
-                    singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = primaryColor,
-                        focusedLabelColor = primaryColor
-                    )
-                )
+                MainTextField(value = passTextField.value, label = "Password", onValueChange = {
+                    passTextField.value = it
+                })
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            interactionSource = interactionSource,
+                            indication = null) {
+                                   navController.navigate(Screens.Authentication.ForgetPassword.route)
+                        },
                     text = "Forget password?",
                     style = TextStyle(
                         color = primaryColor,
@@ -169,8 +140,12 @@ fun SignUpScreen(navController: NavController) {
 
             Text(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 30.dp),
+                    .padding(bottom = 30.dp)
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null) {
+                               navController.popBackStack()
+                    },
                 text = "Already have account? Login here",
                 style = TextStyle(
                     color = primaryColor,
