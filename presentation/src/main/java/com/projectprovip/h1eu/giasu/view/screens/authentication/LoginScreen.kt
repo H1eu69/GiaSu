@@ -40,6 +40,7 @@ import androidx.navigation.NavController
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.ui.composes.MainTextField
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
+import com.projectprovip.h1eu.giasu.view.navigation.BottomBarScreens
 import com.projectprovip.h1eu.giasu.view.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -127,7 +128,7 @@ fun LoginScreen(navController: NavController) {
                     .clickable(
                         interactionSource = interactionSource,
                         indication = null) {
-                        navController.navigate(Screens.Authentication.Signup.route)
+                        navController.navigate(Screens.InApp.route)
                     },
                 text = "Register new account",
                 style = TextStyle(
