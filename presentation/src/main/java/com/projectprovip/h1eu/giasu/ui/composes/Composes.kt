@@ -6,7 +6,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,6 +26,17 @@ fun MainTextField(value: String, label: String, onValueChange: (String) -> Unit)
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = primaryColor,
             focusedLabelColor = primaryColor
+        )
+    )
+}
+
+@Composable
+fun AppBarTitle(text: String) {
+    Text(
+        text = text,
+        style = TextStyle(
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp
         )
     )
 }

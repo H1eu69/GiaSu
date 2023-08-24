@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,13 +25,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.projectprovip.h1eu.giasu.ui.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.ui.composes.MainTextField
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
 
@@ -48,13 +46,7 @@ fun ForgetPasswordScreen(navController: NavController) {
         topBar = {
         CenterAlignedTopAppBar(
             title = {
-                Text(
-                    text = "Forget password?",
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                )
+                AppBarTitle("Forget password?")
             },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
@@ -83,10 +75,11 @@ fun ForgetPasswordScreen(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
-                MainTextField(value = emailTextField.value, label = "Email",
-                    onValueChange = {
-                        emailTextField.value = it
-                    })
+                MainTextField(
+                    value = emailTextField.value, label = "Email"
+                ) {
+                    emailTextField.value = it
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
 

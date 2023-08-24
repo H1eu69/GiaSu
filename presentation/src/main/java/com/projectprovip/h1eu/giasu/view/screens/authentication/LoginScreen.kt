@@ -43,6 +43,7 @@ import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.ui.composes.MainTextField
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
 import com.projectprovip.h1eu.giasu.view.navigation.NavControllerProvider
+import com.projectprovip.h1eu.giasu.view.navigation.BottomBarScreens
 import com.projectprovip.h1eu.giasu.view.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,15 +86,15 @@ fun LoginScreen(@PreviewParameter(NavControllerProvider::class)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                MainTextField(value = emailTextField.value, label = "Email", onValueChange = {
+                MainTextField(value = emailTextField.value, label = "Email") {
                     emailTextField.value = it
-                })
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                MainTextField(value = passTextField.value, label = "Password", onValueChange = {
+                MainTextField(value = passTextField.value, label = "Password") {
                     passTextField.value = it
-                })
+                }
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
@@ -132,9 +133,12 @@ fun LoginScreen(@PreviewParameter(NavControllerProvider::class)
                     .padding(bottom = 30.dp)
                     .clickable(
                         interactionSource = interactionSource,
-                        indication = null
-                    ) {
-                        navController.navigate(Screens.Authentication.Signup.route)
+                        indication = null) {
+                        navController.navigate(Screens.InApp.route){
+                            popUpTo(Screens.Splash.route){
+                                inclusive = true
+                            }
+                        }
                     },
                 text = "Register new account",
                 style = TextStyle(
