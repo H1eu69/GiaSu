@@ -31,8 +31,8 @@ import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.view.screens.authentication.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.view.screens.authentication.LoginScreen
 import com.projectprovip.h1eu.giasu.view.screens.authentication.SignUpScreen
+import com.projectprovip.h1eu.giasu.view.screens.home.HomeScreen
 import com.projectprovip.h1eu.giasu.view.screens.in_app.ClassScreen
-import com.projectprovip.h1eu.giasu.view.screens.in_app.HomeScreen
 import com.projectprovip.h1eu.giasu.view.screens.splash.SplashScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
