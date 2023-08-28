@@ -27,12 +27,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.ui.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.ui.composes.MainTextField
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
+
+
+@Preview
+@Composable
+fun PreviewScreen() {
+    ForgetPasswordScreen(navController = rememberNavController())
+}
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,7 +94,8 @@ fun ForgetPasswordScreen(navController: NavController) {
 
                 Button(
                     onClick = { /*TODO*/ },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(bottom = 20.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
                 ) {

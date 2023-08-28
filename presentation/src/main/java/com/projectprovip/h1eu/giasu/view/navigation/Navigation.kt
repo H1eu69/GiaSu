@@ -29,7 +29,7 @@ import com.projectprovip.h1eu.giasu.view.screens.authentication.ForgetPasswordSc
 import com.projectprovip.h1eu.giasu.view.screens.authentication.LoginScreen
 import com.projectprovip.h1eu.giasu.view.screens.authentication.SignUpScreen
 import com.projectprovip.h1eu.giasu.view.screens.in_app.ClassManagementScreen
-import com.projectprovip.h1eu.giasu.view.screens.in_app.home.ClassDetail
+import com.projectprovip.h1eu.giasu.view.screens.in_app.home.ClassDetailScreen
 import com.projectprovip.h1eu.giasu.view.screens.in_app.home.HomeScreen
 import com.projectprovip.h1eu.giasu.view.screens.splash.SplashScreen
 
@@ -62,6 +62,7 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun InAppScreen(navController: NavHostController = rememberNavController()) {
@@ -81,7 +82,7 @@ fun InAppNavGraph(navController: NavHostController) {
         route = Screens.InApp.route
     ) {
         composable(Screens.InApp.HomeBottomBar.route) { HomeScreen(navController) }
-        composable(Screens.InApp.ClassDetail.route) { ClassDetail(navController) }
+        composable(Screens.InApp.ClassDetail.route) { ClassDetailScreen(navController) }
         composable(Screens.InApp.ClassBottomBar.route) { ClassManagementScreen(navController) }
     }
 }

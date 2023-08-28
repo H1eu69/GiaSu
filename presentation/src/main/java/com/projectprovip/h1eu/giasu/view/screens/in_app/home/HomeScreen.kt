@@ -262,26 +262,20 @@ fun NewClassItem(navController: NavController) {
 
 @Composable
 fun SubTitle() {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text(text = "ID: 1222",
-            style = TextStyle(
-                fontWeight = FontWeight.Medium,
-                color = myBlackColor,
-                fontSize = 14.sp
-            ),
-            modifier = Modifier
-                .background(
-                    idClassBackgroundColor,
-                    RoundedCornerShape(30)
-                )
-                .padding(all = 4.dp)
-        )
-    }
+    Text(text = "ID: 1222",
+        style = TextStyle(
+            fontWeight = FontWeight.Medium,
+            color = myBlackColor,
+            fontSize = 14.sp
+        ),
+        modifier = Modifier
+            .padding(top = 8.dp, bottom = 8.dp)
+            .background(
+                idClassBackgroundColor,
+                RoundedCornerShape(30)
+            )
+            .padding(all = 4.dp)
+    )
 }
 
 @Composable
@@ -306,7 +300,7 @@ fun IconAndText(imageVector : ImageVector, text : String){
     Row{
         androidx.compose.material.Icon(
             imageVector, null,
-            tint = Color.Gray
+            tint = primaryColor
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = text)
@@ -316,7 +310,8 @@ fun IconAndText(imageVector : ImageVector, text : String){
 @Composable
 fun MiddleContent() {
     Column(
-        Modifier.padding(top = 12.dp, bottom = 20.dp)
+        Modifier.padding(top = 12.dp, bottom = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         IconAndText(Icons.Outlined.DateRange, "3 days / week (90 min / day)")
         IconAndText(Icons.Outlined.Info, "At home")
