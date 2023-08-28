@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -36,7 +35,6 @@ import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.ui.composes.MainTextField
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
 import com.projectprovip.h1eu.giasu.view.navigation.Screens
-import com.projectprovip.h1eu.giasu.view.screens.home.HomeScreen
 
 
 @Preview

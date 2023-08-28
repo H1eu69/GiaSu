@@ -38,6 +38,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.ui.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.ui.theme.costTextColor
 import com.projectprovip.h1eu.giasu.ui.theme.idClassBackgroundColor
@@ -46,10 +48,15 @@ import com.projectprovip.h1eu.giasu.ui.theme.notScheduleBackgroundColor
 import com.projectprovip.h1eu.giasu.ui.theme.notScheduleTextColor
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
 
+@Preview
+@Composable
+fun PreviewScreen() {
+    ClassManagementScreen(navController = rememberNavController())
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
-fun ClassManagement() {
+fun ClassManagementScreen(navController: NavController) {
     val tabSelectedIndex = remember {
         mutableIntStateOf(0)
     }
@@ -126,7 +133,8 @@ fun ClassItem() {
 @Composable
 fun SubTitle() {
     Row(
-        Modifier.fillMaxWidth()
+        Modifier
+            .fillMaxWidth()
             .padding(top = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
