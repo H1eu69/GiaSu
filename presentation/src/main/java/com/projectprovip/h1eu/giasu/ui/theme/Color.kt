@@ -22,3 +22,5 @@ val idClassBackgroundColor = Color(239,239,239,255)
 val costTextColor = Color(61,130,254,255)
 
 val myBlackColor = Color(82,82,82,255)
+
+val backgroundApp = Color(240,255,248)

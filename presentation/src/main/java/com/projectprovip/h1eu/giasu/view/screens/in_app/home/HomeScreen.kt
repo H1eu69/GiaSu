@@ -51,6 +51,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.ui.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.ui.composes.SubjectCategoryItem
+import com.projectprovip.h1eu.giasu.ui.theme.backgroundApp
 import com.projectprovip.h1eu.giasu.ui.theme.costTextColor
 import com.projectprovip.h1eu.giasu.ui.theme.idClassBackgroundColor
 import com.projectprovip.h1eu.giasu.ui.theme.myBlackColor
