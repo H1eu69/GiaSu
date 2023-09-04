@@ -51,6 +51,7 @@ import com.projectprovip.h1eu.giasu.view.screens.authentication.SignUpScreen
 import com.projectprovip.h1eu.giasu.view.screens.in_app.ClassManagementScreen
 import com.projectprovip.h1eu.giasu.view.screens.in_app.home.ClassDetailScreen
 import com.projectprovip.h1eu.giasu.view.screens.in_app.home.HomeScreen
+import com.projectprovip.h1eu.giasu.view.screens.in_app.profile.ProfileScreen
 import com.projectprovip.h1eu.giasu.view.screens.splash.SplashScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,6 +105,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable(Screens.InApp.HomeBottomBar.route) { HomeScreen(navController) }
         composable(Screens.InApp.ClassDetail.route) { ClassDetailScreen(navController) }
         composable(Screens.InApp.ClassBottomBar.route) { ClassManagementScreen(navController) }
+        composable(Screens.InApp.ProfileBottomBar.route) { ProfileScreen(navController) }
     }
 }
 
