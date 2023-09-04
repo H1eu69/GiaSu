@@ -132,26 +132,40 @@ fun AppBar() {
 @Composable
 fun BodyContent(modifier: Modifier,
                 navController: NavController) {
-    Column(modifier = modifier,
+    Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         SearchTextField()
         LazyColumn(
-            contentPadding = PaddingValues(20.dp),
+            contentPadding = PaddingValues(16.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White,
-                    RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
+                .background(
+                    Color.White,
+                    RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                )
         ) {
-            item { RowTitle("Category", "View all") }
+            item { RowTitle(title1 = "Category", title2 = "View all") }
             item { CategoryItemList() }
-            item { RowTitle("Newest Classes", "View all") }
+            item {
+                RowTitle(
+                    modifier = Modifier.padding(
+                        start = 10.dp,
+                        top = 8.dp,
+                        bottom = 15.dp,
+                        end = 10.dp
+                    ),
+                    title1 = "Newest Classes",
+                    title2 = "View all"
+                )
+            }
             items(8) {
                 NewClassItem(navController)
             }
         }
     }
-
 }
 
 @Composable
@@ -202,10 +216,15 @@ private fun CategoryItemList() {
     }
 }
 @Composable
-private fun RowTitle(title1: String, title2: String) {
+private fun RowTitle(modifier: Modifier =
+                         Modifier.padding( start = 10.dp,
+                             top = 4.dp,
+                             bottom = 15.dp,
+                             end = 10.dp)
+                     ,title1: String,
+                     title2: String) {
     Row(
-        Modifier
-            .padding( start = 10.dp, top = 15.dp, bottom = 15.dp, end = 10.dp)
+        modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -253,7 +272,7 @@ fun NewClassItem(navController: NavController) {
                 .background(Color.White)
                 .padding(20.dp)
         ) {
-            AppBarTitle(text = "IT Beginner Entry")
+            AppBarTitle(text = "IT Beginner Entry", fontSize = 16)
             SubTitle()
             MiddleContent()
             BottomContent()
