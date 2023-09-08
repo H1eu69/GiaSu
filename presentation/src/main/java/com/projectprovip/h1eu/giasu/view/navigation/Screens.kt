@@ -21,6 +21,7 @@ sealed class Screens(val route: String){
         object ClassDetail : Screens(route = "new_class_detail")
         object ClassBottomBar : BottomBarScreens(route = "class", R.string.bottom_class, icon = Icons.Outlined.Warning, title = "Class")
         object ProfileBottomBar : BottomBarScreens(route = "profile", R.string.bottom_profile, icon = Icons.Outlined.AccountCircle, title = "Profile")
+        object PersonalInformation : Screens(route = "personal_information")
 
     }
 }
