@@ -81,6 +81,9 @@ fun BodyContent(modifier: Modifier) {
         item { Spacer(modifier = Modifier.height(30.dp)) }
         item { ColumnOfButton() }
         item { Spacer(modifier = Modifier.height(30.dp)) }
+        item { ButtonColumnItem(Icons.Rounded.ExitToApp, primaryColor,
+            "Change password", true) }
+        item { Spacer(modifier = Modifier.height(30.dp)) }
         item { ButtonColumnItem(Icons.Rounded.ExitToApp, Color.Red,
             "Logout", false) }
         item { Spacer(modifier = Modifier.height(50.dp)) }

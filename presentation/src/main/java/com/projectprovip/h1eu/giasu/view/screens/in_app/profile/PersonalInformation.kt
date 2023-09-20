@@ -2,7 +2,9 @@
 
 package com.projectprovip.h1eu.giasu.view.screens.in_app.profile
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +21,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -27,6 +31,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +41,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.ui.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 
 @Composable
@@ -68,7 +75,8 @@ fun PersonalInformation(navController: NavController) {
             InformationFields(modifier = Modifier.fillMaxHeight(.9f))
             Button(
                 onClick = { /*TODO*/ },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
             ) {
@@ -83,25 +91,28 @@ fun PersonalInformation(navController: NavController) {
 fun InformationFields(modifier: Modifier = Modifier) {
 
     LazyColumn(modifier = modifier) {
-        items(9) {
-            InformationTextField()
+        item {
+            InformationTextField("First name")
         }
         item {
-            InformationTextField()
+            InformationTextField("Last name")
         }
         item {
-            InformationTextField()
+            InformationTextField("Address")
         }
         item {
-            InformationTextField()
+            InformationTextField("anrayno200@gmail.com")
         }
-
+        item {
+            GenderOptions()
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InformationTextField() {
-    val text = remember { mutableStateOf("hehehe") }
+fun InformationTextField(hintText: String) {
+    val text = remember { mutableStateOf("") }
 
     TextField(value = text.value,
         colors = TextFieldDefaults.textFieldColors(
@@ -110,6 +121,10 @@ fun InformationTextField() {
             unfocusedIndicatorColor = Color.LightGray,
             cursorColor = primaryColor
         ),
+        singleLine = true,
+        placeholder = {
+            Text(text = hintText)
+        },
         leadingIcon = {
             Icon(imageVector = Icons.Default.AccountCircle,
                 contentDescription = null,
@@ -120,4 +135,33 @@ fun InformationTextField() {
         },
         modifier = Modifier.fillMaxWidth()
     )
+}
+
+@Composable
+fun GenderOptions() {
+    val radioOptions = listOf("Male", "Female")
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1] ) }
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        radioOptions.forEach { text ->
+            Row(
+                verticalAlignment = CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                RadioButton(
+                    selected = (text == selectedOption),
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = primaryColor
+                    ),
+                    onClick = { onOptionSelected(text) }
+                )
+                Text(
+                    text = text,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+            }
+        }
+    }
 }
