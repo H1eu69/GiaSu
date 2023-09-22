@@ -6,6 +6,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -21,7 +22,7 @@ import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainTextField(value: String, label: String, onValueChange: (String) -> Unit) {
+fun MainTextField(value: String, label: String, modifier : Modifier = Modifier, onValueChange: (String) -> Unit) {
     OutlinedTextField(
         value = value,
         onValueChange = {
@@ -33,7 +34,8 @@ fun MainTextField(value: String, label: String, onValueChange: (String) -> Unit)
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = primaryColor,
             focusedLabelColor = primaryColor
-        )
+        ),
+        modifier = modifier
     )
 }
 
