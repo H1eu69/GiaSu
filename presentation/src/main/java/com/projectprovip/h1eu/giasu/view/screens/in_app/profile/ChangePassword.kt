@@ -100,15 +100,7 @@ fun ChangePasswordScreen(navController: NavController) {
                 },
                 modifier = Modifier.fillMaxWidth().padding(16.dp)
             )
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
-            ) {
-                androidx.compose.material3.Text(text = "Change password")
-            }
+
         }
     }
 }

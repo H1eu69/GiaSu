@@ -3,7 +3,6 @@
 package com.projectprovip.h1eu.giasu.view.screens.in_app.profile
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,18 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.ui.composes.AppBarTitle
+import com.projectprovip.h1eu.giasu.ui.composes.EduSmartButton
+import com.projectprovip.h1eu.giasu.ui.composes.InformationTextField
 import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
 
 
@@ -43,6 +37,7 @@ fun PreviewScreen() {
     PersonalInformation(navController = rememberNavController())
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonalInformation(navController: NavController) {
     Scaffold(
@@ -66,14 +61,8 @@ fun PersonalInformation(navController: NavController) {
                 .padding(it)
                 .fillMaxSize()){
             InformationFields(modifier = Modifier.fillMaxHeight(.9f))
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
-            ) {
-                Text(text = "Update")
-            }
+            EduSmartButton(text = "Update", onClick = {},
+                modifier = Modifier.fillMaxWidth().padding(16.dp))
         }
     }
 }
@@ -84,40 +73,25 @@ fun InformationFields(modifier: Modifier = Modifier) {
 
     LazyColumn(modifier = modifier) {
         items(9) {
-            InformationTextField()
+            InformationTextField(remember {
+                mutableStateOf("author")
+            }, modifier = Modifier.fillMaxWidth())
         }
         item {
-            InformationTextField()
+            InformationTextField(remember {
+                mutableStateOf("name")
+            }, modifier = Modifier.fillMaxWidth())
         }
         item {
-            InformationTextField()
+            InformationTextField(remember {
+                mutableStateOf("hohoh")
+            }, modifier = Modifier.fillMaxWidth())
         }
         item {
-            InformationTextField()
+            InformationTextField(remember {
+                mutableStateOf("hehe")
+            }, modifier = Modifier.fillMaxWidth())
         }
-
     }
 }
 
-@Composable
-fun InformationTextField() {
-    val text = remember { mutableStateOf("hehehe") }
-
-    TextField(value = text.value,
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.White,
-            focusedIndicatorColor = primaryColor,
-            unfocusedIndicatorColor = Color.LightGray,
-            cursorColor = primaryColor
-        ),
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.AccountCircle,
-                contentDescription = null,
-                tint = primaryColor)
-        },
-        onValueChange = { name ->
-            text.value = name
-        },
-        modifier = Modifier.fillMaxWidth()
-    )
-}
