@@ -1,11 +1,23 @@
 package com.projectprovip.h1eu.giasu.ui.composes
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
@@ -13,8 +25,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,4 +72,48 @@ fun MultiColorText(text1: String, color1: Color, text2: String, color2 : Color) 
             }
         }
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun InformationTextField(text: MutableState<String>,
+                         tintIcon: Color = primaryColor,
+                         singleLine: Boolean = true,
+                         modifier: Modifier = Modifier) {
+
+    TextField(value = text.value,
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.White,
+            focusedIndicatorColor = primaryColor,
+            unfocusedIndicatorColor = Color.LightGray,
+            cursorColor = primaryColor
+        ),
+        leadingIcon = {
+            Icon(imageVector = Icons.Default.AccountCircle,
+                contentDescription = null,
+                tint = tintIcon,)
+        },
+        onValueChange = { name ->
+            text.value = name
+        },
+        singleLine = singleLine,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EduSmartButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String,
+    buttonColor: Color = primaryColor,
+ )  {
+    Button(
+        onClick = { onClick() },
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
+    ) {
+        Text(text = text)
+    }
 }
