@@ -31,9 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.ui.composes.EduSmartButton
-import com.projectprovip.h1eu.giasu.ui.composes.InformationTextField
-import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
+import com.projectprovip.h1eu.giasu.common.composes.EduSmartButton
+import com.projectprovip.h1eu.giasu.common.composes.InformationTextField
+import com.projectprovip.h1eu.giasu.common.theme.primaryColor
 
 @Preview
 @Composable

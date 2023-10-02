@@ -40,13 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.ui.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.ui.theme.costTextColor
-import com.projectprovip.h1eu.giasu.ui.theme.idClassBackgroundColor
-import com.projectprovip.h1eu.giasu.ui.theme.myBlackColor
-import com.projectprovip.h1eu.giasu.ui.theme.notScheduleBackgroundColor
-import com.projectprovip.h1eu.giasu.ui.theme.notScheduleTextColor
-import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
+import com.projectprovip.h1eu.giasu.common.composes.AppBarTitle
+import com.projectprovip.h1eu.giasu.common.theme.costTextColor
+import com.projectprovip.h1eu.giasu.common.theme.idClassBackgroundColor
+import com.projectprovip.h1eu.giasu.common.theme.myBlackColor
+import com.projectprovip.h1eu.giasu.common.theme.notScheduleBackgroundColor
+import com.projectprovip.h1eu.giasu.common.theme.notScheduleTextColor
 
 @Preview
 @Composable

@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.ui.composes
+package com.projectprovip.h1eu.giasu.common.composes
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -25,7 +25,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
+import com.projectprovip.h1eu.giasu.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.view.navigation.BottomBarScreens
 import com.projectprovip.h1eu.giasu.view.navigation.Screens
 

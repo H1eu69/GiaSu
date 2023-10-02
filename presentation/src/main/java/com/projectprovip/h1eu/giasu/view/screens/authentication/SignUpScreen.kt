@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.ui.composes.MainTextField
-import com.projectprovip.h1eu.giasu.ui.theme.primaryColor
+import com.projectprovip.h1eu.giasu.common.composes.MainTextField
+import com.projectprovip.h1eu.giasu.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.view.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)

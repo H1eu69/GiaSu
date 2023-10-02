@@ -1,7 +1,6 @@
-package com.projectprovip.h1eu.giasu.ui.composes
+package com.projectprovip.h1eu.giasu.common.composes
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.height

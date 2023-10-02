@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.ui.theme
+package com.projectprovip.h1eu.giasu.common.theme
 
 import android.app.Activity
 import android.os.Build
