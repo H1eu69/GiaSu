@@ -68,27 +68,20 @@ fun ProfileScreen(navController: NavController) {
             ))
         }
     ) {
-        BodyContent(Modifier.padding(it))
-    }
+        LazyColumn(modifier = Modifier.padding(it)) {
+            item { Profile() }
+            item { Spacer(modifier = Modifier.height(30.dp)) }
+            item { ColumnOfButton() }
+            item { Spacer(modifier = Modifier.height(30.dp)) }
+            item { ButtonColumnItem(Icons.Rounded.ExitToApp, primaryColor,
+                "Change password", true) }
+            item { Spacer(modifier = Modifier.height(30.dp)) }
+            item { ButtonColumnItem(Icons.Rounded.ExitToApp, Color.Red,
+                "Logout", false) }
+            item { Spacer(modifier = Modifier.height(50.dp)) }
+
+        }    }
 }
-
-@Composable
-fun BodyContent(modifier: Modifier) {
-    LazyColumn(modifier = modifier) {
-        item { Profile() }
-        item { Spacer(modifier = Modifier.height(30.dp)) }
-        item { ColumnOfButton() }
-        item { Spacer(modifier = Modifier.height(30.dp)) }
-        item { ButtonColumnItem(Icons.Rounded.ExitToApp, primaryColor,
-            "Change password", true) }
-        item { Spacer(modifier = Modifier.height(30.dp)) }
-        item { ButtonColumnItem(Icons.Rounded.ExitToApp, Color.Red,
-            "Logout", false) }
-        item { Spacer(modifier = Modifier.height(50.dp)) }
-
-    }
-}
-
 @Composable
 fun Profile() {
     Column(

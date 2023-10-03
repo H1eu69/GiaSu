@@ -1,20 +1,35 @@
 package com.projectprovip.h1eu.giasu.common.composes
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Start
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -70,10 +85,12 @@ fun MultiColorText(text1: String, color1: Color, text2: String, color2 : Color) 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InformationTextField(text: MutableState<String>,
-                         tintIcon: Color = primaryColor,
-                         singleLine: Boolean = true,
-                         modifier: Modifier = Modifier) {
+fun CommonTextField(text: MutableState<String>,
+                    hint: String? = null,
+                    singleLine: Boolean = true,
+                    keyboardOptions:KeyboardOptions = KeyboardOptions.Default,
+                    icon: @Composable (() -> Unit)? = null,
+                    modifier: Modifier = Modifier) {
 
     TextField(value = text.value,
         colors = TextFieldDefaults.textFieldColors(
@@ -82,17 +99,64 @@ fun InformationTextField(text: MutableState<String>,
             unfocusedIndicatorColor = Color.LightGray,
             cursorColor = primaryColor
         ),
-        leadingIcon = {
-            Icon(imageVector = Icons.Default.AccountCircle,
-                contentDescription = null,
-                tint = tintIcon,)
+        leadingIcon = icon,
+        placeholder = {
+            if (hint != null) {
+                Text(text = hint,
+                    color = Color.LightGray)
+            }
         },
         onValueChange = { name ->
             text.value = name
         },
         singleLine = singleLine,
+        keyboardOptions = keyboardOptions,
         modifier = modifier
     )
+}
+@Composable
+fun CommonRadioButton(title: String,
+                      radioOptions: List<String>,
+                      selectedOption: String,
+                      onOptionSelected: (String) -> Unit,
+                      modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier.border( width = 1.dp ,
+            color = Color.LightGray,
+            shape = RectangleShape)
+    ) {
+        Text(text = title,
+            modifier = Modifier.width(IntrinsicSize.Min))
+        radioOptions.forEach { text ->
+            Row(
+                verticalAlignment = CenterVertically,
+                horizontalArrangement = Start,
+                modifier = Modifier
+                    .selectable(
+                        selected = (text == selectedOption),
+                        onClick = {
+                            onOptionSelected(text)
+                        })
+            )
+            {
+                RadioButton(
+                    selected = (text == selectedOption),
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = primaryColor,
+                        unselectedColor = Color.LightGray
+                    ),
+                    onClick = { onOptionSelected(text) }
+                )
+                Text(
+                    text = text,
+                    color = if (text == selectedOption) primaryColor
+                    else Color.LightGray
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

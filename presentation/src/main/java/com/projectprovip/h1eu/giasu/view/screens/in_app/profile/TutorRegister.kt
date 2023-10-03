@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.common.composes.EduSmartButton
-import com.projectprovip.h1eu.giasu.common.composes.InformationTextField
+import com.projectprovip.h1eu.giasu.common.composes.CommonTextField
 import com.projectprovip.h1eu.giasu.common.theme.primaryColor
 
 @Preview
@@ -81,16 +81,14 @@ fun TutorRegisterScreen(navController: NavController) {
                 contentPadding = PaddingValues( bottom = 100.dp)
             ) {
                 items(20) {
-                    InformationTextField(remember {
-                        mutableStateOf("profile name")
-                    }, tintIcon = Color.Black,
+                    CommonTextField(remember { mutableStateOf("") },
+                        hint = "profile",
                         modifier = Modifier.fillMaxWidth())
                 }
                 item() {
-                    InformationTextField(remember {
-                        mutableStateOf("last field")
-                    }, tintIcon = Color.Black,
-                        false,
+                    CommonTextField(remember { mutableStateOf("") },
+                        hint = "last field",
+                        singleLine = false,
                         modifier = Modifier.fillMaxWidth().
                         height(150.dp))
                 }

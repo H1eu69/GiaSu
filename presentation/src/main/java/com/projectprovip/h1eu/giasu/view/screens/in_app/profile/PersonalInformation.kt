@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.common.composes.EduSmartButton
-import com.projectprovip.h1eu.giasu.common.composes.InformationTextField
+import com.projectprovip.h1eu.giasu.common.composes.CommonTextField
 import com.projectprovip.h1eu.giasu.common.theme.primaryColor
 
 
@@ -73,22 +73,22 @@ fun InformationFields(modifier: Modifier = Modifier) {
 
     LazyColumn(modifier = modifier) {
         items(9) {
-            InformationTextField(remember {
+            CommonTextField(remember {
                 mutableStateOf("author")
             }, modifier = Modifier.fillMaxWidth())
         }
         item {
-            InformationTextField(remember {
+            CommonTextField(remember {
                 mutableStateOf("name")
             }, modifier = Modifier.fillMaxWidth())
         }
         item {
-            InformationTextField(remember {
+            CommonTextField(remember {
                 mutableStateOf("hohoh")
             }, modifier = Modifier.fillMaxWidth())
         }
         item {
-            InformationTextField(remember {
+            CommonTextField(remember {
                 mutableStateOf("hehe")
             }, modifier = Modifier.fillMaxWidth())
         }
