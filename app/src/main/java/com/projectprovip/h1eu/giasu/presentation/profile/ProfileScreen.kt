@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.view.screens.in_app.profile
+package com.projectprovip.h1eu.giasu.presentation.profile
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -44,9 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.common.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.common.composes.MultiColorText
-import com.projectprovip.h1eu.giasu.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
+import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
+import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 
 @Preview
 @Composable

@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.view.navigation
+package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
 import android.graphics.drawable.Icon
 import androidx.annotation.StringRes

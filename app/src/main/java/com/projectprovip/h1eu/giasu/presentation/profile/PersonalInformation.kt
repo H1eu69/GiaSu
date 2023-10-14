@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.projectprovip.h1eu.giasu.view.screens.in_app.profile
+package com.projectprovip.h1eu.giasu.presentation.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -26,11 +26,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.common.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.common.composes.CommonRadioButton
-import com.projectprovip.h1eu.giasu.common.composes.EduSmartButton
-import com.projectprovip.h1eu.giasu.common.composes.CommonTextField
-import com.projectprovip.h1eu.giasu.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
+import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
+import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
+import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonTextField
+import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 
 
 @Composable

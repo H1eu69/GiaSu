@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.view.screens.in_app
+package com.projectprovip.h1eu.giasu.presentation.class_management
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -40,12 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.common.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.common.theme.costTextColor
-import com.projectprovip.h1eu.giasu.common.theme.idClassBackgroundColor
-import com.projectprovip.h1eu.giasu.common.theme.myBlackColor
-import com.projectprovip.h1eu.giasu.common.theme.notScheduleBackgroundColor
-import com.projectprovip.h1eu.giasu.common.theme.notScheduleTextColor
+import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
+import com.projectprovip.h1eu.giasu.presentation.common.theme.costTextColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.idClassBackgroundColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.myBlackColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.notScheduleBackgroundColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.notScheduleTextColor
 
 @Preview
 @Composable

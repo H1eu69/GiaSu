@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.projectprovip.h1eu.giasu.view.navigation
+package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,15 +14,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.common.composes.BottomBar
-import com.projectprovip.h1eu.giasu.view.screens.authentication.ForgetPasswordScreen
-import com.projectprovip.h1eu.giasu.view.screens.authentication.LoginScreen
-import com.projectprovip.h1eu.giasu.view.screens.authentication.SignUpScreen
-import com.projectprovip.h1eu.giasu.view.screens.in_app.ClassManagementScreen
-import com.projectprovip.h1eu.giasu.view.screens.in_app.home.ClassDetailScreen
-import com.projectprovip.h1eu.giasu.view.screens.in_app.home.HomeScreen
-import com.projectprovip.h1eu.giasu.view.screens.in_app.profile.ProfileScreen
-import com.projectprovip.h1eu.giasu.view.screens.splash.SplashScreen
+import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
+import com.projectprovip.h1eu.giasu.presentation.authentication.ForgetPasswordScreen
+import com.projectprovip.h1eu.giasu.presentation.authentication.LoginScreen
+import com.projectprovip.h1eu.giasu.presentation.authentication.SignUpScreen
+import com.projectprovip.h1eu.giasu.presentation.class_management.ClassManagementScreen
+import com.projectprovip.h1eu.giasu.presentation.home.ClassDetailScreen
+import com.projectprovip.h1eu.giasu.presentation.home.HomeScreen
+import com.projectprovip.h1eu.giasu.presentation.profile.ProfileScreen
+import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

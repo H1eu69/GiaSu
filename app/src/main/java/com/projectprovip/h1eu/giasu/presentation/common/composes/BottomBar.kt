@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.common.composes
+package com.projectprovip.h1eu.giasu.presentation.common.composes
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -25,9 +25,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.projectprovip.h1eu.giasu.common.theme.primaryColor
-import com.projectprovip.h1eu.giasu.view.navigation.BottomBarScreens
-import com.projectprovip.h1eu.giasu.view.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.BottomBarScreens
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 
 @Composable
 fun BottomBar(navController: NavHostController) {

@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.common.theme
+package com.projectprovip.h1eu.giasu.presentation.common.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

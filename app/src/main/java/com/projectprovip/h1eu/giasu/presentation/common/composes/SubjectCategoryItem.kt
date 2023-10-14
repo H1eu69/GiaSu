@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.common.composes
+package com.projectprovip.h1eu.giasu.presentation.common.composes
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

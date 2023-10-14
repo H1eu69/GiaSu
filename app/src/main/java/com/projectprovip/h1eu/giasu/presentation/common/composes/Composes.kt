@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.common.composes
+package com.projectprovip.h1eu.giasu.presentation.common.composes
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.projectprovip.h1eu.giasu.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.view.screens.authentication
+package com.projectprovip.h1eu.giasu.presentation.authentication
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -26,30 +26,29 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.common.composes.MainTextField
-import com.projectprovip.h1eu.giasu.common.theme.primaryColor
-import com.projectprovip.h1eu.giasu.view.navigation.Screens
-
-
-@Preview
-@Composable
-fun Preview() {
-    LoginScreen(rememberNavController())
-}
+import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
+import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController) {
+fun SignUpScreen(navController: NavController) {
     val fontFamily = FontFamily(
         Font(R.font.mont_bold, FontWeight.Bold),
         Font(R.font.mont_regular, FontWeight.Normal)
     )
+
+    val firstNameTextField = remember{
+        mutableStateOf("")
+    }
+    val lastNameTextField = remember{
+        mutableStateOf("")
+    }
+
     val emailTextField = remember{
         mutableStateOf("")
     }
@@ -81,6 +80,18 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
+                MainTextField(value = firstNameTextField.value, label = "First name") {
+                    firstNameTextField.value = it
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                MainTextField(value = lastNameTextField.value, label = "Last name") {
+                    lastNameTextField.value = it
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
                 MainTextField(value = emailTextField.value, label = "Email") {
                     emailTextField.value = it
                 }
@@ -90,6 +101,7 @@ fun LoginScreen(navController: NavController) {
                 MainTextField(value = passTextField.value, label = "Password") {
                     passTextField.value = it
                 }
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
@@ -97,9 +109,8 @@ fun LoginScreen(navController: NavController) {
                         .fillMaxWidth()
                         .clickable(
                             interactionSource = interactionSource,
-                            indication = null
-                        ) {
-                            navController.navigate(Screens.Authentication.ForgetPassword.route)
+                            indication = null) {
+                                   navController.navigate(Screens.Authentication.ForgetPassword.route)
                         },
                     text = "Forget password?",
                     style = TextStyle(
@@ -116,7 +127,7 @@ fun LoginScreen(navController: NavController) {
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
                 ) {
-                    Text(text = "Login")
+                    Text(text = "Register")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -129,13 +140,9 @@ fun LoginScreen(navController: NavController) {
                     .clickable(
                         interactionSource = interactionSource,
                         indication = null) {
-                        navController.navigate(Screens.InApp.route){
-                            popUpTo(Screens.Splash.route){
-                                inclusive = true
-                            }
-                        }
+                               navController.popBackStack()
                     },
-                text = "Register new account",
+                text = "Already have account? Login here",
                 style = TextStyle(
                     color = primaryColor,
                     fontSize = 12.sp,

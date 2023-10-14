@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.view.screens.splash
+package com.projectprovip.h1eu.giasu.presentation.splash
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.view.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 
 @Composable
 fun SplashScreen(navController: NavController) {

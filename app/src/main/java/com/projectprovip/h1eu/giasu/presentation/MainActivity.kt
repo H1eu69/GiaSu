@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu
+package com.projectprovip.h1eu.giasu.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.projectprovip.h1eu.giasu.common.theme.GiaSuTheme
-import com.projectprovip.h1eu.giasu.view.navigation.Navigation
+import com.projectprovip.h1eu.giasu.presentation.common.theme.GiaSuTheme
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Navigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

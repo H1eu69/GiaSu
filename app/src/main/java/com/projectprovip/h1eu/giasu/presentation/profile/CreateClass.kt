@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.view.screens.in_app.profile
+package com.projectprovip.h1eu.giasu.presentation.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,10 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.common.composes.CommonRadioButton
-import com.projectprovip.h1eu.giasu.common.composes.EduSmartButton
-import com.projectprovip.h1eu.giasu.common.composes.CommonTextField
-import com.projectprovip.h1eu.giasu.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
+import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
+import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonTextField
+import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 
 @Preview
 @Composable
@@ -109,9 +109,11 @@ fun CreateClassFields() {
     val (studentSelectedOptions, studentOnOptionSelected) = remember {
         mutableStateOf(genderOptions[0])
     }
+
     val (tutorSelectedOptions, tutorOnOptionSelected) = remember {
         mutableStateOf(genderOptions[0])
     }
+
     Text(text = "Class description",
         textAlign = TextAlign.Left,
         modifier = Modifier
@@ -124,7 +126,8 @@ fun CreateClassFields() {
         icon = {
                Icon(imageVector = Icons.Default.Favorite,
                    contentDescription = null,
-                   tint = primaryColor)
+                   tint = primaryColor
+               )
         },
         modifier = Modifier.fillMaxWidth()
     )
@@ -137,7 +140,8 @@ fun CreateClassFields() {
         icon = {
             Icon(imageVector = Icons.Outlined.Star,
                 contentDescription = null,
-                tint = primaryColor)
+                tint = primaryColor
+            )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = Modifier.fillMaxWidth()
@@ -190,7 +194,8 @@ fun CreateClassFields() {
         icon = {
                Icon(imageVector = Icons.Default.Create,
                    contentDescription = null,
-                   tint = primaryColor)
+                   tint = primaryColor
+               )
         },
         modifier = Modifier
             .fillMaxWidth()
