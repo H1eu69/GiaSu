@@ -2,6 +2,7 @@
 
 package com.projectprovip.h1eu.giasu.view.screens.in_app.profile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.common.composes.AppBarTitle
+import com.projectprovip.h1eu.giasu.common.composes.CommonRadioButton
 import com.projectprovip.h1eu.giasu.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.common.composes.CommonTextField
 import com.projectprovip.h1eu.giasu.common.theme.primaryColor
@@ -62,7 +64,9 @@ fun PersonalInformation(navController: NavController) {
                 .fillMaxSize()){
             InformationFields(modifier = Modifier.fillMaxHeight(.9f))
             EduSmartButton(text = "Update", onClick = {},
-                modifier = Modifier.fillMaxWidth().padding(16.dp))
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp))
         }
     }
 }
@@ -70,27 +74,40 @@ fun PersonalInformation(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InformationFields(modifier: Modifier = Modifier) {
+    val genderOptions = listOf("Male", "Female", "Other")
 
+    val (userSelectedOptions, userOnOptionSelected) = remember {
+        mutableStateOf(genderOptions[0])
+    }
     LazyColumn(modifier = modifier) {
-        items(9) {
+        item {
             CommonTextField(remember {
-                mutableStateOf("author")
+                mutableStateOf("Hieu")
             }, modifier = Modifier.fillMaxWidth())
         }
         item {
             CommonTextField(remember {
-                mutableStateOf("name")
+                mutableStateOf("Email")
             }, modifier = Modifier.fillMaxWidth())
         }
         item {
             CommonTextField(remember {
-                mutableStateOf("hohoh")
+                mutableStateOf("Address")
             }, modifier = Modifier.fillMaxWidth())
         }
         item {
             CommonTextField(remember {
-                mutableStateOf("hehe")
+                mutableStateOf("Birthday")
             }, modifier = Modifier.fillMaxWidth())
+        }
+        item{
+            CommonRadioButton(title = "Gender",
+                radioOptions = genderOptions,
+                selectedOption = userSelectedOptions,
+                onOptionSelected = userOnOptionSelected,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White))
         }
     }
 }
