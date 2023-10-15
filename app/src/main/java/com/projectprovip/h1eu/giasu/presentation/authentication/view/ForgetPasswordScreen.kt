@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.presentation.authentication
+package com.projectprovip.h1eu.giasu.presentation.authentication.view
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement

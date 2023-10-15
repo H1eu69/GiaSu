@@ -15,9 +15,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
-import com.projectprovip.h1eu.giasu.presentation.authentication.ForgetPasswordScreen
-import com.projectprovip.h1eu.giasu.presentation.authentication.LoginScreen
-import com.projectprovip.h1eu.giasu.presentation.authentication.SignUpScreen
+import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
+import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
+import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScreen
 import com.projectprovip.h1eu.giasu.presentation.class_management.ClassManagementScreen
 import com.projectprovip.h1eu.giasu.presentation.home.ClassDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.HomeScreen
