@@ -4,5 +4,5 @@ data class UserLoginDto(
     val isSuccess: Boolean,
     val message: String,
     val token: String,
-    val userDto: UserDto
+    var user: UserDto
 )

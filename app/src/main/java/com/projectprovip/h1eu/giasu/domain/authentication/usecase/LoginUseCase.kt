@@ -8,8 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
-class LoginUseCase(
+class LoginUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
     operator fun invoke(userLoginInput: UserLoginInput) : Flow<Resource<UserLoginDto>> = flow {

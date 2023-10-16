@@ -7,6 +7,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -18,6 +20,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScreen
+import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.AuthViewModel
 import com.projectprovip.h1eu.giasu.presentation.class_management.ClassManagementScreen
 import com.projectprovip.h1eu.giasu.presentation.home.ClassDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.HomeScreen
@@ -40,9 +43,11 @@ fun Navigation() {
 }
 
 fun NavGraphBuilder.authenticationGraph(navController: NavController) {
-    navigation(startDestination = Screens.Authentication.Login.route, route = Screens.Authentication.route) {
+    navigation(startDestination = Screens.Authentication.Login.route,
+        route = Screens.Authentication.route) {
         composable(Screens.Authentication.Login.route) {
-            LoginScreen(navController)
+            val viewModel = hiltViewModel<AuthViewModel>()
+            LoginScreen(navController, viewModel)
         }
         composable(Screens.Authentication.Signup.route) {
             SignUpScreen(navController)

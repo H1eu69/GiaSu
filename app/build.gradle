@@ -54,6 +54,9 @@ dependencies {
     //Navigation Compose
     implementation "androidx.navigation:navigation-compose:$nav_version"
 
+    //Navigation Compose with Hilt
+    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+
     //Bottom Navigation
     implementation "androidx.compose.material:material:1.5.3"
 

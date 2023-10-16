@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
@@ -41,13 +42,30 @@ import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainTextField(value: String, label: String, modifier : Modifier = Modifier, onValueChange: (String) -> Unit) {
+fun MainTextField(value: String,
+                  label: String,
+                  supportText: String? = null,
+                  isError: Boolean = false,
+                  modifier : Modifier = Modifier,
+                  onValueChange: (String) -> Unit) {
     OutlinedTextField(
         value = value,
         onValueChange = {
             onValueChange(it)
         },
-        label = { Text(label) },
+        isError = isError,
+        supportingText = {
+            if(supportText != null && isError){
+                Text(
+                    supportText,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        label = {
+            Text(label)
+        },
         shape = RoundedCornerShape(8.dp),
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -92,7 +110,8 @@ fun CommonTextField(text: MutableState<String>,
                     icon: @Composable (() -> Unit)? = null,
                     modifier: Modifier = Modifier) {
 
-    TextField(value = text.value,
+    TextField(
+        value = text.value,
         colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.White,
             focusedIndicatorColor = primaryColor,
