@@ -3,6 +3,7 @@ package com.projectprovip.h1eu.giasu.domain.authentication.usecase
 import com.projectprovip.h1eu.giasu.common.Resource
 import com.projectprovip.h1eu.giasu.data.remote.dto.UserLoginDto
 import com.projectprovip.h1eu.giasu.data.remote.model.UserLoginInput
+import com.projectprovip.h1eu.giasu.domain.authentication.model.User
 import com.projectprovip.h1eu.giasu.domain.authentication.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

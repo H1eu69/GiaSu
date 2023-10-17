@@ -28,7 +28,10 @@ class LoginViewModel @Inject constructor(
             when(result) {
                 is Resource.Success -> {
                     Log.e("AuthViewModel", "Login success")
-                    _loginState.value = LoginState(user = result.data!!.user.toUser())
+                    _loginState.value = LoginState(
+                        user = result.data!!.user.toUser(),
+                        token = result.data.token
+                    )
                 }
                 is Resource.Error -> {
                     Log.e("AuthViewModel", result.message.toString())

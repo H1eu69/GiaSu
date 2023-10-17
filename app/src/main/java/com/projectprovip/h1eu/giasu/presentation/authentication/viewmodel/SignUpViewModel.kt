@@ -48,7 +48,8 @@ class SignUpViewModel @Inject constructor(
                     _signUpState.value = SignUpState(error = result.message ?: "Unexpected error")
                 }
                 is Resource.Success -> {
-                    _signUpState.value = SignUpState(user = result.data!!.user.toUser())
+                    _signUpState.value = SignUpState(user = result.data!!.user.toUser(),
+                        token = result.data.token)
                 }
             }
         }.launchIn(viewModelScope)

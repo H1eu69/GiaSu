@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.authentication.view
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -19,10 +20,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -31,14 +35,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
+import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -61,22 +72,38 @@ fun LoginScreen(navController: NavController,
     val passTextField = remember{
         mutableStateOf("")
     }
-
-    val state = vm.loginState.value
-
     val fontFamily = FontFamily(
         Font(R.font.mont_bold, FontWeight.Bold),
         Font(R.font.mont_regular, FontWeight.Normal)
     )
-
     val interactionSource = remember { MutableInteractionSource() }
 
-    if(state.user != null)
+    val state = vm.loginState.value
+    val token = stringPreferencesKey(Constant.TOKEN_STRING)
+    val context = LocalContext.current
+    val coroutine = rememberCoroutineScope()
+
+    if(state.user != null){
+        LaunchedEffect(key1 = "") {
+            coroutine.launch {
+                context.dataStore.edit { preferences ->
+                    preferences[token] = state.token.toString()
+                    Log.d("Token in Login", state.token.toString())
+                }
+            }
+        }
+
         navController.navigate(Screens.InApp.route) {
             popUpTo(Screens.Splash.route) {
                 inclusive = true
             }
         }
+    }
+
+
+    val onLoginClick: () -> Unit = {
+        vm.loginByEmail(emailTextField.value, passTextField.value)
+    }
 
     Surface {
         Column(
@@ -149,9 +176,7 @@ fun LoginScreen(navController: NavController,
                 )
 
                 Button(
-                    onClick = {
-                        loginByEmail(vm, emailTextField.value, passTextField.value)
-                    },
+                    onClick = onLoginClick,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
                 ) {
@@ -193,5 +218,4 @@ fun LoginScreen(navController: NavController,
 }
 
 private fun loginByEmail(vm: LoginViewModel, email: String, password: String) {
-    vm.loginByEmail(email, password)
 }

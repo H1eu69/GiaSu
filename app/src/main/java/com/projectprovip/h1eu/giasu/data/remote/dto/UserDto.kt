@@ -9,4 +9,8 @@ data class UserDto(
     val role: Int
 )
 
-fun UserDto.toUser() = User(email, fullName, image)
+fun UserDto.toUser() = User(
+    email = email,
+    fullName = fullName,
+    image = image
+)
