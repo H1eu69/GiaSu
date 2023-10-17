@@ -1,0 +1,12 @@
+package com.projectprovip.h1eu.giasu.data.remote.model
+
+data class UserSignUpInput(
+    val address: String,
+    val birthYear: Int,
+    val email: String,
+    val firstName: String,
+    val gender: String,
+    val lastName: String,
+    val password: String,
+    val phoneNumber: String
+)

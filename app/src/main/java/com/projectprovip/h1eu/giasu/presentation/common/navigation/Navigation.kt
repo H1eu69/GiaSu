@@ -8,7 +8,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -20,7 +19,8 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScreen
-import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.AuthViewModel
+import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
+import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
 import com.projectprovip.h1eu.giasu.presentation.class_management.ClassManagementScreen
 import com.projectprovip.h1eu.giasu.presentation.home.ClassDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.HomeScreen
@@ -43,14 +43,17 @@ fun Navigation() {
 }
 
 fun NavGraphBuilder.authenticationGraph(navController: NavController) {
-    navigation(startDestination = Screens.Authentication.Login.route,
-        route = Screens.Authentication.route) {
+    navigation(
+        startDestination = Screens.Authentication.Login.route,
+        route = Screens.Authentication.route
+    ) {
         composable(Screens.Authentication.Login.route) {
-            val viewModel = hiltViewModel<AuthViewModel>()
+            val viewModel = hiltViewModel<LoginViewModel>()
             LoginScreen(navController, viewModel)
         }
         composable(Screens.Authentication.Signup.route) {
-            SignUpScreen(navController)
+            val viewModel = hiltViewModel<SignUpViewModel>()
+            SignUpScreen(navController, viewModel)
         }
         composable(Screens.Authentication.ForgetPassword.route) {
             ForgetPasswordScreen(navController)
@@ -73,7 +76,8 @@ fun InAppScreen(navController: NavHostController = rememberNavController()) {
 @Composable
 fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
     NavHost(
-        navController, startDestination = Screens.InApp.HomeBottomBar.route,
+        navController,
+        startDestination = Screens.InApp.HomeBottomBar.route,
         route = Screens.InApp.route,
         modifier = modifier,
     ) {

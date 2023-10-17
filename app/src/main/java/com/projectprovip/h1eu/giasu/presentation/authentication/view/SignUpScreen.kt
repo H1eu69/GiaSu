@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,17 +27,33 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
+import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 
+@Preview
+@Composable
+fun PreviewSignUp() {
+    SignUpScreen(
+        rememberNavController(),
+        hiltViewModel()
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(navController: NavController) {
+fun SignUpScreen(
+    navController: NavController,
+    vm: SignUpViewModel
+                 ) {
     val fontFamily = FontFamily(
         Font(R.font.mont_bold, FontWeight.Bold),
         Font(R.font.mont_regular, FontWeight.Normal)
@@ -57,6 +74,12 @@ fun SignUpScreen(navController: NavController) {
         mutableStateOf("")
     }
     val interactionSource = remember { MutableInteractionSource() }
+
+    val state = vm.signUpState
+
+    if(state.value.user != null) {
+        navController.navigate(Screens.InApp.route)
+    }
 
     Surface {
         Column(
@@ -80,25 +103,33 @@ fun SignUpScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                MainTextField(value = firstNameTextField.value, label = "First name") {
+                MainTextField(
+                    value = firstNameTextField.value,
+                    label = "First name") {
                     firstNameTextField.value = it
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                MainTextField(value = lastNameTextField.value, label = "Last name") {
+                MainTextField(
+                    value = lastNameTextField.value,
+                    label = "Last name") {
                     lastNameTextField.value = it
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                MainTextField(value = emailTextField.value, label = "Email") {
+                MainTextField(
+                    value = emailTextField.value,
+                    label = "Email") {
                     emailTextField.value = it
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                MainTextField(value = passTextField.value, label = "Password") {
+                MainTextField(
+                    value = passTextField.value,
+                    label = "Password") {
                     passTextField.value = it
                 }
 
@@ -109,8 +140,9 @@ fun SignUpScreen(navController: NavController) {
                         .fillMaxWidth()
                         .clickable(
                             interactionSource = interactionSource,
-                            indication = null) {
-                                   navController.navigate(Screens.Authentication.ForgetPassword.route)
+                            indication = null
+                        ) {
+                            navController.navigate(Screens.Authentication.ForgetPassword.route)
                         },
                     text = "Forget password?",
                     style = TextStyle(
@@ -123,11 +155,23 @@ fun SignUpScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        signUp(
+                            vm,
+                            firstNameTextField.value,
+                            lastNameTextField.value,
+                            emailTextField.value,
+                            passTextField.value
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
                 ) {
-                    Text(text = "Register")
+                    if(state.value.isLoading){
+                        CircularProgressIndicator()
+                    }
+                    else
+                        Text(text = "Register")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -139,8 +183,9 @@ fun SignUpScreen(navController: NavController) {
                     .padding(bottom = 30.dp)
                     .clickable(
                         interactionSource = interactionSource,
-                        indication = null) {
-                               navController.popBackStack()
+                        indication = null
+                    ) {
+                        navController.popBackStack()
                     },
                 text = "Already have account? Login here",
                 style = TextStyle(
@@ -150,7 +195,21 @@ fun SignUpScreen(navController: NavController) {
                 ),
                 textAlign = TextAlign.Center,
             )
-
         }
     }
+}
+
+private fun signUp(
+    vm: SignUpViewModel,
+    firstName: String,
+    lastName: String,
+    email: String,
+    pwd: String
+) {
+    vm.signUp(
+        firstName,
+        lastName,
+        email,
+        pwd
+    )
 }

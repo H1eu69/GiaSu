@@ -35,7 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.AuthViewModel
+import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
@@ -53,7 +53,7 @@ fun Preview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(navController: NavController,
-                vm: AuthViewModel) {
+                vm: LoginViewModel) {
     val emailTextField = remember{
         mutableStateOf("")
     }
@@ -71,8 +71,12 @@ fun LoginScreen(navController: NavController,
 
     val interactionSource = remember { MutableInteractionSource() }
 
-    if(state.user.fullName.isNotBlank())
-        navController.navigate(Screens.InApp.route)
+    if(state.user != null)
+        navController.navigate(Screens.InApp.route) {
+            popUpTo(Screens.Splash.route) {
+                inclusive = true
+            }
+        }
 
     Surface {
         Column(
@@ -174,11 +178,7 @@ fun LoginScreen(navController: NavController,
                         interactionSource = interactionSource,
                         indication = null
                     ) {
-                        navController.navigate(Screens.InApp.route) {
-                            popUpTo(Screens.Splash.route) {
-                                inclusive = true
-                            }
-                        }
+                        navController.navigate(Screens.Authentication.Signup.route)
                     },
                 text = "Register new account",
                 style = TextStyle(
@@ -192,6 +192,6 @@ fun LoginScreen(navController: NavController,
     }
 }
 
-private fun loginByEmail(vm: AuthViewModel, email: String, password: String) {
+private fun loginByEmail(vm: LoginViewModel, email: String, password: String) {
     vm.loginByEmail(email, password)
 }
