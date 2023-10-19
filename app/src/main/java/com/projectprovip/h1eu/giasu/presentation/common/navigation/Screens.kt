@@ -1,6 +1,5 @@
 package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
-import android.graphics.drawable.Icon
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -17,10 +16,10 @@ sealed class Screens(val route: String){
         object ForgetPassword : Screens(route = "forget_password")
     }
     data object InApp : Screens(route = "in_app"){
-        object HomeBottomBar : BottomBarScreens(route = "home", R.string.bottom_home, icon = Icons.Outlined.Home, title = "Home")
+        object Home : BottomBarScreens(route = "home", R.string.bottom_home, icon = Icons.Outlined.Home, title = "Home")
         object ClassDetail : Screens(route = "new_class_detail")
-        object ClassBottomBar : BottomBarScreens(route = "class", R.string.bottom_class, icon = Icons.Outlined.Warning, title = "Class")
-        object ProfileBottomBar : BottomBarScreens(route = "profile", R.string.bottom_profile, icon = Icons.Outlined.AccountCircle, title = "Profile")
+        object Class : BottomBarScreens(route = "class", R.string.bottom_class, icon = Icons.Outlined.Warning, title = "Class")
+        object Profile : BottomBarScreens(route = "profile", R.string.bottom_profile, icon = Icons.Outlined.AccountCircle, title = "Profile")
         object PersonalInformation : Screens(route = "personal_information")
 
     }

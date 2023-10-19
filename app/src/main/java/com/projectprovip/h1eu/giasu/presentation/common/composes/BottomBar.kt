@@ -32,9 +32,9 @@ import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 @Composable
 fun BottomBar(navController: NavHostController) {
     val screens = listOf(
-        Screens.InApp.HomeBottomBar,
-        Screens.InApp.ClassBottomBar,
-        Screens.InApp.ProfileBottomBar
+        Screens.InApp.Home,
+        Screens.InApp.Class,
+        Screens.InApp.Profile
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination

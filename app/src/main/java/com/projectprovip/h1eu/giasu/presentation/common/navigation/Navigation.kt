@@ -77,14 +77,14 @@ fun InAppScreen(navController: NavHostController = rememberNavController()) {
 fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
     NavHost(
         navController,
-        startDestination = Screens.InApp.HomeBottomBar.route,
+        startDestination = Screens.InApp.Home.route,
         route = Screens.InApp.route,
         modifier = modifier,
     ) {
-        composable(Screens.InApp.HomeBottomBar.route) { HomeScreen(navController) }
+        composable(Screens.InApp.Home.route) { HomeScreen(navController) }
         composable(Screens.InApp.ClassDetail.route) { ClassDetailScreen(navController) }
-        composable(Screens.InApp.ClassBottomBar.route) { ClassManagementScreen(navController) }
-        composable(Screens.InApp.ProfileBottomBar.route) { ProfileScreen(navController) }
+        composable(Screens.InApp.Class.route) { ClassManagementScreen(navController) }
+        composable(Screens.InApp.Profile.route) { ProfileScreen(navController) }
     }
 }
 
