@@ -59,11 +59,8 @@ import com.projectprovip.h1eu.giasu.common.Result
 import com.projectprovip.h1eu.giasu.domain.classes.model.NewClass
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.SubjectCategoryItem
-import com.projectprovip.h1eu.giasu.presentation.common.theme.costTextColor
-import com.projectprovip.h1eu.giasu.presentation.common.theme.idClassBackgroundColor
-import com.projectprovip.h1eu.giasu.presentation.common.theme.myBlackColor
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 
 @Preview
@@ -272,7 +269,7 @@ private fun RowTitle(modifier: Modifier =
             text = title2,
             style = TextStyle(
                 fontWeight = FontWeight.Normal,
-                color = primaryColor,
+                color = EDSColors.primaryColor,
                 fontSize = 14.sp,
                 fontFamily = FontFamily.SansSerif
             )
@@ -319,13 +316,13 @@ fun SubTitle(text: String) {
     Text(text = text,
         style = TextStyle(
             fontWeight = FontWeight.Medium,
-            color = myBlackColor,
+            color = EDSColors.myBlackColor,
             fontSize = 14.sp
         ),
         modifier = Modifier
             .padding(top = 8.dp, bottom = 8.dp)
             .background(
-                idClassBackgroundColor,
+                EDSColors.idClassBackgroundColor,
                 RoundedCornerShape(30)
             )
             .padding(all = 4.dp)
@@ -353,7 +350,7 @@ fun IconAndText(imageVector : ImageVector, text : String){
     Row{
         androidx.compose.material.Icon(
             imageVector, null,
-            tint = primaryColor
+            tint = EDSColors.primaryColor
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = text)
@@ -370,7 +367,7 @@ fun BottomContent(fee: String, createdDate: String) {
             style = TextStyle(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = costTextColor
+                color = EDSColors.costTextColor
             )
         )
         IconAndText(Icons.Outlined.DateRange, createdDate)

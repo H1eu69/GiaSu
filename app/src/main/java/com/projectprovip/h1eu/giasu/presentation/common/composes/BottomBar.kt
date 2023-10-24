@@ -25,9 +25,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.BottomBarScreens
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 @Composable
 fun BottomBar(navController: NavHostController) {
@@ -69,8 +69,8 @@ fun CustomBottomNavItem(modifier: Modifier,
                         screen: BottomBarScreens,
                         navController: NavController
 ) {
-    val background = if(selected) primaryColor else Color.Transparent
-    val contentColor = if(selected) primaryColor else Color.LightGray
+    val background = if(selected) EDSColors.primaryColor else Color.Transparent
+    val contentColor = if(selected) EDSColors.primaryColor else Color.LightGray
     val selectedIconColor = if(selected) Color.White else Color.LightGray
 
     Box(

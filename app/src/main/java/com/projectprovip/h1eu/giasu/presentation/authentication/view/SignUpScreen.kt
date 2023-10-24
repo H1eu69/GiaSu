@@ -44,8 +44,8 @@ import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.launch
 
 @Preview
@@ -119,7 +119,7 @@ fun SignUpScreen(
                     modifier = Modifier.fillMaxWidth(),
                     text = "EduSmart",
                     style = TextStyle(
-                        color = primaryColor,
+                        color = EDSColors.primaryColor,
                         fontSize = 24.sp,
                         fontFamily = fontFamily
                     ),
@@ -171,7 +171,7 @@ fun SignUpScreen(
                         },
                     text = "Forget password?",
                     style = TextStyle(
-                        color = primaryColor,
+                        color = EDSColors.primaryColor,
                         fontSize = 12.sp,
                     ),
                     textAlign = TextAlign.End,
@@ -190,7 +190,7 @@ fun SignUpScreen(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                    colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
                 ) {
                     if(state.isLoading){
                         CircularProgressIndicator()
@@ -214,7 +214,7 @@ fun SignUpScreen(
                     },
                 text = "Already have account? Login here",
                 style = TextStyle(
-                    color = primaryColor,
+                    color = EDSColors.primaryColor,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 ),

@@ -38,7 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,8 +69,8 @@ fun MainTextField(value: String,
         shape = RoundedCornerShape(8.dp),
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = primaryColor,
-            focusedLabelColor = primaryColor
+            focusedBorderColor = EDSColors.primaryColor,
+            focusedLabelColor = EDSColors.primaryColor
         ),
         modifier = modifier
     )
@@ -114,9 +114,9 @@ fun CommonTextField(text: MutableState<String>,
         value = text.value,
         colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.White,
-            focusedIndicatorColor = primaryColor,
+            focusedIndicatorColor = EDSColors.primaryColor,
             unfocusedIndicatorColor = Color.LightGray,
-            cursorColor = primaryColor
+            cursorColor = EDSColors.primaryColor
         ),
         leadingIcon = icon,
         placeholder = {
@@ -163,14 +163,14 @@ fun CommonRadioButton(title: String,
                 RadioButton(
                     selected = (text == selectedOption),
                     colors = RadioButtonDefaults.colors(
-                        selectedColor = primaryColor,
+                        selectedColor = EDSColors.primaryColor,
                         unselectedColor = Color.LightGray
                     ),
                     onClick = { onOptionSelected(text) }
                 )
                 Text(
                     text = text,
-                    color = if (text == selectedOption) primaryColor
+                    color = if (text == selectedOption) EDSColors.primaryColor
                     else Color.LightGray
                 )
             }
@@ -184,7 +184,7 @@ fun EduSmartButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: String,
-    buttonColor: Color = primaryColor,
+    buttonColor: Color = EDSColors.primaryColor,
  )  {
     Button(
         onClick = { onClick() },

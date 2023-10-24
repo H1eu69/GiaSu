@@ -45,8 +45,8 @@ import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -124,7 +124,7 @@ fun LoginScreen(navController: NavController,
                         .align(CenterHorizontally),
                     text = "EduSmart",
                     style = TextStyle(
-                        color = primaryColor,
+                        color = EDSColors.primaryColor,
                         fontSize = 24.sp,
                         fontFamily = fontFamily
                     ),
@@ -165,7 +165,7 @@ fun LoginScreen(navController: NavController,
                         },
                     text = "Forget password?",
                     style = TextStyle(
-                        color = primaryColor,
+                        color = EDSColors.primaryColor,
                         fontSize = 12.sp,
                     ),
                     textAlign = TextAlign.End,
@@ -178,7 +178,7 @@ fun LoginScreen(navController: NavController,
                 Button(
                     onClick = onLoginClick,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                    colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
                 ) {
                     if(state.isLoading) {
                         CircularProgressIndicator()
@@ -207,7 +207,7 @@ fun LoginScreen(navController: NavController,
                     },
                 text = "Register new account",
                 style = TextStyle(
-                    color = primaryColor,
+                    color = EDSColors.primaryColor,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 ),

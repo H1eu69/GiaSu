@@ -41,11 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.presentation.common.theme.costTextColor
-import com.projectprovip.h1eu.giasu.presentation.common.theme.idClassBackgroundColor
-import com.projectprovip.h1eu.giasu.presentation.common.theme.myBlackColor
-import com.projectprovip.h1eu.giasu.presentation.common.theme.notScheduleBackgroundColor
-import com.projectprovip.h1eu.giasu.presentation.common.theme.notScheduleTextColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 @Preview
 @Composable
@@ -140,12 +136,12 @@ fun SubTitle() {
         Text(text = "ID: 1222",
             style = TextStyle(
                 fontWeight = FontWeight.Medium,
-                color = myBlackColor,
+                color = EDSColors.myBlackColor,
                 fontSize = 14.sp
             ),
             modifier = Modifier
                 .background(
-                    idClassBackgroundColor,
+                    EDSColors.idClassBackgroundColor,
                     RoundedCornerShape(30)
                 )
                 .padding(all = 4.dp)
@@ -153,11 +149,11 @@ fun SubTitle() {
         Text(text = "Not schedule",
             style = TextStyle(
                 fontWeight = FontWeight.Medium,
-                color = notScheduleTextColor
+                color = EDSColors.notScheduleTextColor
             ),
             modifier = Modifier
                 .background(
-                    notScheduleBackgroundColor,
+                    EDSColors.notScheduleBackgroundColor,
                     RoundedCornerShape(30)
                 )
                 .padding(all = 4.dp)
@@ -175,7 +171,7 @@ fun BottomContent() {
             style = TextStyle(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = costTextColor
+                color = EDSColors.costTextColor
             )
         )
         IconAndText(Icons.Outlined.DateRange, "31/05/2023")

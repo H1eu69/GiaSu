@@ -34,7 +34,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 
 @Preview
@@ -97,7 +97,7 @@ fun ForgetPasswordScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 20.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                    colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
                 ) {
                     Text(text = "Send OTP")
                 }

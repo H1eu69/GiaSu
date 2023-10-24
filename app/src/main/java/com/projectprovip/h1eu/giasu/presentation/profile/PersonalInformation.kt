@@ -30,7 +30,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonTextField
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 
 @Composable
@@ -47,7 +47,7 @@ fun PersonalInformation(navController: NavController) {
             CenterAlignedTopAppBar(title = {
                 AppBarTitle(text = "Personal Information")
             }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = primaryColor,
+                containerColor = EDSColors.primaryColor,
                 titleContentColor = Color.White
             ), navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {

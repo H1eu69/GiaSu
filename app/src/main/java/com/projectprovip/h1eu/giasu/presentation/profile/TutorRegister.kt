@@ -33,7 +33,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonTextField
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 @Preview
 @Composable
@@ -56,7 +56,7 @@ fun TutorRegisterScreen(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = primaryColor
+                    containerColor = EDSColors.primaryColor
                 ),
                 title = {
                     Text(

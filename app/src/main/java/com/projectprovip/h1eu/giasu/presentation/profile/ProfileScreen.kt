@@ -46,7 +46,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 @Preview
 @Composable
@@ -63,7 +63,7 @@ fun ProfileScreen(navController: NavController) {
             CenterAlignedTopAppBar(title = {
                 AppBarTitle(text = "Profile")
             }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = primaryColor,
+                containerColor = EDSColors.primaryColor,
                 titleContentColor = Color.White
             ))
         }
@@ -73,7 +73,7 @@ fun ProfileScreen(navController: NavController) {
             item { Spacer(modifier = Modifier.height(30.dp)) }
             item { ColumnOfButton() }
             item { Spacer(modifier = Modifier.height(30.dp)) }
-            item { ButtonColumnItem(Icons.Rounded.ExitToApp, primaryColor,
+            item { ButtonColumnItem(Icons.Rounded.ExitToApp, EDSColors.primaryColor,
                 "Change password", true) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
             item { ButtonColumnItem(Icons.Rounded.ExitToApp, Color.Red,
@@ -94,10 +94,10 @@ fun Profile() {
         ProfileImage()
         Text(text = "Lecture name", style = TextStyle(
             fontSize = 16.sp,
-            color = primaryColor
+            color = EDSColors.primaryColor
         ))
         MultiColorText(text1 = "ID: ",
-            color1 = primaryColor,
+            color1 = EDSColors.primaryColor,
             text2 = "0967075",
             color2 = Color.Black)
     }
@@ -120,7 +120,7 @@ fun ProfileImage() {
 
                 })
         Icon(imageVector = Icons.Default.Create, contentDescription = null,
-            tint = primaryColor,
+            tint = EDSColors.primaryColor,
             modifier = Modifier
                 .clip(CircleShape)
                 .background(Color.White)
@@ -134,15 +134,15 @@ fun ColumnOfButton() {
     Column(
         Modifier.fillMaxWidth()
     ) {
-        ButtonColumnItem(Icons.Rounded.AccountCircle, primaryColor,
+        ButtonColumnItem(Icons.Rounded.AccountCircle, EDSColors.primaryColor,
             "Personal information", true)
-        ButtonColumnItem(Icons.Rounded.Favorite, primaryColor,
+        ButtonColumnItem(Icons.Rounded.Favorite, EDSColors.primaryColor,
             "Register lecturer", true)
-        ButtonColumnItem(Icons.Rounded.Star, primaryColor,
+        ButtonColumnItem(Icons.Rounded.Star, EDSColors.primaryColor,
             "Request lecturer", true)
-        ButtonColumnItem(Icons.Rounded.Star, primaryColor,
+        ButtonColumnItem(Icons.Rounded.Star, EDSColors.primaryColor,
             "Request lecturer", true)
-        ButtonColumnItem(Icons.Rounded.Star, primaryColor,
+        ButtonColumnItem(Icons.Rounded.Star, EDSColors.primaryColor,
             "Request lecturer", false)
     }
 }

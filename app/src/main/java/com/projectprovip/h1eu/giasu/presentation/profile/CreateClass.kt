@@ -41,7 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonTextField
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 @Preview
 @Composable
@@ -64,7 +64,7 @@ fun CreateClassScreen(navController: NavController) {
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = primaryColor
+                    containerColor = EDSColors.primaryColor
                 ),
                 title = {
                     Text(
@@ -126,7 +126,7 @@ fun CreateClassFields() {
         icon = {
                Icon(imageVector = Icons.Default.Favorite,
                    contentDescription = null,
-                   tint = primaryColor
+                   tint = EDSColors.primaryColor
                )
         },
         modifier = Modifier.fillMaxWidth()
@@ -140,7 +140,7 @@ fun CreateClassFields() {
         icon = {
             Icon(imageVector = Icons.Outlined.Star,
                 contentDescription = null,
-                tint = primaryColor
+                tint = EDSColors.primaryColor
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -194,7 +194,7 @@ fun CreateClassFields() {
         icon = {
                Icon(imageVector = Icons.Default.Create,
                    contentDescription = null,
-                   tint = primaryColor
+                   tint = EDSColors.primaryColor
                )
         },
         modifier = Modifier

@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 @Preview
 @Composable
@@ -57,7 +57,7 @@ fun ClassDetailScreen(navController: NavController) {
             Button(
                 onClick = { /*TODO*/ },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
             ) {
                 androidx.compose.material3.Text(text = "Tax: (750,000d) Register now")
             }
@@ -103,7 +103,7 @@ fun ClassDetailBody(modifier: Modifier = Modifier, navController: NavController)
 fun ClassDetailAppBar(navController: NavController) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.largeTopAppBarColors(
-            containerColor = primaryColor
+            containerColor = EDSColors.primaryColor
         ),
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
@@ -131,7 +131,7 @@ fun DetailIconAndText(imageVector : ImageVector, boldedText : String, text : Str
     Row{
         Icon(
             imageVector, null,
-            tint = primaryColor
+            tint = EDSColors.primaryColor
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = boldedText,
