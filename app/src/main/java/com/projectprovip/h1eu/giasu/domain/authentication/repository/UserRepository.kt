@@ -1,10 +1,9 @@
 package com.projectprovip.h1eu.giasu.domain.authentication.repository
 
-import com.projectprovip.h1eu.giasu.data.remote.UserAuthApi
-import com.projectprovip.h1eu.giasu.data.remote.dto.UserLoginDto
-import com.projectprovip.h1eu.giasu.data.remote.dto.UserSignUpDto
-import com.projectprovip.h1eu.giasu.data.remote.model.UserLoginInput
-import com.projectprovip.h1eu.giasu.data.remote.model.UserSignUpInput
+import com.projectprovip.h1eu.giasu.data.user.dto.UserLoginDto
+import com.projectprovip.h1eu.giasu.data.user.dto.UserSignUpDto
+import com.projectprovip.h1eu.giasu.data.user.model.UserLoginInput
+import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
 
 interface UserRepository {
     suspend fun login(userLoginInput: UserLoginInput) : UserLoginDto

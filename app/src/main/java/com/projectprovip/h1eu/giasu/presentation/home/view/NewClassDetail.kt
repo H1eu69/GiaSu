@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.presentation.home
+package com.projectprovip.h1eu.giasu.presentation.home.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -82,18 +82,18 @@ fun ClassDetailBody(modifier: Modifier = Modifier, navController: NavController)
                 )
             )
         }
-        item {
-            SubTitle()
-        }
-        item {
-            BottomContent()
-        }
-        items(7) {
-            DetailIconAndText(
-                Icons.Outlined.Info,
-                "Subject: ", "idiot baka oni chan"
-            )
-        }
+//        item {
+//            SubTitle()
+//        }
+//        item {
+//            BottomContent()
+//        }
+//        items(7) {
+//            DetailIconAndText(
+//                Icons.Outlined.Info,
+//                "Subject: ", "idiot baka oni chan"
+//            )
+//        }
     }
 }
 

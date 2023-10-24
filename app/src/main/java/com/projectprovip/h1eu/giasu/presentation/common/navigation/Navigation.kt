@@ -22,8 +22,9 @@ import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScree
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
 import com.projectprovip.h1eu.giasu.presentation.class_management.ClassManagementScreen
-import com.projectprovip.h1eu.giasu.presentation.home.ClassDetailScreen
-import com.projectprovip.h1eu.giasu.presentation.home.HomeScreen
+import com.projectprovip.h1eu.giasu.presentation.home.view.ClassDetailScreen
+import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
+import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.ProfileScreen
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
 
@@ -81,7 +82,10 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         route = Screens.InApp.route,
         modifier = modifier,
     ) {
-        composable(Screens.InApp.Home.route) { HomeScreen(navController) }
+        composable(Screens.InApp.Home.route) {
+            val viewModel = hiltViewModel<HomeViewModel>()
+            HomeScreen(navController, viewModel)
+        }
         composable(Screens.InApp.ClassDetail.route) { ClassDetailScreen(navController) }
         composable(Screens.InApp.Class.route) { ClassManagementScreen(navController) }
         composable(Screens.InApp.Profile.route) { ProfileScreen(navController) }

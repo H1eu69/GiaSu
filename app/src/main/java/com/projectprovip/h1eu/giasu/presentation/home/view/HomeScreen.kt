@@ -1,5 +1,6 @@
-package com.projectprovip.h1eu.giasu.presentation.home
+package com.projectprovip.h1eu.giasu.presentation.home.view
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -40,15 +42,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.projectprovip.h1eu.giasu.R
+import com.projectprovip.h1eu.giasu.common.Result
+import com.projectprovip.h1eu.giasu.domain.classes.model.NewClass
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.SubjectCategoryItem
 import com.projectprovip.h1eu.giasu.presentation.common.theme.costTextColor
@@ -56,23 +64,25 @@ import com.projectprovip.h1eu.giasu.presentation.common.theme.idClassBackgroundC
 import com.projectprovip.h1eu.giasu.presentation.common.theme.myBlackColor
 import com.projectprovip.h1eu.giasu.presentation.common.theme.primaryColor
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 
 @Preview
 @Composable
 fun PreviewHomeScreen() {
-    HomeScreen(rememberNavController())
+    HomeScreen(rememberNavController(), hiltViewModel())
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, vm: HomeViewModel) {
     Scaffold(
         topBar = {
             AppBar()
         },
     ) {
         BodyContent(
-            modifier = Modifier.padding(it)
+            modifier = Modifier
+                .padding(it)
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
@@ -81,7 +91,8 @@ fun HomeScreen(navController: NavController) {
                         ),
                     )
                 ),
-            navController
+            navController,
+            vm
         )
     }
 }
@@ -130,7 +141,9 @@ fun AppBar() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BodyContent(modifier: Modifier,
-                navController: NavController) {
+                navController: NavController,
+                vm: HomeViewModel) {
+    val newClassState = vm.newClassesState
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -160,8 +173,24 @@ fun BodyContent(modifier: Modifier,
                     title2 = "View all"
                 )
             }
-            items(8) {
-                NewClassItem(navController)
+            newClassState.apply {
+                when {
+                    this.value.isLoading -> {
+                        item {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    this.value.data.isNotEmpty() -> {
+                        value.data.forEach {
+                            item {
+                                NewClassItem(
+                                    navController = navController,
+                                    data = it)
+                            }
+                        }
+                    }
+
+                }
             }
         }
     }
@@ -202,7 +231,7 @@ private fun SearchTextField(modifier: Modifier = Modifier) {
 
 @Composable
 private fun CategoryItemList() {
-    val list = listOf<Int>(1, 2, 3, 4, 5, 5, 5, 5, 5, 55, 5, 5, 1, 2, 3, 4, 5, 5, 5, 5, 5, 55, 5, 5, 1, 2, 3, 4, 5, 5, 5, 5, 5, 55, 5, 5)
+    val list = listOf(1, 2, 3, 4, 5, 5, 5, 5, 5, 55, 5, 5, 1, 2, 3, 4, 5, 5, 5, 5, 5, 55, 5, 5, 1, 2, 3, 4, 5, 5, 5, 5, 5, 55, 5, 5)
     LazyRow(
         Modifier.fillMaxWidth(),
         userScrollEnabled = true,
@@ -216,11 +245,14 @@ private fun CategoryItemList() {
 }
 @Composable
 private fun RowTitle(modifier: Modifier =
-                         Modifier.padding( start = 10.dp,
+                         Modifier.padding
+                             (
+                             start = 10.dp,
                              top = 4.dp,
                              bottom = 15.dp,
-                             end = 10.dp)
-                     ,title1: String,
+                             end = 10.dp
+                         ),
+                     title1: String,
                      title2: String) {
     Row(
         modifier
@@ -248,7 +280,7 @@ private fun RowTitle(modifier: Modifier =
     }
 }
 @Composable
-fun NewClassItem(navController: NavController) {
+fun NewClassItem(navController: NavController, data: NewClass) {
     Card(
         shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
@@ -271,17 +303,20 @@ fun NewClassItem(navController: NavController) {
                 .background(Color.White)
                 .padding(20.dp)
         ) {
-            AppBarTitle(text = "IT Beginner Entry", fontSize = 16)
-            SubTitle()
-            MiddleContent()
-            BottomContent()
+            AppBarTitle(text = data.title, fontSize = 16)
+            SubTitle(text = data.id)
+            MiddleContent(minutePerSession = data.minutePerSession,
+                sessionPerWeek = data.sessionPerWeek,
+                info = data.description,
+                location = data.address)
+            BottomContent(fee = data.fee.toString(), createdDate = data.creationTime)
         }
     }
 }
 
 @Composable
-fun SubTitle() {
-    Text(text = "ID: 1222",
+fun SubTitle(text: String) {
+    Text(text = text,
         style = TextStyle(
             fontWeight = FontWeight.Medium,
             color = myBlackColor,
@@ -298,19 +333,18 @@ fun SubTitle() {
 }
 
 @Composable
-fun BottomContent() {
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+fun MiddleContent(minutePerSession: Int, sessionPerWeek: Int, info: String, location: String) {
+    val session = pluralStringResource(id = R.plurals.session_string,
+        count = sessionPerWeek,
+        sessionPerWeek,
+        minutePerSession)
+    Column(
+        Modifier.padding(top = 12.dp, bottom = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "3.000.000 / day",
-            style = TextStyle(
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = costTextColor
-            )
-        )
-        IconAndText(Icons.Outlined.DateRange, "31/05/2023")
+        IconAndText(Icons.Outlined.DateRange, session)
+        IconAndText(Icons.Outlined.Info, info)
+        IconAndText(Icons.Outlined.LocationOn, location)
     }
 }
 
@@ -327,14 +361,19 @@ fun IconAndText(imageVector : ImageVector, text : String){
 }
 
 @Composable
-fun MiddleContent() {
-    Column(
-        Modifier.padding(top = 12.dp, bottom = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+fun BottomContent(fee: String, createdDate: String) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        IconAndText(Icons.Outlined.DateRange, "3 days / week (90 min / day)")
-        IconAndText(Icons.Outlined.Info, "At home")
-        IconAndText(Icons.Outlined.LocationOn, "3 Dinh Ha noi")
+        Text(text = fee,
+            style = TextStyle(
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = costTextColor
+            )
+        )
+        IconAndText(Icons.Outlined.DateRange, createdDate)
     }
 }
 

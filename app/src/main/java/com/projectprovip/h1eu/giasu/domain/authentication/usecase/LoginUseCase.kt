@@ -1,9 +1,8 @@
 package com.projectprovip.h1eu.giasu.domain.authentication.usecase
 
-import com.projectprovip.h1eu.giasu.common.Resource
-import com.projectprovip.h1eu.giasu.data.remote.dto.UserLoginDto
-import com.projectprovip.h1eu.giasu.data.remote.model.UserLoginInput
-import com.projectprovip.h1eu.giasu.domain.authentication.model.User
+import com.projectprovip.h1eu.giasu.common.Result
+import com.projectprovip.h1eu.giasu.data.user.dto.UserLoginDto
+import com.projectprovip.h1eu.giasu.data.user.model.UserLoginInput
 import com.projectprovip.h1eu.giasu.domain.authentication.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,17 +13,17 @@ import javax.inject.Inject
 class LoginUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(userLoginInput: UserLoginInput) : Flow<Resource<UserLoginDto>> = flow {
+    operator fun invoke(userLoginInput: UserLoginInput) : Flow<Result<UserLoginDto>> = flow {
         try {
-            emit(Resource.Loading())
+            emit(Result.Loading())
             val user = userRepository.login(userLoginInput)
-            emit(Resource.Success(user))
+            emit(Result.Success(user))
         }
         catch (e: HttpException) {
-            emit(Resource.Error(e.localizedMessage))
+            emit(Result.Error(e.localizedMessage))
         }
         catch (e: IOException){
-            emit(Resource.Error(e.localizedMessage))
+            emit(Result.Error(e.localizedMessage))
         }
     }
 }

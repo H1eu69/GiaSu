@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.data.remote.dto
+package com.projectprovip.h1eu.giasu.data.user.dto
 
 data class UserSignUpDto(
     val isSuccess: Boolean,

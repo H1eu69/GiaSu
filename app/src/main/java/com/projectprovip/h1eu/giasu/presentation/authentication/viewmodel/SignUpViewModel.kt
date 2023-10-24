@@ -5,9 +5,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.projectprovip.h1eu.giasu.common.Resource
-import com.projectprovip.h1eu.giasu.data.remote.dto.toUser
-import com.projectprovip.h1eu.giasu.data.remote.model.UserSignUpInput
+import com.projectprovip.h1eu.giasu.common.Result
+import com.projectprovip.h1eu.giasu.data.user.dto.toUser
+import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
 import com.projectprovip.h1eu.giasu.domain.authentication.usecase.SignUpUseCase
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.SignUpState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,14 +40,14 @@ class SignUpViewModel @Inject constructor(
             )
         ).onEach { result ->
             when(result) {
-                is Resource.Loading -> {
+                is Result.Loading -> {
                     _signUpState.value = SignUpState(isLoading = true)
                 }
-                is Resource.Error -> {
+                is Result.Error -> {
                     Log.e("SignUpViewModel", result.message ?: "Unexpected error")
                     _signUpState.value = SignUpState(error = result.message ?: "Unexpected error")
                 }
-                is Resource.Success -> {
+                is Result.Success -> {
                     _signUpState.value = SignUpState(user = result.data!!.user.toUser(),
                         token = result.data.token)
                 }
