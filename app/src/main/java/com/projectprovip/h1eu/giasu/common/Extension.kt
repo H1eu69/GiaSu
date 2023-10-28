@@ -1,14 +1,16 @@
 package com.projectprovip.h1eu.giasu.common
 
-import java.text.SimpleDateFormat
-import java.util.Locale
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 object DateFormat {
-    fun DD_MM_YYYY(date: String) : String {
-        val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    fun DD_MM_YYYY(date: String): String {
 
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS", Locale.getDefault())
-        val date = inputFormat.parse(date)
+        val inputDate = "2023-06-22T21:29:19"
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
-        return outputFormat.format(date!!)
+        val dateTime = LocalDateTime.parse(inputDate)
+
+        return dateTime.format(formatter)
     }
 }

@@ -26,6 +26,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -50,6 +51,11 @@ android {
 
 dependencies {
     def nav_version = "2.7.0"
+
+    //JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-gson:0.12.3'
 
     //Data store
     implementation "androidx.datastore:datastore-preferences:1.0.0"

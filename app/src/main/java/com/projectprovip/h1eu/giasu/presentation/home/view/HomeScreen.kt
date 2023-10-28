@@ -88,8 +88,8 @@ fun HomeScreen(navController: NavController, vm: HomeViewModel) {
                         ),
                     )
                 ),
-            navController,
-            vm
+            navController = navController,
+            vm = vm
         )
     }
 }
@@ -186,7 +186,6 @@ fun BodyContent(modifier: Modifier,
                             }
                         }
                     }
-
                 }
             }
         }
@@ -252,8 +251,7 @@ private fun RowTitle(modifier: Modifier =
                      title1: String,
                      title2: String) {
     Row(
-        modifier
-            .fillMaxWidth(),
+        modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
@@ -301,7 +299,7 @@ fun NewClassItem(navController: NavController, data: NewClass) {
                 .padding(20.dp)
         ) {
             AppBarTitle(text = data.title, fontSize = 16)
-            SubTitle(text = data.id)
+            SubTitle(text = data.id.toString())
             MiddleContent(minutePerSession = data.minutePerSession,
                 sessionPerWeek = data.sessionPerWeek,
                 info = data.description,
@@ -363,7 +361,7 @@ fun BottomContent(fee: String, createdDate: String) {
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = fee,
+        Text(text = "$fee $",
             style = TextStyle(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,

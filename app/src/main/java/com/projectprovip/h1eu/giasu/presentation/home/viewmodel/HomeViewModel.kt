@@ -23,7 +23,7 @@ class HomeViewModel @Inject constructor(
         getAllClasses()
     }
     private fun getAllClasses() {
-        getClassUseCase(pageIndex, null).onEach { result ->
+        getClassUseCase().onEach { result ->
             when (result) {
                 is Result.Loading -> {
                     _newClassesState.value = NewClassesState(isLoading = true)
