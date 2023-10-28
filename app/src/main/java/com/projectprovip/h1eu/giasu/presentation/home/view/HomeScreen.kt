@@ -137,9 +137,11 @@ fun AppBar() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BodyContent(modifier: Modifier,
-                navController: NavController,
-                vm: HomeViewModel) {
+fun BodyContent(
+    modifier: Modifier,
+    navController: NavController,
+    vm: HomeViewModel
+) {
     val newClassState = vm.newClassesState
     Column(
         modifier = modifier,
@@ -177,12 +179,14 @@ fun BodyContent(modifier: Modifier,
                             CircularProgressIndicator()
                         }
                     }
+
                     this.value.data.isNotEmpty() -> {
                         value.data.forEach {
                             item {
                                 NewClassItem(
                                     navController = navController,
-                                    data = it)
+                                    data = it
+                                )
                             }
                         }
                     }
@@ -214,7 +218,7 @@ private fun SearchTextField(modifier: Modifier = Modifier) {
         colors = TextFieldDefaults.outlinedTextFieldColors(
             containerColor = Color.White,
 
-        ),
+            ),
         keyboardActions = KeyboardActions(
             onDone = {
                 focusManager.clearFocus()
@@ -227,7 +231,44 @@ private fun SearchTextField(modifier: Modifier = Modifier) {
 
 @Composable
 private fun CategoryItemList() {
-    val list = listOf(1, 2, 3, 4, 5, 5, 5, 5, 5, 55, 5, 5, 1, 2, 3, 4, 5, 5, 5, 5, 5, 55, 5, 5, 1, 2, 3, 4, 5, 5, 5, 5, 5, 55, 5, 5)
+    val list = listOf(
+        1,
+        2,
+        3,
+        4,
+        5,
+        5,
+        5,
+        5,
+        5,
+        55,
+        5,
+        5,
+        1,
+        2,
+        3,
+        4,
+        5,
+        5,
+        5,
+        5,
+        5,
+        55,
+        5,
+        5,
+        1,
+        2,
+        3,
+        4,
+        5,
+        5,
+        5,
+        5,
+        5,
+        55,
+        5,
+        5
+    )
     LazyRow(
         Modifier.fillMaxWidth(),
         userScrollEnabled = true,
@@ -239,17 +280,20 @@ private fun CategoryItemList() {
         }
     }
 }
+
 @Composable
-private fun RowTitle(modifier: Modifier =
-                         Modifier.padding
-                             (
-                             start = 10.dp,
-                             top = 4.dp,
-                             bottom = 15.dp,
-                             end = 10.dp
-                         ),
-                     title1: String,
-                     title2: String) {
+private fun RowTitle(
+    modifier: Modifier =
+        Modifier.padding
+            (
+            start = 10.dp,
+            top = 4.dp,
+            bottom = 15.dp,
+            end = 10.dp
+        ),
+    title1: String,
+    title2: String
+) {
     Row(
         modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -274,12 +318,14 @@ private fun RowTitle(modifier: Modifier =
         )
     }
 }
+
 @Composable
 fun NewClassItem(navController: NavController, data: NewClass) {
     Card(
         shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.Blue),
+            containerColor = Color.Blue
+        ),
         border = BorderStroke(2.dp, Color.LightGray),
         elevation = CardDefaults.outlinedCardElevation(3.dp),
         modifier = Modifier
@@ -299,11 +345,13 @@ fun NewClassItem(navController: NavController, data: NewClass) {
                 .padding(20.dp)
         ) {
             AppBarTitle(text = data.title, fontSize = 16)
-            SubTitle(text = data.id.toString())
-            MiddleContent(minutePerSession = data.minutePerSession,
+            SubTitle(text = "ID: ${data.id}")
+            MiddleContent(
+                minutePerSession = data.minutePerSession,
                 sessionPerWeek = data.sessionPerWeek,
                 info = data.description,
-                location = data.address)
+                location = data.address
+            )
             BottomContent(fee = data.fee.toString(), createdDate = data.creationTime)
         }
     }
@@ -311,7 +359,8 @@ fun NewClassItem(navController: NavController, data: NewClass) {
 
 @Composable
 fun SubTitle(text: String) {
-    Text(text = text,
+    Text(
+        text = text,
         style = TextStyle(
             fontWeight = FontWeight.Medium,
             color = EDSColors.myBlackColor,
@@ -329,10 +378,12 @@ fun SubTitle(text: String) {
 
 @Composable
 fun MiddleContent(minutePerSession: Int, sessionPerWeek: Int, info: String, location: String) {
-    val session = pluralStringResource(id = R.plurals.session_string,
+    val session = pluralStringResource(
+        id = R.plurals.session_string,
         count = sessionPerWeek,
         sessionPerWeek,
-        minutePerSession)
+        minutePerSession
+    )
     Column(
         Modifier.padding(top = 12.dp, bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -344,8 +395,8 @@ fun MiddleContent(minutePerSession: Int, sessionPerWeek: Int, info: String, loca
 }
 
 @Composable
-fun IconAndText(imageVector : ImageVector, text : String){
-    Row{
+fun IconAndText(imageVector: ImageVector, text: String) {
+    Row {
         androidx.compose.material.Icon(
             imageVector, null,
             tint = EDSColors.primaryColor
@@ -361,7 +412,8 @@ fun BottomContent(fee: String, createdDate: String) {
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = "$fee $",
+        Text(
+            text = "$fee $",
             style = TextStyle(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,

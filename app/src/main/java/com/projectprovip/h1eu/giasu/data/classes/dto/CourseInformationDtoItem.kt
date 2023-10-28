@@ -2,6 +2,7 @@ package com.projectprovip.h1eu.giasu.data.classes.dto
 
 import com.projectprovip.h1eu.giasu.common.DateFormat
 import com.projectprovip.h1eu.giasu.domain.classes.model.NewClass
+import com.projectprovip.h1eu.giasu.domain.classes.model.NewClassDetail
 
 data class CourseInformationDtoItem(
     val academicLevelRequirement: String,
@@ -34,4 +35,24 @@ fun CourseInformationDtoItem.toNewClass() = NewClass(
     minutePerSession = minutePerSession,
     address = address,
     description = description
+)
+
+fun CourseInformationDtoItem.toClassDetail() = NewClassDetail(
+    title = title,
+    id = id,
+    fee = fee,
+    sessionPerWeek = sessionPerWeek,
+    minutePerSession = minutePerSession,
+    address = address,
+    description = description,
+    academicLevelRequirement = academicLevelRequirement,
+    chargeFee = chargeFee,
+    contactNumber = contactNumber,
+    genderRequirement = genderRequirement,
+    learnerGender = learnerGender,
+    learningMode = learningMode,
+    numberOfLearner = numberOfLearner,
+    status = status,
+    subjectId = subjectId,
+    subjectName = subjectName
 )
