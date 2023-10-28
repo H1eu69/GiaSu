@@ -1,6 +1,14 @@
-package com.projectprovip.h1eu.giasu.domain.classes.model
+package com.projectprovip.h1eu.giasu.presentation.home.model
 
-data class NewClassDetail(
+import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
+
+data class CourseDetailState(
+    var isLoading: Boolean = false,
+    var data: List<CourseDetail> = emptyList(),
+    var error: String? = null
+)
+
+data class CourseDetail(
     val academicLevelRequirement: String,
     val address: String,
     val chargeFee: Double,
@@ -17,5 +25,6 @@ data class NewClassDetail(
     val status: String,
     val subjectId: Int,
     val subjectName: String,
-    val title: String
+    val title: String,
+    val creationTime: String
 )

@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.Result
-import com.projectprovip.h1eu.giasu.domain.classes.usecase.GetClassUseCase
-import com.projectprovip.h1eu.giasu.presentation.home.model.NewClassesState
+import com.projectprovip.h1eu.giasu.domain.course.usecase.GetCourseUseCase
+import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -14,30 +14,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getClassUseCase: GetClassUseCase
+    private val getCourseUseCase: GetCourseUseCase
 ) : ViewModel() {
-    private var pageIndex = 1
-    private var _newClassesState = mutableStateOf(NewClassesState())
-    val newClassesState : State<NewClassesState> =  _newClassesState
+    private var _courseState = mutableStateOf(CourseDetailState())
+    val courseState : State<CourseDetailState> =  _courseState
     init {
         getAllClasses()
     }
     private fun getAllClasses() {
-        getClassUseCase().onEach { result ->
+        getCourseUseCase().onEach { result ->
             when (result) {
                 is Result.Loading -> {
-                    _newClassesState.value = NewClassesState(isLoading = true)
+                    _courseState.value = CourseDetailState(isLoading = true)
                 }
 
                 is Result.Error -> {
-                    _newClassesState.value = NewClassesState(error = result.message)
+                    _courseState.value = CourseDetailState(error = result.message)
                 }
 
                 is Result.Success -> {
-                    pageIndex++
-                    _newClassesState.value = NewClassesState(data = result.data!!)
+                    val courses = result.data!!
+
+                    _courseState.value = CourseDetailState(data = courses)
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getClassDetailById(id: Int) = _courseState.value.data.find {
+        it.id == id
     }
 }

@@ -11,10 +11,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
@@ -22,7 +24,7 @@ import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScree
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
 import com.projectprovip.h1eu.giasu.presentation.class_management.ClassManagementScreen
-import com.projectprovip.h1eu.giasu.presentation.home.view.ClassDetailScreen
+import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.ProfileScreen
@@ -45,8 +47,7 @@ fun Navigation() {
 
 fun NavGraphBuilder.authenticationGraph(navController: NavController) {
     navigation(
-        startDestination = Screens.Authentication.Login.route,
-        route = Screens.Authentication.route
+        startDestination = Screens.Authentication.Login.route, route = Screens.Authentication.route
     ) {
         composable(Screens.Authentication.Login.route) {
             val viewModel = hiltViewModel<LoginViewModel>()
@@ -65,17 +66,17 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InAppScreen(navController: NavHostController = rememberNavController()) {
-    Scaffold(
-        bottomBar = {
-            BottomBar(navController)
-        }
-    ) {
-        InAppNavGraph(Modifier.padding(it),navController)
+    Scaffold(bottomBar = {
+        BottomBar(navController)
+    }) {
+        InAppNavGraph(Modifier.padding(it), navController)
     }
 }
 
 @Composable
 fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
+    val homeViewModel = hiltViewModel<HomeViewModel>()
+
     NavHost(
         navController,
         startDestination = Screens.InApp.Home.route,
@@ -83,16 +84,21 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         modifier = modifier,
     ) {
         composable(Screens.InApp.Home.route) {
-            val viewModel = hiltViewModel<HomeViewModel>()
-            HomeScreen(navController, viewModel)
+            HomeScreen(navController, homeViewModel)
         }
-        composable(Screens.InApp.ClassDetail.route) { ClassDetailScreen(navController) }
+        composable("${Screens.InApp.Home.ClassDetail.route}/{courseId}",
+            arguments = listOf(navArgument("courseId") {
+                type = NavType.IntType
+            })) {backStackEntry ->
+            CourseDetailScreen(navController,
+                homeViewModel,
+                backStackEntry.arguments?.getInt("courseId"))
+        }
+
         composable(Screens.InApp.Class.route) { ClassManagementScreen(navController) }
         composable(Screens.InApp.Profile.route) { ProfileScreen(navController) }
     }
 }
-
-
 
 
 /*BottomNavigationItem(

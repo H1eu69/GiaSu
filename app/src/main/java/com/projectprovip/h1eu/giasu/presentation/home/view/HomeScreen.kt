@@ -1,6 +1,5 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,7 +41,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
@@ -55,8 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.common.Result
-import com.projectprovip.h1eu.giasu.domain.classes.model.NewClass
+import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.SubjectCategoryItem
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
@@ -142,7 +139,7 @@ fun BodyContent(
     navController: NavController,
     vm: HomeViewModel
 ) {
-    val newClassState = vm.newClassesState
+    val newClassState = vm.courseState
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -183,7 +180,7 @@ fun BodyContent(
                     this.value.data.isNotEmpty() -> {
                         value.data.forEach {
                             item {
-                                NewClassItem(
+                                CourseItem(
                                     navController = navController,
                                     data = it
                                 )
@@ -217,7 +214,6 @@ private fun SearchTextField(modifier: Modifier = Modifier) {
         shape = RoundedCornerShape(30),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             containerColor = Color.White,
-
             ),
         keyboardActions = KeyboardActions(
             onDone = {
@@ -320,7 +316,7 @@ private fun RowTitle(
 }
 
 @Composable
-fun NewClassItem(navController: NavController, data: NewClass) {
+fun CourseItem(navController: NavController, data: CourseDetail) {
     Card(
         shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
@@ -335,7 +331,7 @@ fun NewClassItem(navController: NavController, data: NewClass) {
                 RoundedCornerShape(10)
             )
             .clickable {
-                navController.navigate(Screens.InApp.ClassDetail.route)
+                navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${data.id}")
             }
     ) {
         Column(
@@ -352,7 +348,8 @@ fun NewClassItem(navController: NavController, data: NewClass) {
                 info = data.description,
                 location = data.address
             )
-            BottomContent(fee = data.fee.toString(), createdDate = data.creationTime)
+            BottomContent(fee = data.fee,
+                createdDate = data.creationTime)
         }
     }
 }
@@ -407,7 +404,7 @@ fun IconAndText(imageVector: ImageVector, text: String) {
 }
 
 @Composable
-fun BottomContent(fee: String, createdDate: String) {
+fun BottomContent(fee: Double, createdDate: String) {
     Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
