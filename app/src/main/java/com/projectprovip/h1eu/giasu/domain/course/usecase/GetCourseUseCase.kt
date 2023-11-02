@@ -1,7 +1,7 @@
 package com.projectprovip.h1eu.giasu.domain.course.usecase
 
 import com.projectprovip.h1eu.giasu.common.Result
-import com.projectprovip.h1eu.giasu.data.classes.dto.toNewClassDetail
+import com.projectprovip.h1eu.giasu.data.course.dto.toNewClassDetail
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.domain.course.repository.ClassesRepository
 import kotlinx.coroutines.flow.flow

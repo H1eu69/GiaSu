@@ -1,7 +1,7 @@
-package com.projectprovip.h1eu.giasu.data.classes.api
+package com.projectprovip.h1eu.giasu.data.course.api
 
-import com.projectprovip.h1eu.giasu.data.classes.dto.ListCourseInformationDto
-import com.projectprovip.h1eu.giasu.data.classes.dto.CourseInformationDtoItem
+import com.projectprovip.h1eu.giasu.data.course.dto.ListCourseInformationDto
+import com.projectprovip.h1eu.giasu.data.course.dto.CourseInformationDtoItem
 import retrofit2.http.GET
 import retrofit2.http.Path
 

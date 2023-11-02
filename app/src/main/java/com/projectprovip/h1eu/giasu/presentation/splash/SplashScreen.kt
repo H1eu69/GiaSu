@@ -26,13 +26,16 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
+import com.auth0.android.jwt.JWT
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import io.jsonwebtoken.Jwts
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -51,28 +54,33 @@ fun SplashScreen(navController: NavController) {
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
     val tokenKey = stringPreferencesKey(Constant.TOKEN_STRING)
-    var tokenValue: String? = null
 
-
+    var token: String? = null
     LaunchedEffect(key1 = "") {
         coroutine.launch {
             //Check for token if already login before
             async {
                 context.dataStore.data
                     .collect { preferences ->
-                        tokenValue = preferences[tokenKey]
-                        Log.d("Token in Splash", tokenValue.toString())
+                        token = preferences[tokenKey]
+                        Log.d("Token in Splash", token.toString())
                     }
             }
             delay(3000)
-            if (tokenValue != null) {
-                navController.navigate(Screens.InApp.route) {
-                    popUpTo(Screens.Splash.route) {
-                        inclusive = true
+
+            if (token != null) {
+                val jwt = JWT(token!!)
+
+                val isExpired = jwt.isExpired(0)
+                if (!isExpired) {
+                    navController.navigate(Screens.InApp.route) {
+                        popUpTo(Screens.Splash.route) {
+                            inclusive = true
+                        }
                     }
+                } else {
+                    navController.navigate(Screens.Authentication.route)
                 }
-            } else {
-                navController.navigate(Screens.Authentication.route)
             }
         }
     }

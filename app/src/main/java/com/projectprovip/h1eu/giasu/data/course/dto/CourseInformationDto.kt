@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.data.classes.dto
+package com.projectprovip.h1eu.giasu.data.course.dto
 
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 

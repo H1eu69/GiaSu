@@ -29,14 +29,10 @@ class SignUpViewModel @Inject constructor(
                pwd: String ) {
         signUpUseCase(
             UserSignUpInput(
-                address = "Default address",
-                birthYear = 45,
                 email = email,
                 firstName = firstName,
                 lastName = lastName,
                 password = pwd,
-                phoneNumber = "0123456789",
-                gender = "male"
             )
         ).onEach { result ->
             when(result) {
@@ -48,8 +44,8 @@ class SignUpViewModel @Inject constructor(
                     _signUpState.value = SignUpState(error = result.message ?: "Unexpected error")
                 }
                 is Result.Success -> {
-                    _signUpState.value = SignUpState(user = result.data!!.user.toUser(),
-                        token = result.data.token)
+                    _signUpState.value = SignUpState(user = result.data!!.value.user.toUser(),
+                        token = result.data.value.token)
                 }
             }
         }.launchIn(viewModelScope)

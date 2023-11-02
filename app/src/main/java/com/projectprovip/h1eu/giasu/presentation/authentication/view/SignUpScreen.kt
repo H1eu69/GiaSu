@@ -34,11 +34,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.auth0.android.jwt.JWT
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
@@ -47,6 +50,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.launch
+
 
 @Preview
 @Composable
@@ -85,15 +89,19 @@ fun SignUpScreen(
     val interactionSource = remember { MutableInteractionSource() }
 
     val state = vm.signUpState.value
-    val token = stringPreferencesKey(Constant.TOKEN_STRING)
+    val tokenKey = stringPreferencesKey(Constant.TOKEN_STRING)
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
 
     if(state.user != null){
         LaunchedEffect(key1 = "") {
             coroutine.launch {
+                val jwt = JWT(state.token!!)
+
+                val isExpired = jwt.isExpired(0) // Do time validation with 10 seconds leeway
+                Log.d("isExpired", isExpired.toString())
                 context.dataStore.edit { preferences ->
-                    preferences[token] = state.token.toString()
+                    preferences[tokenKey] = state.token.toString()
                     Log.d("Token in Sign up", state.token.toString())
                 }
             }

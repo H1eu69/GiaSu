@@ -1,8 +1,8 @@
 package com.projectprovip.h1eu.giasu.di
 
 import com.projectprovip.h1eu.giasu.common.Constant
-import com.projectprovip.h1eu.giasu.data.classes.api.CourseApi
-import com.projectprovip.h1eu.giasu.data.classes.repository.CourseRepositoryImpl
+import com.projectprovip.h1eu.giasu.data.course.api.CourseApi
+import com.projectprovip.h1eu.giasu.data.course.repository.CourseRepositoryImpl
 import com.projectprovip.h1eu.giasu.data.user.api.UserAuthApi
 import com.projectprovip.h1eu.giasu.data.user.repository.UserRepositoryImpl
 import com.projectprovip.h1eu.giasu.domain.authentication.repository.UserRepository
