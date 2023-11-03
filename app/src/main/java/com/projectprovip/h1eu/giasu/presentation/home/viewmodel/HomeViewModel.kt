@@ -19,9 +19,9 @@ class HomeViewModel @Inject constructor(
     private var _courseState = mutableStateOf(CourseDetailState())
     val courseState : State<CourseDetailState> =  _courseState
     init {
-        getAllClasses()
+        getAllCourse()
     }
-    private fun getAllClasses() {
+    private fun getAllCourse() {
         getCourseUseCase().onEach { result ->
             when (result) {
                 is Result.Loading -> {

@@ -90,6 +90,10 @@ fun SignUpScreen(
 
     val state = vm.signUpState.value
     val tokenKey = stringPreferencesKey(Constant.TOKEN_STRING)
+    val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
+    val useridKey = stringPreferencesKey(Constant.USERID_STRING)
+    val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
+
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
 
@@ -102,6 +106,10 @@ fun SignUpScreen(
                 Log.d("isExpired", isExpired.toString())
                 context.dataStore.edit { preferences ->
                     preferences[tokenKey] = state.token.toString()
+                    preferences[usernameKey] = state.user!!.fullName
+                    preferences[useridKey] = state.user!!.id.toString()
+                    preferences[userImageKey] = state.user!!.image
+
                     Log.d("Token in Sign up", state.token.toString())
                 }
             }

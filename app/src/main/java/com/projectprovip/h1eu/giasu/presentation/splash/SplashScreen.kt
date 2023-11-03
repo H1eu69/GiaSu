@@ -72,6 +72,7 @@ fun SplashScreen(navController: NavController) {
                 val jwt = JWT(token!!)
 
                 val isExpired = jwt.isExpired(0)
+                Log.d("Expired", isExpired.toString())
                 if (!isExpired) {
                     navController.navigate(Screens.InApp.route) {
                         popUpTo(Screens.Splash.route) {
@@ -81,6 +82,8 @@ fun SplashScreen(navController: NavController) {
                 } else {
                     navController.navigate(Screens.Authentication.route)
                 }
+            } else {
+                navController.navigate(Screens.Authentication.route)
             }
         }
     }

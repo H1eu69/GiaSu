@@ -27,7 +27,7 @@ class LoginViewModel @Inject constructor(
         loginUseCase(UserLoginInput(email, password)).onEach { result ->
             when(result) {
                 is Result.Success -> {
-                    Log.e("AuthViewModel", "Login success")
+                    Log.d("AuthViewModel", "Login success")
                     _loginState.value = LoginState(
                         user = result.data!!.user.toUser(),
                         token = result.data.token
@@ -38,7 +38,7 @@ class LoginViewModel @Inject constructor(
                     _loginState.value = LoginState(error = result.message ?: "Unexpected error")
                 }
                 is Result.Loading -> {
-                    Log.e("AuthViewModel", "Login loading")
+                    Log.d("AuthViewModel", "Login loading")
                     _loginState.value = LoginState(isLoading = true)
                 }
             }

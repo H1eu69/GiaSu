@@ -65,11 +65,11 @@ fun Preview() {
 @Composable
 fun LoginScreen(navController: NavController,
                 vm: LoginViewModel) {
-    val emailTextField = remember{
+    val emailTextField = remember {
         mutableStateOf("")
     }
 
-    val passTextField = remember{
+    val passTextField = remember {
         mutableStateOf("")
     }
     val fontFamily = FontFamily(
@@ -77,29 +77,33 @@ fun LoginScreen(navController: NavController,
         Font(R.font.mont_regular, FontWeight.Normal)
     )
     val interactionSource = remember { MutableInteractionSource() }
+    val tokenKey = stringPreferencesKey(Constant.TOKEN_STRING)
+    val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
+    val useridKey = stringPreferencesKey(Constant.USERID_STRING)
+    val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
 
     val state = vm.loginState.value
-    val token = stringPreferencesKey(Constant.TOKEN_STRING)
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
 
-    if(state.user != null){
+    if (state.user != null) {
         LaunchedEffect(key1 = "") {
             coroutine.launch {
                 context.dataStore.edit { preferences ->
-                    preferences[token] = state.token.toString()
+                    preferences[tokenKey] = state.token.toString()
+                    preferences[usernameKey] = state.user.fullName
+                    preferences[useridKey] = state.user.id.toString()
+                    preferences[userImageKey] = state.user.image
                     Log.d("Token in Login", state.token.toString())
+                }
+                navController.navigate(Screens.InApp.route) {
+                    popUpTo(Screens.Splash.route) {
+                        inclusive = true
+                    }
                 }
             }
         }
-
-        navController.navigate(Screens.InApp.route) {
-            popUpTo(Screens.Splash.route) {
-                inclusive = true
-            }
-        }
     }
-
 
     val onLoginClick: () -> Unit = {
         vm.loginByEmail(emailTextField.value, passTextField.value)
@@ -137,7 +141,8 @@ fun LoginScreen(navController: NavController,
 
                 MainTextField(
                     value = emailTextField.value,
-                    label = "Email") {
+                    label = "Email"
+                ) {
                     emailTextField.value = it
                 }
 
@@ -147,7 +152,8 @@ fun LoginScreen(navController: NavController,
 
                 MainTextField(
                     value = passTextField.value,
-                    label = "Password") {
+                    label = "Password"
+                ) {
                     passTextField.value = it
                 }
                 Spacer(
@@ -180,10 +186,9 @@ fun LoginScreen(navController: NavController,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
                 ) {
-                    if(state.isLoading) {
+                    if (state.isLoading) {
                         CircularProgressIndicator()
-                    }
-                    else {
+                    } else {
                         Text(
                             text = "Login"
                         )
@@ -205,7 +210,7 @@ fun LoginScreen(navController: NavController,
                     ) {
                         navController.navigate(Screens.Authentication.Signup.route)
                     },
-                text = "Register new account",
+                text    = "Register new account",
                 style = TextStyle(
                     color = EDSColors.primaryColor,
                     fontSize = 12.sp,
@@ -215,7 +220,4 @@ fun LoginScreen(navController: NavController,
             )
         }
     }
-}
-
-private fun loginByEmail(vm: LoginViewModel, email: String, password: String) {
 }

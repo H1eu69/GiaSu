@@ -33,14 +33,17 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
@@ -49,16 +52,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
+import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.SubjectCategoryItem
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -69,9 +78,23 @@ fun PreviewHomeScreen() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController, vm: HomeViewModel) {
+    val context = LocalContext.current
+    val coroutine = rememberCoroutineScope()
+    val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
+    var userName = remember {
+        mutableStateOf("")
+    }
+    LaunchedEffect(key1 = "") {
+        coroutine.launch {
+            context.dataStore.data.collect {
+                userName.value = it[usernameKey].toString()
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
-            AppBar()
+            AppBar(text = userName.value)
         },
     ) {
         BodyContent(
@@ -93,7 +116,7 @@ fun HomeScreen(navController: NavController, vm: HomeViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar() {
+fun AppBar(text: String) {
     TopAppBar(
         modifier = Modifier
             .background(
@@ -118,7 +141,7 @@ fun AppBar() {
                     )
                 )
                 Text(
-                    text = "{Username}",
+                    text = text,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
