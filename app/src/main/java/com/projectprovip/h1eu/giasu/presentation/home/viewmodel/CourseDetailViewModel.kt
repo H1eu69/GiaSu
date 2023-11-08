@@ -7,49 +7,40 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.Result
 import com.projectprovip.h1eu.giasu.common.alphaNumericOnly
-import com.projectprovip.h1eu.giasu.domain.course.usecase.GetCourseUseCase
 import com.projectprovip.h1eu.giasu.domain.course.usecase.RegisterCourseUseCase
-import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val getCourseUseCase: GetCourseUseCase,
+class CourseDetailViewModel @Inject constructor(
     private val registerCourseUseCase: RegisterCourseUseCase
-) : ViewModel() {
-    private var _courseDetailState = mutableStateOf(CourseDetailState())
-    val courseDetailState : State<CourseDetailState> =  _courseDetailState
+)  : ViewModel() {
 
-    init {
-        getAllCourse()
-    }
-    private fun getAllCourse() {
-        getCourseUseCase().onEach { result ->
+    private var _courseRegisterState = mutableStateOf(CourseRegisterState())
+    val courseRegisterState : State<CourseRegisterState> =  _courseRegisterState
+    fun registerCourse(courseId: Int, token: String) {
+        registerCourseUseCase(courseId, token).onEach { result ->
             when (result) {
                 is Result.Loading -> {
-                    _courseDetailState.value = CourseDetailState(isLoading = true)
+                    _courseRegisterState.value = CourseRegisterState(isLoading = true)
                 }
 
                 is Result.Error -> {
-                    _courseDetailState.value = CourseDetailState(error = result.message)
+                    _courseRegisterState.value = CourseRegisterState(error = true, message = result.message.toString().alphaNumericOnly())
+                    Log.d("HomeVM", result.message.toString())
                 }
 
                 is Result.Success -> {
                     val courses = result.data!!
-
-                    _courseDetailState.value = CourseDetailState(data = courses)
+                    Log.d("HomeVM", courses.toString())
+                    _courseRegisterState.value = CourseRegisterState(isSuccess = true, message = "Course register successful")
                 }
             }
         }.launchIn(viewModelScope)
     }
-
-    fun getClassDetailById(id: Int) = _courseDetailState.value.data.find {
-        it.id == id
-    }
-
-
 }

@@ -26,6 +26,7 @@ import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUp
 import com.projectprovip.h1eu.giasu.presentation.class_management.ClassManagementScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
+import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.ProfileScreen
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
@@ -90,8 +91,10 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             arguments = listOf(navArgument("courseId") {
                 type = NavType.IntType
             })) {backStackEntry ->
+            val courseDetailViewModel = hiltViewModel<CourseDetailViewModel>()
             CourseDetailScreen(navController,
                 homeViewModel,
+                courseDetailViewModel,
                 backStackEntry.arguments?.getInt("courseId"))
         }
 

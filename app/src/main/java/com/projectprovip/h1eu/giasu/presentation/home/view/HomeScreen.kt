@@ -65,8 +65,6 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.SubjectCategory
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Preview
@@ -162,7 +160,7 @@ fun BodyContent(
     navController: NavController,
     vm: HomeViewModel
 ) {
-    val newClassState = vm.courseState
+    val newClassState = vm.courseDetailState
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
