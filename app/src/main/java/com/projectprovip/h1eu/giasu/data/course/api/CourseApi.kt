@@ -3,6 +3,7 @@ package com.projectprovip.h1eu.giasu.data.course.api
 import com.projectprovip.h1eu.giasu.data.course.dto.ListCourseInformationDto
 import com.projectprovip.h1eu.giasu.data.course.dto.CourseInformationDtoItem
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -21,4 +22,6 @@ interface CourseApi {
     @PUT("Course/{courseId}/RequestCourse")
     suspend fun registerCourse(@Path("courseId") id: Int,
                                @Header("Authorization") token: String) : Response<RequestCourseDto>
+    @GET("Profile/GetCourseRequests")
+    suspend fun getRequestedCourse(@Header("Authorization") token: String) : Response<RequestedCourseDto>
 }

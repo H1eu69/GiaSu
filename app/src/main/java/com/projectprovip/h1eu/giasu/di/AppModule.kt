@@ -6,7 +6,7 @@ import com.projectprovip.h1eu.giasu.data.course.repository.CourseRepositoryImpl
 import com.projectprovip.h1eu.giasu.data.user.api.UserAuthApi
 import com.projectprovip.h1eu.giasu.data.user.repository.UserRepositoryImpl
 import com.projectprovip.h1eu.giasu.domain.authentication.repository.UserRepository
-import com.projectprovip.h1eu.giasu.domain.course.repository.ClassesRepository
+import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,7 +46,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideClassesRepository(api : CourseApi) : ClassesRepository{
+    fun provideClassesRepository(api : CourseApi) : CoursesRepository {
         return CourseRepositoryImpl(api)
     }
 }

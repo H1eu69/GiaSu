@@ -1,5 +1,6 @@
-package com.projectprovip.h1eu.giasu.presentation.class_management
+package com.projectprovip.h1eu.giasu.presentation.class_management.view
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,85 +21,145 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.DateFormat
+import com.projectprovip.h1eu.giasu.common.dataStore
+import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
+import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.CourseManagementViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 fun PreviewScreen() {
-    ClassManagementScreen(navController = rememberNavController())
+    ClassManagementScreen(navController = rememberNavController(), hiltViewModel())
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClassManagementScreen(navController: NavController) {
+fun ClassManagementScreen(navController: NavController, vm: CourseManagementViewModel) {
     val tabSelectedIndex = remember {
         mutableIntStateOf(0)
     }
-    val list = listOf("All", "title 1", "title 2dsadsadasdas ", "title 3", "title 4")
+    val list = listOf("All", "Success", "Canceled", "Pending")
+    val context = LocalContext.current
+    val coroutine = rememberCoroutineScope()
+    var token = remember { mutableStateOf("") }
+    val state = vm.state
+    val listRequestedCourse = vm.filteredlList
+
+    LaunchedEffect(key1 = "") {
+        coroutine.launch {
+            context.dataStore.data.collect { preference ->
+                token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
+            }
+        }
+    }
+    vm.getRequestedCourses(token.value)
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(title = {
-                AppBarTitle(text = "Classes")
+                AppBarTitle(text = "Courses")
             })
         }
     ) {
-        LazyColumn (
+        LazyColumn(
             Modifier
                 .padding(it)
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.Top) {
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             item {
                 ScrollableTabRow(
                     selectedTabIndex = tabSelectedIndex.value,
                     edgePadding = 8.dp,
-                    modifier = Modifier.fillMaxWidth()) {
-                    list.forEachIndexed {index, item ->
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    list.forEachIndexed { index, item ->
                         Tab(text = { Text(item) },
                             selected = tabSelectedIndex.value == index,
                             unselectedContentColor = Color.LightGray,
                             onClick = {
                                 tabSelectedIndex.value = index
+                                vm.getListByFilter(item)
                             }
                         )
                     }
                 }
             }
+            when {
+                state.value.isLoading -> {
+                    item {
+                        CircularProgressIndicator()
+                    }
+                }
 
-            items(4) {
-                ClassItem()
+                state.value.message.isNotEmpty() -> {
+                    Toast.makeText(context, state.value.message, Toast.LENGTH_SHORT).show()
+                }
+
+                state.value.data.isNotEmpty() -> {
+                    if (listRequestedCourse.value.isNotEmpty()) {
+                        listRequestedCourse.value.forEach {
+                            item {
+                                ClassItem(it)
+                            }
+                        }
+                    } else {
+                        item {
+                            Text(text = "No items to show",
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+
+                }
             }
+
         }
     }
 }
 
-@Preview
 @Composable
-fun ClassItem() {
+fun ClassItem(data: RequestedCourse) {
     Card(
         shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = Color.Blue),
+            containerColor = Color.Blue
+        ),
         border = BorderStroke(1.dp, Color.LightGray),
         elevation = CardDefaults.outlinedCardElevation(2.dp),
         modifier = Modifier
@@ -117,23 +178,31 @@ fun ClassItem() {
                 .background(Color.White)
                 .padding(20.dp)
         ) {
-            AppBarTitle(text = "IT Beginner Entry")
-            SubTitle()
-            MiddleContent()
-            BottomContent()
+            AppBarTitle(text = data.title)
+            SubTitle(data.id, data.requestStatus)
+            MiddleContent(data.subjectName, data.courseId, data.creationTime)
         }
     }
 }
 
 @Composable
-fun SubTitle() {
+fun SubTitle(subTitle: Int, status: String) {
+    var backgroundColor = EDSColors.notScheduleBackgroundColor
+    var textColor = EDSColors.notScheduleTextColor
+
+    if (status == "Success") {
+        backgroundColor = EDSColors.teachingBackgroundColor
+        textColor = EDSColors.teachingTextColor
+    }
+
     Row(
         Modifier
             .fillMaxWidth()
             .padding(top = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(text = "ID: 1222",
+        Text(
+            text = "ID: $subTitle",
             style = TextStyle(
                 fontWeight = FontWeight.Medium,
                 color = EDSColors.myBlackColor,
@@ -146,14 +215,15 @@ fun SubTitle() {
                 )
                 .padding(all = 4.dp)
         )
-        Text(text = "Not schedule",
+        Text(
+            text = status,
             style = TextStyle(
                 fontWeight = FontWeight.Medium,
-                color = EDSColors.notScheduleTextColor
+                color = textColor
             ),
             modifier = Modifier
                 .background(
-                    EDSColors.notScheduleBackgroundColor,
+                    backgroundColor,
                     RoundedCornerShape(30)
                 )
                 .padding(all = 4.dp)
@@ -162,39 +232,27 @@ fun SubTitle() {
 }
 
 @Composable
-fun BottomContent() {
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(text = "3.000.000 / day",
-            style = TextStyle(
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = EDSColors.costTextColor
-            )
+fun IconAndText(imageVector: ImageVector, text: String) {
+    Row {
+        Icon(
+            imageVector, null,
+            tint = Color.Gray
         )
-        IconAndText(Icons.Outlined.DateRange, "31/05/2023")
-    }
-}
-
-@Composable
-fun IconAndText(imageVector : ImageVector, text : String){
-    Row{
-        Icon(imageVector, null,
-            tint = Color.Gray)
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = text)
     }
 }
 
 @Composable
-fun MiddleContent() {
+fun MiddleContent(subjectName: String, courseId: Int, creationTime: String) {
     Column(
         Modifier.padding(top = 12.dp, bottom = 20.dp)
     ) {
-        IconAndText(Icons.Outlined.DateRange, "3 days / week (90 min / day)")
-        IconAndText(Icons.Outlined.Info, "At home")
-        IconAndText(Icons.Outlined.LocationOn, "3 Dinh Ha noi")
+        IconAndText(Icons.Outlined.Info, subjectName)
+        IconAndText(Icons.Outlined.Info, "Course ID: $courseId")
+        IconAndText(
+            Icons.Outlined.DateRange,
+            "Created at ${DateFormat.DD_MM_YYYY(creationTime)}"
+        )
     }
 }
