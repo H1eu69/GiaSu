@@ -15,7 +15,7 @@ class GetCourseUseCase @Inject constructor(
     operator fun invoke() = flow<Result<List<CourseDetail>>> {
         try {
             emit(Result.Loading())
-            val data = repository.getAllClasses().map {
+            val data = repository.getAllClasses().value.map {
                 it.toNewClassDetail()
             }
             emit(Result.Success(data))

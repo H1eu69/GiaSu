@@ -1,6 +1,6 @@
 package com.projectprovip.h1eu.giasu.data.user.dto
 
-data class Value(
+data class UserWithToken(
     val token: String,
-    val user: UserDto
+    val user: User
 )

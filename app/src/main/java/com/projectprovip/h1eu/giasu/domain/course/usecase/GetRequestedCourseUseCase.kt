@@ -18,7 +18,7 @@ class GetRequestedCourseUseCase @Inject constructor(
             emit(Result.Loading())
             val body = repository.getRequestedCourse(token)
             if (body.body() != null) {
-                val requestedCourse = body.body()!!.map {
+                val requestedCourse = body.body()!!.requestedCourseDtoItem.map {
                     it.toRequestedCourse()
                 }
                 emit(Result.Success(requestedCourse))

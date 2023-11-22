@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.Result
-import com.projectprovip.h1eu.giasu.data.user.dto.toUser
 import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
 import com.projectprovip.h1eu.giasu.domain.authentication.usecase.SignUpUseCase
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.SignUpState
@@ -44,8 +43,8 @@ class SignUpViewModel @Inject constructor(
                     _signUpState.value = SignUpState(error = result.message ?: "Unexpected error")
                 }
                 is Result.Success -> {
-                    _signUpState.value = SignUpState(user = result.data!!.value.user.toUser(),
-                        token = result.data.value.token)
+                    _signUpState.value = SignUpState(user = result.data!!.userWithToken.user,
+                        token = result.data.userWithToken.token)
                 }
             }
         }.launchIn(viewModelScope)

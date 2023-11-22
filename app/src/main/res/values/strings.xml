@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">GiaSu</string>
     <string name="bottom_home">Home</string>
-    <string name="bottom_class">Class</string>
+    <string name="bottom_course">Course</string>
     <string name="bottom_profile">Profile</string>
 
     <plurals name="session_string">

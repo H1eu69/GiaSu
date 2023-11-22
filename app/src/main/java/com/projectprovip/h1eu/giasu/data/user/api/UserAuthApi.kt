@@ -8,9 +8,9 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface UserAuthApi {
-    @POST("Auth/Login")
+    @POST("Authentication/Login")
     suspend fun sendLoginRequest(@Body userLoginInput: UserLoginInput) : UserLoginDto
 
-    @POST("Auth/Register")
+    @POST("Authentication/Register")
     suspend fun sendSignUpRequest(@Body userSignUpInput: UserSignUpInput) : UserSignUpDto
 }

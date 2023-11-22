@@ -20,8 +20,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -57,12 +55,13 @@ import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
 import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.CourseManagementViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
-fun PreviewScreen() {
+fun PreviewClassManagementScreen() {
     ClassManagementScreen(navController = rememberNavController(), hiltViewModel())
 }
 
@@ -77,7 +76,7 @@ fun ClassManagementScreen(navController: NavController, vm: CourseManagementView
     val coroutine = rememberCoroutineScope()
     var token = remember { mutableStateOf("") }
     val state = vm.state
-    val listRequestedCourse = vm.filteredlList
+    val listRequestedCourse = vm.filteredList
 
     LaunchedEffect(key1 = "") {
         coroutine.launch {
@@ -120,41 +119,39 @@ fun ClassManagementScreen(navController: NavController, vm: CourseManagementView
                     }
                 }
             }
-            when {
-                state.value.isLoading -> {
-                    item {
-                        CircularProgressIndicator()
+            state.apply {
+                when {
+                    state.value.isLoading -> {
+                        item {
+                            CircularProgressIndicator()
+                        }
                     }
-                }
-
-                state.value.message.isNotEmpty() -> {
-                    Toast.makeText(context, state.value.message, Toast.LENGTH_SHORT).show()
-                }
-
-                state.value.data.isNotEmpty() -> {
-                    if (listRequestedCourse.value.isNotEmpty()) {
-                        listRequestedCourse.value.forEach {
+                    state.value.message.isNotEmpty() -> {
+                        Toast.makeText(context, state.value.message, Toast.LENGTH_SHORT).show()
+                    }
+                    state.value.data.isNotEmpty() -> {
+                        if (listRequestedCourse.value.isNotEmpty()) {
+                            listRequestedCourse.value.forEach {
+                                item {
+                                    ClassItem(it, navController)
+                                }
+                            }
+                        } else {
                             item {
-                                ClassItem(it)
+                                Text(text = "No items to show",
+                                    textAlign = TextAlign.Center,
+                                )
                             }
                         }
-                    } else {
-                        item {
-                            Text(text = "No items to show",
-                                textAlign = TextAlign.Center,
-                            )
-                        }
                     }
-
                 }
             }
-
         }
     }
 }
 
 @Composable
-fun ClassItem(data: RequestedCourse) {
+fun ClassItem(data: RequestedCourse, navController: NavController) {
     Card(
         shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
@@ -169,7 +166,7 @@ fun ClassItem(data: RequestedCourse) {
                 RoundedCornerShape(10)
             )
             .clickable {
-
+                navController.navigate("${Screens.InApp.Courses.CourseDetail.route}/${data.id}")
             }
     ) {
         Column(

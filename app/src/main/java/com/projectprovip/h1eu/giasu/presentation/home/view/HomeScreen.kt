@@ -176,8 +176,7 @@ fun BodyContent(
                     RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                 )
         ) {
-            item { RowTitle(title1 = "Category", title2 = "View all") }
-            item { CategoryItemList() }
+//            item { RowTitle(title1 = "Category", title2 = "View all") }
             item {
                 RowTitle(
                     modifier = Modifier.padding(
@@ -244,58 +243,6 @@ private fun SearchTextField(modifier: Modifier = Modifier) {
         onValueChange = {
             searchTextField.value = it
         })
-}
-
-@Composable
-private fun CategoryItemList() {
-    val list = listOf(
-        1,
-        2,
-        3,
-        4,
-        5,
-        5,
-        5,
-        5,
-        5,
-        55,
-        5,
-        5,
-        1,
-        2,
-        3,
-        4,
-        5,
-        5,
-        5,
-        5,
-        5,
-        55,
-        5,
-        5,
-        1,
-        2,
-        3,
-        4,
-        5,
-        5,
-        5,
-        5,
-        5,
-        55,
-        5,
-        5
-    )
-    LazyRow(
-        Modifier.fillMaxWidth(),
-        userScrollEnabled = true,
-        horizontalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-    ) {
-        items(list.size) {
-            SubjectCategoryItem()
-        }
-    }
 }
 
 @Composable

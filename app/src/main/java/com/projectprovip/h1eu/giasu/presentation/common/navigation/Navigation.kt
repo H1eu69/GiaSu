@@ -24,7 +24,9 @@ import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScree
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
 import com.projectprovip.h1eu.giasu.presentation.class_management.view.ClassManagementScreen
+import com.projectprovip.h1eu.giasu.presentation.class_management.view.RequestedCourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.CourseManagementViewModel
+import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.RequestedCourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
@@ -99,9 +101,20 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                 backStackEntry.arguments?.getInt("courseId"))
         }
 
-        composable(Screens.InApp.Class.route) {
+        composable(Screens.InApp.Courses.route) {
             val vm = hiltViewModel<CourseManagementViewModel>()
             ClassManagementScreen(navController, vm) }
+
+        composable("${Screens.InApp.Courses.CourseDetail.route}/{courseId}",
+            arguments = listOf(navArgument("courseId") {
+                type = NavType.IntType
+            })) {backStackEntry ->
+            val courseDetailViewModel = hiltViewModel<RequestedCourseDetailViewModel>()
+            RequestedCourseDetailScreen(navController,
+                courseDetailViewModel,
+                backStackEntry.arguments?.getInt("courseId"))
+        }
+
         composable(Screens.InApp.Profile.route) { ProfileScreen(navController) }
     }
 }

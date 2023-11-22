@@ -11,8 +11,6 @@ import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
 import com.projectprovip.h1eu.giasu.domain.course.usecase.GetRequestedCourseUseCase
 import com.projectprovip.h1eu.giasu.presentation.class_management.model.RequestedCourseState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -24,7 +22,7 @@ class CourseManagementViewModel @Inject constructor(
 
     private val _state = mutableStateOf(RequestedCourseState())
     val state : State<RequestedCourseState> = _state
-    var filteredlList : MutableState<List<RequestedCourse>> = mutableStateOf( emptyList())
+    var filteredList : MutableState<List<RequestedCourse>> = mutableStateOf( emptyList())
 
     fun getRequestedCourses(token: String) {
         getRequestedCourseUseCase(token).onEach { result ->
@@ -40,14 +38,14 @@ class CourseManagementViewModel @Inject constructor(
                 is Result.Success -> {
                     Log.d("course management", result.data!!.toString())
                     _state.value = RequestedCourseState(data = result.data)
-                    filteredlList.value = result.data
+                    filteredList.value = result.data
                 }
             }
         }.launchIn(viewModelScope)
     }
 
     fun getListByFilter(status: String) {
-        filteredlList.value = if(status == "All") {
+        filteredList.value = if(status == "All") {
             _state.value.data
         } else {
             _state.value.data.filter {
