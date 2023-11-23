@@ -1,14 +1,18 @@
 package com.projectprovip.h1eu.giasu.presentation.class_management.view
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -34,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -78,6 +83,7 @@ fun RequestedCourseDetailScreen(
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     var token = remember { mutableStateOf("") }
+    val state = vm.state
 
     LaunchedEffect(key1 = "") {
         coroutine.launch {
@@ -86,22 +92,25 @@ fun RequestedCourseDetailScreen(
             }
         }
     }
-    vm.getRequestedCourseDetail(id = id!!, token.value)
-    val state = vm.state
+    if (state.value.data == null) {
+        vm.getRequestedCourseDetail(id = id!!, token.value)
+    }
 
     Scaffold(
         topBar = {
             CourseDetailAppbar(navController)
         },
     ) {
-        Box(modifier = Modifier
-            .padding(it)
-            .padding(20.dp)
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .padding(20.dp)
+                .fillMaxSize()
         ) {
             state.apply {
                 when {
                     state.value.isLoading -> {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
 
                     state.value.data != null -> {
@@ -123,13 +132,14 @@ fun RequestedCourseDetailBody(
     navController: NavController,
     course: RequestedCourseDetail
 ) {
+    val context = LocalContext.current
     LazyColumn(
         modifier = modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
             Text(
-                text = course.title,
+                text = "Title: ${course.title}",
                 style = TextStyle(
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -157,38 +167,81 @@ fun RequestedCourseDetailBody(
         }
         item {
             DetailIconAndText(
-                Icons.Outlined.Info,
-                "Subject: ", course.subjectName
+                imageVector = Icons.Outlined.Info,
+                boldedText = "Subject: ",
+                contentText = {
+                    Text(
+                        text = course.subjectName,
+                        fontSize = 16.sp
+                    )
+                }
             )
         }
         item {
             DetailIconAndText(
-                Icons.Outlined.Info,
-                "Status: ", course.requestStatus
+                imageVector = Icons.Outlined.Info,
+                boldedText = "Status: ", contentText = {
+                    Text(
+                        text = course.requestStatus,
+                        fontSize = 16.sp
+                    )
+                }
             )
         }
         item {
             DetailIconAndText(
-                Icons.Outlined.Phone,
-                "Contact number: ", course.learnerContact
+                imageVector = Icons.Outlined.Phone,
+                boldedText = "Contact number: ", contentText = {
+                    Text(
+                        text = course.learnerContact,
+                        fontSize = 16.sp,
+                        color = EDSColors.costTextColor,
+                        modifier = Modifier.clickable {
+                            val uri = Uri.parse("tel: ${course.learnerContact}")
+                            val dialIntent = Intent(Intent.ACTION_DIAL, uri)
+                            context.startActivity(dialIntent)
+                        }
+                    )
+                }
             )
         }
         item {
             DetailIconAndText(
-                Icons.Outlined.Person,
-                "Learner name: ", course.learnerName
+                imageVector = Icons.Outlined.Person,
+                boldedText = "Learner name: ", contentText = {
+                    Text(
+                        text = course.learnerName,
+                        fontSize = 16.sp
+                    )
+                }
             )
         }
         item {
             DetailIconAndText(
-                Icons.Outlined.Face,
-                "Tutor name: ", course.tutorName
+                imageVector = Icons.Outlined.Face,
+                boldedText = "Tutor name: ", contentText = {
+                    Text(
+                        text = course.tutorName,
+                        fontSize = 16.sp
+                    )
+                }
             )
         }
         item {
             DetailIconAndText(
-                Icons.Outlined.Person,
-                "Tutor phone: ", course.tutorPhone
+                imageVector = Icons.Outlined.Phone,
+                boldedText = "Tutor phone: ", contentText = {
+                    Text(
+                        text = course.tutorPhone,
+                        fontSize = 16.sp,
+                        color = EDSColors.costTextColor,
+                        modifier = Modifier.clickable {
+                            val uri = Uri.parse("tel: ${course.tutorPhone}")
+                            val dialIntent = Intent(Intent.ACTION_DIAL, uri)
+                            context.startActivity(dialIntent)
+                        }
+                    )
+                }
             )
         }
 //        item {
@@ -235,7 +288,12 @@ fun CourseDetailAppbar(navController: NavController) {
 }
 
 @Composable
-fun DetailIconAndText(imageVector: ImageVector, boldedText: String, text: String) {
+fun DetailIconAndText(
+    modifier: Modifier = Modifier,
+    imageVector: ImageVector,
+    boldedText: String,
+    contentText: @Composable (() -> Unit),
+) {
     Row {
         Icon(
             imageVector, null,
@@ -248,10 +306,7 @@ fun DetailIconAndText(imageVector: ImageVector, boldedText: String, text: String
             fontSize = 16.sp
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = text,
-            fontSize = 16.sp
-        )
+        contentText()
     }
 }
 

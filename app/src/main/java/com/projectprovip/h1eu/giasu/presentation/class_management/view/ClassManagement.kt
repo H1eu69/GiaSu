@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -85,7 +86,9 @@ fun ClassManagementScreen(navController: NavController, vm: CourseManagementView
             }
         }
     }
-    vm.getRequestedCourses(token.value)
+    if(state.value.data.isEmpty()){
+        vm.getRequestedCourses(token.value)
+    }
 
     Scaffold(
         topBar = {
@@ -119,33 +122,37 @@ fun ClassManagementScreen(navController: NavController, vm: CourseManagementView
                     }
                 }
             }
-            state.apply {
-                when {
-                    state.value.isLoading -> {
-                        item {
-                            CircularProgressIndicator()
-                        }
+            when {
+                state.value.isLoading -> {
+                    item {
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxHeight()
+                        )
                     }
-                    state.value.message.isNotEmpty() -> {
-                        Toast.makeText(context, state.value.message, Toast.LENGTH_SHORT).show()
-                    }
-                    state.value.data.isNotEmpty() -> {
-                        if (listRequestedCourse.value.isNotEmpty()) {
-                            listRequestedCourse.value.forEach {
-                                item {
-                                    ClassItem(it, navController)
-                                }
-                            }
-                        } else {
+                }
+
+                state.value.message.isNotEmpty() -> {
+                    Toast.makeText(context, state.value.message, Toast.LENGTH_SHORT).show()
+                }
+
+                state.value.data.isNotEmpty() -> {
+                    if (listRequestedCourse.value.isNotEmpty()) {
+                        listRequestedCourse.value.forEach {
                             item {
-                                Text(text = "No items to show",
-                                    textAlign = TextAlign.Center,
-                                )
+                                ClassItem(it, navController)
                             }
+                        }
+                    } else {
+                        item {
+                            Text(
+                                text = "No items to show",
+                                textAlign = TextAlign.Center,
+                            )
                         }
                     }
                 }
             }
+
         }
     }
 }
@@ -233,7 +240,7 @@ fun IconAndText(imageVector: ImageVector, text: String) {
     Row {
         Icon(
             imageVector, null,
-            tint = Color.Gray
+            tint = EDSColors.primaryColor
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = text)
