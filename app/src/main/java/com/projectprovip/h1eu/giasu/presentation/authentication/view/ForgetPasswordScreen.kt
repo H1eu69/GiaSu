@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 
@@ -84,11 +83,11 @@ fun ForgetPasswordScreen(navController: NavController) {
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
-                MainTextField(
-                    value = emailTextField.value, label = "Email"
-                ) {
-                    emailTextField.value = it
-                }
+//                MainTextField(
+//                    value = emailTextField.value, label = "Email"
+//                ) {
+//                    emailTextField.value = it
+//                }
 
                 Spacer(modifier = Modifier.weight(1f))
 

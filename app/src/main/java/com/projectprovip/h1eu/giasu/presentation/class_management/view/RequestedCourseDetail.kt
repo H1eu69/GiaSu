@@ -244,12 +244,12 @@ fun RequestedCourseDetailBody(
                 }
             )
         }
-//        item {
-//            DetailIconAndText(
-//                Icons.Outlined.Person,
-//                "Tutor email: ", course.tu
-//            )
-//        }
+    //        item {
+    //            DetailIconAndText(
+    //                Icons.Outlined.Person,
+    //                "Tutor email: ", course.tu
+    //            )
+    //        }
         item {
             Spacer(modifier = Modifier.height(50.dp))
         }

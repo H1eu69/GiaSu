@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
 
 @Preview
 @Composable
@@ -72,27 +71,27 @@ fun ChangePasswordScreen(navController: NavController) {
             var textField2 = remember { mutableStateOf("") }
             var textField3 = remember { mutableStateOf("") }
 
-            MainTextField(
-                value = textField1.value, label = "Old password",
-                onValueChange = {
-                    textField1.value = it
-                },
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
-            )
-            MainTextField(
-                value = textField2.value, label = "New password",
-                onValueChange = {
-                    textField2.value = it
-                },
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
-            )
-            MainTextField(
-                value = textField3.value, label = "Confirm password",
-                onValueChange = {
-                    textField3.value = it
-                },
-                modifier = Modifier.fillMaxWidth().padding(16.dp)
-            )
+//            MainTextField(
+//                value = textField1.value, label = "Old password",
+//                onValueChange = {
+//                    textField1.value = it
+//                },
+//                modifier = Modifier.fillMaxWidth().padding(16.dp)
+//            )
+//            MainTextField(
+//                value = textField2.value, label = "New password",
+//                onValueChange = {
+//                    textField2.value = it
+//                },
+//                modifier = Modifier.fillMaxWidth().padding(16.dp)
+//            )
+//            MainTextField(
+//                value = textField3.value, label = "Confirm password",
+//                onValueChange = {
+//                    textField3.value = it
+//                },
+//                modifier = Modifier.fillMaxWidth().padding(16.dp)
+//            )
 
         }
     }

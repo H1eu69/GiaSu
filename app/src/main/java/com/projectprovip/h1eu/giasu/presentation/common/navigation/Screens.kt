@@ -3,7 +3,9 @@ package com.projectprovip.h1eu.giasu.presentation.common.navigation
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.projectprovip.h1eu.giasu.R
@@ -27,9 +29,16 @@ sealed class Screens(val route: String) {
 
         object Courses : BottomBarScreens(
             route = "course", R.string.bottom_course,
-            icon = Icons.Outlined.Warning, title = "Course"
+            icon = Icons.Outlined.ExitToApp, title = "Course"
         ) {
             object CourseDetail : Screens(route = "course_detail")
+        }
+
+        object Tutor : BottomBarScreens(
+            route = "tutor", R.string.bottom_tutor,
+            icon = Icons.Outlined.Person, title = "Tutor"
+        ) {
+            object TutorDetail : Screens(route = "tutor_detail")
         }
 
         object Profile : BottomBarScreens(

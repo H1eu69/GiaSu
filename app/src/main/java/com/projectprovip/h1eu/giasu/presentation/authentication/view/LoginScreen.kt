@@ -13,12 +13,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +36,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,7 +51,6 @@ import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
-import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.delay
@@ -139,23 +145,45 @@ fun LoginScreen(navController: NavController,
                     modifier = Modifier.height(8.dp)
                 )
 
-                MainTextField(
+                OutlinedTextField(
                     value = emailTextField.value,
-                    label = "Email"
-                ) {
-                    emailTextField.value = it
-                }
+                    onValueChange = {
+                        emailTextField.value = it
+                    },
+                    label = {
+                        Text("Email")
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLabelColor = EDSColors.primaryColor
+                    ),
+                    modifier = Modifier
+                )
 
                 Spacer(
                     modifier = Modifier.height(12.dp)
                 )
 
-                MainTextField(
+                OutlinedTextField(
                     value = passTextField.value,
-                    label = "Password"
-                ) {
-                    passTextField.value = it
-                }
+                    visualTransformation = PasswordVisualTransformation(),
+                    onValueChange = {
+                        passTextField.value = it
+                    },
+                    label = {
+                        Text("Password")
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLabelColor = EDSColors.primaryColor
+                    ),
+                    modifier = Modifier
+                )
+
                 Spacer(
                     modifier = Modifier.height(16.dp)
                 )

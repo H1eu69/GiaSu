@@ -33,6 +33,8 @@ import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailView
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.ProfileScreen
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
+import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorScreen
+import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,6 +102,9 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                 courseDetailViewModel,
                 backStackEntry.arguments?.getInt("courseId"))
         }
+        composable(Screens.InApp.Tutor.route) {
+            val vm = hiltViewModel<TutorViewModel>()
+            TutorScreen(navController, vm) }
 
         composable(Screens.InApp.Courses.route) {
             val vm = hiltViewModel<CourseManagementViewModel>()

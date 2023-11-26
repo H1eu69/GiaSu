@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Star
@@ -136,14 +137,10 @@ fun ColumnOfButton() {
     ) {
         ButtonColumnItem(Icons.Rounded.AccountCircle, EDSColors.primaryColor,
             "Personal information", true)
-        ButtonColumnItem(Icons.Rounded.Favorite, EDSColors.primaryColor,
+        ButtonColumnItem(Icons.Rounded.AddCircle, EDSColors.primaryColor,
             "Register lecturer", true)
         ButtonColumnItem(Icons.Rounded.Star, EDSColors.primaryColor,
-            "Request lecturer", true)
-        ButtonColumnItem(Icons.Rounded.Star, EDSColors.primaryColor,
-            "Request lecturer", true)
-        ButtonColumnItem(Icons.Rounded.Star, EDSColors.primaryColor,
-            "Request lecturer", false)
+            "Learning Courses", true)
     }
 }
 

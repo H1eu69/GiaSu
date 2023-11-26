@@ -33,6 +33,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         Screens.InApp.Home,
+        Screens.InApp.Tutor,
         Screens.InApp.Courses,
         Screens.InApp.Profile
     )

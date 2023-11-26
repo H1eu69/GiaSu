@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,46 +36,14 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainTextField(value: String,
-                  label: String,
-                  supportText: String? = null,
-                  isError: Boolean = false,
-                  modifier : Modifier = Modifier,
-                  onValueChange: (String) -> Unit) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = {
-            onValueChange(it)
-        },
-        isError = isError,
-        supportingText = {
-            if(supportText != null && isError){
-                Text(
-                    supportText,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        },
-        label = {
-            Text(label)
-        },
-        shape = RoundedCornerShape(8.dp),
-        singleLine = true,
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = EDSColors.primaryColor,
-            focusedLabelColor = EDSColors.primaryColor
-        ),
-        modifier = modifier
-    )
-}
 
 @Composable
 fun AppBarTitle(text: String, fontSize: Int = 20) {
