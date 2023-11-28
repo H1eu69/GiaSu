@@ -8,7 +8,7 @@ import javax.inject.Inject
 class TutorRepositoryImpl @Inject constructor(
     private val api: TutorApi
 ) : TutorRepository {
-    override suspend fun getAllTutor(): TutorDto {
-        return api.getAllTutor()
+    override suspend fun getAllTutor(pageIndex: Int): TutorDto {
+        return api.getAllTutor(pageIndex)
     }
 }

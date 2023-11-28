@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.Icon
@@ -77,7 +78,34 @@ fun TutorScreen(navController: NavController, vm: TutorViewModel) {
             }
 
             state.value.data.isNotEmpty() -> {
-                GridBodyList(state.value.data, modifier = Modifier.padding(it))
+                InfiniteList(state.value.data,
+                    modifier = Modifier.padding(it),
+                    onLoadMore = {
+                        vm.loadMore()
+                    })
+            }
+        }
+    }
+}
+
+@Composable
+fun InfiniteList(
+    data: List<Tutor>,
+    modifier: Modifier,
+    onLoadMore: (() -> Unit)
+) {
+    val listState = rememberLazyGridState()
+    val listCount = data.count()
+    LazyVerticalGrid(
+        state = listState,
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+    ) {
+        items(count = listCount) { index ->
+            TutorItem(data[index])
+            if ( index == listCount - 2) {
+                onLoadMore()
             }
         }
     }
@@ -126,14 +154,34 @@ fun TutorItem(tutor: Tutor) {
                 model = tutor.image,
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.clip(RoundedCornerShape(topStart = 20.dp,
-                    topEnd = 20.dp))
+                modifier = Modifier.clip(
+                    RoundedCornerShape(
+                        topStart = 20.dp,
+                        topEnd = 20.dp
+                    )
+                )
 
             )
-            IconAndText(Icons.Outlined.Info, "${tutor.firstName} ${tutor.lastName}", modifier = Modifier.padding(horizontal = 20.dp))
-            IconAndText(Icons.Outlined.Info, tutor.academicLevel, modifier = Modifier.padding(horizontal = 20.dp))
-            IconAndText(Icons.Outlined.Info, tutor.birthYear.toString(), modifier = Modifier.padding(horizontal = 20.dp))
-            IconAndText(Icons.Outlined.Info, tutor.university, modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 20.dp))
+            IconAndText(
+                Icons.Outlined.Info,
+                "${tutor.firstName} ${tutor.lastName}",
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+            IconAndText(
+                Icons.Outlined.Info,
+                tutor.academicLevel,
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+            IconAndText(
+                Icons.Outlined.Info,
+                tutor.birthYear.toString(),
+                modifier = Modifier.padding(horizontal = 20.dp)
+            )
+            IconAndText(
+                Icons.Outlined.Info, tutor.university, modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 20.dp)
+            )
         }
     }
 
