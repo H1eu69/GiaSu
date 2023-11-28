@@ -22,10 +22,12 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Face
+import androidx.compose.material.icons.outlined.Face5
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material.icons.outlined.Subject
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -167,7 +169,7 @@ fun RequestedCourseDetailBody(
         }
         item {
             DetailIconAndText(
-                imageVector = Icons.Outlined.Info,
+                imageVector = Icons.Outlined.Subject,
                 boldedText = "Subject: ",
                 contentText = {
                     Text(
@@ -218,7 +220,7 @@ fun RequestedCourseDetailBody(
         }
         item {
             DetailIconAndText(
-                imageVector = Icons.Outlined.Face,
+                imageVector = Icons.Outlined.Face5,
                 boldedText = "Tutor name: ", contentText = {
                     Text(
                         text = course.tutorName,

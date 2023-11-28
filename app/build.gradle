@@ -86,6 +86,10 @@ dependencies {
     //Kotlin Coroutine
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2'
 
+    //Material icons
+    implementation 'androidx.compose.material:material-icons-extended'
+
+
     //Default
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')

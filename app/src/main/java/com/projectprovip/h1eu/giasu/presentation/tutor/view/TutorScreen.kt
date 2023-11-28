@@ -19,7 +19,10 @@ import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Cake
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.School
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -163,7 +166,7 @@ fun TutorItem(tutor: Tutor) {
 
             )
             IconAndText(
-                Icons.Outlined.Info,
+                Icons.Outlined.Person,
                 "${tutor.firstName} ${tutor.lastName}",
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
@@ -173,12 +176,12 @@ fun TutorItem(tutor: Tutor) {
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             IconAndText(
-                Icons.Outlined.Info,
+                Icons.Outlined.Cake,
                 tutor.birthYear.toString(),
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             IconAndText(
-                Icons.Outlined.Info, tutor.university, modifier = Modifier
+                Icons.Outlined.School, tutor.university, modifier = Modifier
                     .padding(horizontal = 20.dp)
                     .padding(bottom = 20.dp)
             )

@@ -21,6 +21,8 @@ import androidx.compose.material3.Tab
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.PermIdentity
+import androidx.compose.material.icons.outlined.Subject
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -252,7 +254,7 @@ fun MiddleContent(subjectName: String, courseId: Int, creationTime: String) {
     Column(
         Modifier.padding(top = 12.dp, bottom = 20.dp)
     ) {
-        IconAndText(Icons.Outlined.Info, subjectName)
+        IconAndText(Icons.Outlined.Subject, subjectName)
         IconAndText(Icons.Outlined.Info, "Course ID: $courseId")
         IconAndText(
             Icons.Outlined.DateRange,
