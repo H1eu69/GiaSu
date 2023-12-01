@@ -32,6 +32,7 @@ import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.ProfileScreen
+import com.projectprovip.h1eu.giasu.presentation.profile.TutorRegisterScreen
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorViewModel
@@ -121,6 +122,10 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         }
 
         composable(Screens.InApp.Profile.route) { ProfileScreen(navController) }
+        composable(Screens.InApp.Profile.TutorRegistration.route) {
+
+            TutorRegisterScreen(navController)
+        }
     }
 }
 

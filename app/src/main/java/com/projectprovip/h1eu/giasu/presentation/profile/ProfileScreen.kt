@@ -47,6 +47,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 @Preview
@@ -72,7 +73,7 @@ fun ProfileScreen(navController: NavController) {
         LazyColumn(modifier = Modifier.padding(it)) {
             item { Profile() }
             item { Spacer(modifier = Modifier.height(30.dp)) }
-            item { ColumnOfButton() }
+            item { ColumnOfButton(navController) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
             item { ButtonColumnItem(Icons.Rounded.ExitToApp, EDSColors.primaryColor,
                 "Change password", true) }
@@ -131,26 +132,32 @@ fun ProfileImage() {
 }
 
 @Composable
-fun ColumnOfButton() {
+fun ColumnOfButton(navController: NavController) {
     Column(
         Modifier.fillMaxWidth()
     ) {
         ButtonColumnItem(Icons.Rounded.AccountCircle, EDSColors.primaryColor,
             "Personal information", true)
         ButtonColumnItem(Icons.Rounded.AddCircle, EDSColors.primaryColor,
-            "Register lecturer", true)
+            "Register lecturer", true,
+            onClick = {
+                navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
+            }
+        )
         ButtonColumnItem(Icons.Rounded.Star, EDSColors.primaryColor,
             "Learning Courses", true)
     }
 }
 
 @Composable
-fun ButtonColumnItem(imageVector: ImageVector, iconColor: Color ,title: String, hasNavigateIcon : Boolean) {
+fun ButtonColumnItem(imageVector: ImageVector, iconColor: Color ,title: String, hasNavigateIcon : Boolean,
+                     onClick: (() -> Unit) = {}) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clickable {
+                onClick()
             }
             .border(BorderStroke(0.3.dp, Color.LightGray))
             .background(Color.White)

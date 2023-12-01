@@ -20,6 +20,8 @@ class EDSColors {
         val idClassBackgroundColor = Color(239,239,239,255)
         val costTextColor = Color(61,130,254,255)
         val myBlackColor = Color(82,82,82,255)
+        val imageBackground = Color(237,237,237)
+        val plusBackground = Color(130,130,130)
         val backgroundApp = Color(240,255,248)
         val grayText = Color(128,128,128,255)
         val white = Color.White

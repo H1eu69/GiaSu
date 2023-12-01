@@ -45,7 +45,9 @@ sealed class Screens(val route: String) {
         object Profile : BottomBarScreens(
             route = "profile", R.string.bottom_profile,
             icon = Icons.Outlined.AccountCircle, title = "Profile"
-        )
+        ) {
+            object TutorRegistration : Screens(route = "tutor_registration")
+        }
 
         object PersonalInformation : Screens(route = "personal_information")
 
