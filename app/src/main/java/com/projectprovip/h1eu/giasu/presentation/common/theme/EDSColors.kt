@@ -25,5 +25,6 @@ class EDSColors {
         val backgroundApp = Color(240,255,248)
         val grayText = Color(128,128,128,255)
         val white = Color.White
+        val yellowStar =  Color(255,212,94,255)
     }
 }

@@ -1,12 +1,12 @@
-package com.projectprovip.h1eu.giasu.presentation.profile
+package com.projectprovip.h1eu.giasu.presentation.profile.view
 
+import android.content.Context
 import android.net.Uri
-import android.os.Environment
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,55 +31,74 @@ import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.School
 import androidx.compose.material.icons.outlined.Subtitles
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.FileProvider
-import androidx.core.net.toFile
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.projectprovip.h1eu.giasu.common.ComposeFileProvider
+import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonTextField
-import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import java.io.File
-import java.text.DateFormat.getDateInstance
-import java.util.Date
+import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 
 @Preview
 @Composable
 fun PreviewTutorRegister() {
-    TutorRegisterScreen(rememberNavController())
+    TutorRegisterScreen(rememberNavController(), hiltViewModel())
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TutorRegisterScreen(navController: NavController) {
+fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel) {
+    val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current
+    val tokenKey = stringPreferencesKey(Constant.TOKEN_STRING)
+    val token = remember {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(key1 = token) {
+        coroutine.launch {
+            context.dataStore.data.collect { preference ->
+                token.value = "Bearer ${preference[tokenKey].toString()}"
+                Log.d("Token in tutor", token.value)
+            }
+        }
+    }
+
+    val registerState = vm.tutorRegisterState
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -109,6 +128,10 @@ fun TutorRegisterScreen(navController: NavController) {
             )
         }
     ) {
+        val academicText = remember { mutableStateOf("") }
+        val universityText = remember { mutableStateOf("") }
+        val majorText = remember { mutableStateOf("") }
+
         Box(
             modifier = Modifier
                 .padding(it)
@@ -121,7 +144,7 @@ fun TutorRegisterScreen(navController: NavController) {
             ) {
                 item {
                     CommonTextField(
-                        remember { mutableStateOf("") },
+                        academicText,
                         hint = "Academic level",
                         icon = {
                             Icon(
@@ -135,7 +158,7 @@ fun TutorRegisterScreen(navController: NavController) {
                 }
                 item {
                     CommonTextField(
-                        remember { mutableStateOf("") },
+                        universityText,
                         icon = {
                             Icon(
                                 imageVector = Icons.Outlined.School,
@@ -149,7 +172,7 @@ fun TutorRegisterScreen(navController: NavController) {
                 }
                 item {
                     CommonTextField(
-                        remember { mutableStateOf("") },
+                        majorText,
                         icon = {
                             Icon(
                                 imageVector = Icons.Outlined.Subtitles,
@@ -180,7 +203,11 @@ fun TutorRegisterScreen(navController: NavController) {
                                 color = EDSColors.notScheduleTextColor
                             )
                         }
-                        ImagePicker()
+                        ImagePicker(
+                            onImageUriChanged = { uri ->
+                                vm.uploadImage(uri)
+                            }
+                        )
                     }
                 }
 //                item() {
@@ -191,53 +218,73 @@ fun TutorRegisterScreen(navController: NavController) {
 //                        height(150.dp))
 //                }
             }
-            EduSmartButton(
-                onClick = {},
-                text = "Register",
+            Button(
+                onClick = {
+                    Log.d("Token in tutor onclick" , token.value)
+
+                    vm.registerTutor(
+                        token.value,
+                        academicText.value,
+                        universityText.value,
+                        majorText.value
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
-                    .align(Alignment.BottomCenter)
-            )
+                    .align(Alignment.BottomCenter),
+                colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
+            ) {
+
+                if (registerState.value.isLoading)
+                    CircularProgressIndicator()
+                else
+                    Text(text = "Register", color = EDSColors.white)
+                LaunchedEffect(key1 = registerState.value ) {
+                    if (registerState.value.error.isNotEmpty() || registerState.value.success) {
+                        showToast(context, registerState.value.error)
+                        navController.popBackStack()
+                    }
+
+                }
+            }
+
         }
     }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ImagePicker() {
+fun ImagePicker(onImageUriChanged: ((uri: Uri) -> Unit)) {
 //    val launcher =
 //        rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) {
 //            hasImage.value = it
 //        }
-
-    val context = LocalContext.current
-
-    val uri = remember { mutableStateOf(Uri.parse(""))  }
+    val uri = remember { mutableStateOf(Uri.parse("")) }
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
-            Log.d("1235", "3")
-            if(it != null) {
+            if (it != null) {
                 uri.value = it
-                Log.d("Test uri ", uri.toString())
+                onImageUriChanged(it)
+                Log.d("Test uri ", uri.value.lastPathSegment.toString())
             }
         }
 
 
-    if(uri.value.toString().isNotEmpty()) {
+    if (uri.value.toString().isNotEmpty()) {
         GlideImage(model = uri.value, contentDescription = "",
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp)
-            .padding(top = 20.dp)
-            .clip(
-                shape = RoundedCornerShape(20.dp)
-            )
-            .clickable {
+                .fillMaxWidth()
+                .height(300.dp)
+                .padding(top = 20.dp)
+                .clip(
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .clickable {
                     launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 }
         )
+
     } else {
         Box(modifier = Modifier
             .fillMaxWidth()
@@ -260,4 +307,8 @@ fun ImagePicker() {
             )
         }
     }
+}
+
+private fun showToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }

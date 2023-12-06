@@ -2,7 +2,9 @@ package com.projectprovip.h1eu.giasu.data.tutor.repository
 
 import com.projectprovip.h1eu.giasu.data.tutor.api.TutorApi
 import com.projectprovip.h1eu.giasu.data.tutor.dto.TutorDto
+import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
 import com.projectprovip.h1eu.giasu.domain.tutor.repository.TutorRepository
+import retrofit2.Response
 import javax.inject.Inject
 
 class TutorRepositoryImpl @Inject constructor(
@@ -10,5 +12,12 @@ class TutorRepositoryImpl @Inject constructor(
 ) : TutorRepository {
     override suspend fun getAllTutor(pageIndex: Int): TutorDto {
         return api.getAllTutor(pageIndex)
+    }
+
+    override suspend fun registerTutor(
+        auth: String,
+        tutorRegisterInput: TutorRegisterInput
+    ): Response<Unit> {
+        return api.registerTutor(auth, tutorRegisterInput)
     }
 }

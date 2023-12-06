@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.projectprovip.h1eu.giasu.presentation.profile
+package com.projectprovip.h1eu.giasu.presentation.profile.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

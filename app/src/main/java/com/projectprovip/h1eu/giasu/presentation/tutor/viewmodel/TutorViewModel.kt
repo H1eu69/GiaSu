@@ -5,11 +5,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.projectprovip.h1eu.giasu.common.Result
+import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.domain.tutor.usecase.GetAllTutorUseCase
 import com.projectprovip.h1eu.giasu.presentation.tutor.model.TutorListState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -27,15 +26,16 @@ class TutorViewModel @Inject constructor(
     init {
         getAllTutorUseCase(_currentPage).onEach {
             when (it) {
-                is Result.Loading -> {
+                is EDSResult.Loading -> {
+                    Log.d("Test Loading","load from vm")
                     _state.value = TutorListState(isLoading = true)
                 }
 
-                is Result.Error -> {
+                is EDSResult.Error -> {
                     _state.value = TutorListState(error = it.message.toString())
                 }
 
-                is Result.Success -> {
+                is EDSResult.Success -> {
                     _state.value = TutorListState(data = it.data!!)
                     Log.d("Test success", "at $_currentPage")
                     _currentPage++
@@ -48,9 +48,9 @@ class TutorViewModel @Inject constructor(
         val currentData = _state.value.data.toMutableList()
         getAllTutorUseCase(_currentPage).onEach {
             when (it) {
-                is Result.Loading -> {}
-                is Result.Error -> {}
-                is Result.Success -> {
+                is EDSResult.Loading -> {}
+                is EDSResult.Error -> {}
+                is EDSResult.Success -> {
                     currentData.addAll(it.data!!)
                     _state.value = TutorListState(data = currentData)
                     Log.d("Test success", "at $_currentPage")

@@ -31,8 +31,9 @@ import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
-import com.projectprovip.h1eu.giasu.presentation.profile.ProfileScreen
-import com.projectprovip.h1eu.giasu.presentation.profile.TutorRegisterScreen
+import com.projectprovip.h1eu.giasu.presentation.profile.view.ProfileScreen
+import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorRegisterScreen
+import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorViewModel
@@ -105,7 +106,10 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         }
         composable(Screens.InApp.Tutor.route) {
             val vm = hiltViewModel<TutorViewModel>()
-            TutorScreen(navController, vm) }
+            TutorScreen(vm.state) {
+                vm.loadMore()
+            }
+        }
 
         composable(Screens.InApp.Courses.route) {
             val vm = hiltViewModel<CourseManagementViewModel>()
@@ -123,9 +127,10 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
 
         composable(Screens.InApp.Profile.route) { ProfileScreen(navController) }
         composable(Screens.InApp.Profile.TutorRegistration.route) {
-
-            TutorRegisterScreen(navController)
+            val vm = hiltViewModel<TutorRegisterViewModel>()
+            TutorRegisterScreen(navController, vm)
         }
+        authenticationGraph(navController)
     }
 }
 

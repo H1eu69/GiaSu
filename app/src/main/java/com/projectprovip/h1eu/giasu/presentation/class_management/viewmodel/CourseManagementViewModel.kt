@@ -6,7 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.projectprovip.h1eu.giasu.common.Result
+import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
 import com.projectprovip.h1eu.giasu.domain.course.usecase.GetRequestedCourseUseCase
 import com.projectprovip.h1eu.giasu.presentation.class_management.model.RequestedCourseState
@@ -27,15 +27,15 @@ class CourseManagementViewModel @Inject constructor(
     fun getRequestedCourses(token: String) {
         getRequestedCourseUseCase(token).onEach { result ->
             when (result) {
-                is Result.Loading -> {
+                is EDSResult.Loading -> {
                     Log.d("course loading", result.message.toString())
                     _state.value = RequestedCourseState(isLoading = true)
                 }
-                is Result.Error -> {
+                is EDSResult.Error -> {
                     Log.d("course error", result.message.toString());
                     _state.value = RequestedCourseState(message = result.message.toString())
                 }
-                is Result.Success -> {
+                is EDSResult.Success -> {
                     Log.d("course management", result.data!!.toString())
                     _state.value = RequestedCourseState(data = result.data)
                     filteredList.value = result.data

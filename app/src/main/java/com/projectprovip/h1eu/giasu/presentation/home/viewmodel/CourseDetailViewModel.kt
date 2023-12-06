@@ -5,13 +5,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.projectprovip.h1eu.giasu.common.Result
+import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.common.alphaNumericOnly
 import com.projectprovip.h1eu.giasu.domain.course.usecase.RegisterCourseUseCase
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -26,16 +24,16 @@ class CourseDetailViewModel @Inject constructor(
     fun registerCourse(courseId: Int, token: String) {
         registerCourseUseCase(courseId, token).onEach { result ->
             when (result) {
-                is Result.Loading -> {
+                is EDSResult.Loading -> {
                     _courseRegisterState.value = CourseRegisterState(isLoading = true)
                 }
 
-                is Result.Error -> {
+                is EDSResult.Error -> {
                     _courseRegisterState.value = CourseRegisterState(error = true, message = result.message.toString().alphaNumericOnly())
                     Log.d("HomeVM", result.message.toString())
                 }
 
-                is Result.Success -> {
+                is EDSResult.Success -> {
                     val courses = result.data!!
                     Log.d("HomeVM", courses.toString())
                     _courseRegisterState.value = CourseRegisterState(isSuccess = true, message = "Course register successful")

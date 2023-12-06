@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.presentation.profile
+package com.projectprovip.h1eu.giasu.presentation.profile.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -27,7 +27,6 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.AddCircle
 import androidx.compose.material.icons.rounded.ExitToApp
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -79,7 +78,13 @@ fun ProfileScreen(navController: NavController) {
                 "Change password", true) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
             item { ButtonColumnItem(Icons.Rounded.ExitToApp, Color.Red,
-                "Logout", false) }
+                "Logout", false, onClick = {
+                    navController.navigate(Screens.Authentication.route) {
+                        popUpTo(Screens.InApp.route) {
+                            inclusive = true
+                        }
+                    }
+                }) }
             item { Spacer(modifier = Modifier.height(50.dp)) }
 
         }    }
