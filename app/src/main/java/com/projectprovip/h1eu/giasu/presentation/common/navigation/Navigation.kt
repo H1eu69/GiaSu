@@ -6,13 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -23,9 +17,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.projectprovip.h1eu.giasu.common.Constant
-import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScreen
@@ -35,6 +26,7 @@ import com.projectprovip.h1eu.giasu.presentation.class_management.view.ClassMana
 import com.projectprovip.h1eu.giasu.presentation.class_management.view.RequestedCourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.CourseManagementViewModel
 import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.RequestedCourseDetailViewModel
+import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
 import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
@@ -47,7 +39,6 @@ import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegister
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,12 +99,15 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable("${Screens.InApp.Home.ClassDetail.route}/{courseId}",
             arguments = listOf(navArgument("courseId") {
                 type = NavType.IntType
-            })) {backStackEntry ->
+            })
+        ) { backStackEntry ->
             val courseDetailViewModel = hiltViewModel<CourseDetailViewModel>()
-            CourseDetailScreen(navController,
+            CourseDetailScreen(
+                navController,
                 homeViewModel,
                 courseDetailViewModel,
-                backStackEntry.arguments?.getInt("courseId"))
+                backStackEntry.arguments?.getInt("courseId")
+            )
         }
         composable(Screens.InApp.Tutor.route) {
             val vm = hiltViewModel<TutorViewModel>()
@@ -124,16 +118,20 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
 
         composable(Screens.InApp.Courses.route) {
             val vm = hiltViewModel<CourseManagementViewModel>()
-            ClassManagementScreen(navController, vm) }
+            ClassManagementScreen(navController, vm)
+        }
 
         composable("${Screens.InApp.Courses.CourseDetail.route}/{courseId}",
             arguments = listOf(navArgument("courseId") {
                 type = NavType.IntType
-            })) {backStackEntry ->
+            })
+        ) { backStackEntry ->
             val courseDetailViewModel = hiltViewModel<RequestedCourseDetailViewModel>()
-            RequestedCourseDetailScreen(navController,
+            RequestedCourseDetailScreen(
+                navController,
                 courseDetailViewModel,
-                backStackEntry.arguments?.getInt("courseId"))
+                backStackEntry.arguments?.getInt("courseId")
+            )
         }
 
         composable(Screens.InApp.Profile.route) { ProfileScreen(navController) }
@@ -145,8 +143,10 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             val vm = hiltViewModel<LearningCoursesViewModel>()
             LearningCourseScreen(vm.state.value,
                 getLearningCourseCallback = {
-                vm.getLearningCourse(it)
-            })
+                    vm.getLearningCourse(it)
+                }, onNavigationIconClick = {
+                    navController.popBackStack()
+                })
         }
         authenticationGraph(navController)
     }

@@ -156,7 +156,7 @@ fun PreviewLearningCourseScreen() {
         ),
     )
     LearningCourseScreen(
-        state = LearningCoursesState(data = dummyData), {}
+        state = LearningCoursesState(data = dummyData), {}, {}
     )
 }
 
@@ -195,7 +195,7 @@ fun PreviewCourseItem() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LearningCourseScreen(state: LearningCoursesState, getLearningCourseCallback: (String) -> Unit) {
+fun LearningCourseScreen(state: LearningCoursesState, getLearningCourseCallback: (String) -> Unit, onNavigationIconClick: () -> Unit ){
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val token = remember { mutableStateOf("") }
@@ -223,7 +223,7 @@ fun LearningCourseScreen(state: LearningCoursesState, getLearningCourseCallback:
             ),
             navigationIcon = {
                 IconButton(onClick = {
-
+                    onNavigationIconClick()
                 }) {
                     Icon(
                         imageVector = Icons.Filled.ArrowBack, contentDescription = "",

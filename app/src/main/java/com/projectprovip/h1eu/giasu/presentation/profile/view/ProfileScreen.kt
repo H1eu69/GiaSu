@@ -33,21 +33,32 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
+import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import kotlinx.coroutines.launch
+import org.jetbrains.annotations.Async
 
 @Preview
 @Composable
@@ -58,6 +69,29 @@ fun Preview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController) {
+    val context = LocalContext.current
+    val coroutine = rememberCoroutineScope()
+    val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
+    val useridKey = stringPreferencesKey(Constant.USERID_STRING)
+    val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
+    val userName = remember {
+        mutableStateOf("")
+    }
+    val userId = remember {
+        mutableStateOf("")
+    }
+    val userImage = remember {
+        mutableStateOf("")
+    }
+    LaunchedEffect(key1 = "") {
+        coroutine.launch {
+            context.dataStore.data.collect {
+                userName.value = it[usernameKey].toString()
+                userId.value = it[useridKey].toString()
+                userImage.value = it[userImageKey].toString()
+            }
+        }
+    }
     Scaffold(
         containerColor = Color.LightGray,
         topBar = {
@@ -70,7 +104,7 @@ fun ProfileScreen(navController: NavController) {
         }
     ) {
         LazyColumn(modifier = Modifier.padding(it)) {
-            item { Profile() }
+            item { Profile(userImage.value ,userName.value, userId.value) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
             item { ColumnOfButton(navController) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
@@ -90,7 +124,7 @@ fun ProfileScreen(navController: NavController) {
         }    }
 }
 @Composable
-fun Profile() {
+fun Profile(image: String,name: String, id: String) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -98,42 +132,42 @@ fun Profile() {
             .fillMaxWidth()
             .background(Color.White)
     ) {
-        ProfileImage()
-        Text(text = "Lecture name", style = TextStyle(
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .requiredSize(150.dp)
+        ) {
+            AsyncImage(
+                image,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(CircleShape)
+                    .clickable {
+
+                    })
+            Icon(imageVector = Icons.Default.Create, contentDescription = null,
+                tint = EDSColors.primaryColor,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .padding(2.dp)
+                    .align(Alignment.BottomCenter))
+        }
+        Text(text = name, style = TextStyle(
             fontSize = 16.sp,
             color = EDSColors.primaryColor
         ))
         MultiColorText(text1 = "ID: ",
             color1 = EDSColors.primaryColor,
-            text2 = "0967075",
+            text2 = id,
             color2 = Color.Black)
     }
 }
 
 @Composable
-fun ProfileImage() {
-    Box(
-        modifier = Modifier
-            .clip(CircleShape)
-            .requiredSize(150.dp)
-    ) {
-        Image(imageVector = Icons.Default.AccountCircle,
-            contentDescription = null,
-            alpha = 0.3f,
-            modifier = Modifier
-                .size(150.dp)
-                .clip(CircleShape)
-                .clickable {
+fun ProfileImage(image: String) {
 
-                })
-        Icon(imageVector = Icons.Default.Create, contentDescription = null,
-            tint = EDSColors.primaryColor,
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(Color.White)
-                .padding(2.dp)
-                .align(Alignment.BottomCenter))
-    }
 }
 
 @Composable
