@@ -6,7 +6,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -17,6 +23,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
@@ -31,12 +39,15 @@ import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
+import com.projectprovip.h1eu.giasu.presentation.profile.view.LearningCourseScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.ProfileScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorRegisterScreen
+import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCoursesViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,10 +141,16 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             val vm = hiltViewModel<TutorRegisterViewModel>()
             TutorRegisterScreen(navController, vm)
         }
+        composable(Screens.InApp.Profile.LearningCourses.route) {
+            val vm = hiltViewModel<LearningCoursesViewModel>()
+            LearningCourseScreen(vm.state.value,
+                getLearningCourseCallback = {
+                vm.getLearningCourse(it)
+            })
+        }
         authenticationGraph(navController)
     }
 }
-
 
 /*BottomNavigationItem(
 icon = {

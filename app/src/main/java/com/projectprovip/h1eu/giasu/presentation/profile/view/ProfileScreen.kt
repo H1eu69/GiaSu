@@ -150,7 +150,10 @@ fun ColumnOfButton(navController: NavController) {
             }
         )
         ButtonColumnItem(Icons.Rounded.Star, EDSColors.primaryColor,
-            "Learning Courses", true)
+            "Learning Courses", true,
+            onClick = {
+                navController.navigate(Screens.InApp.Profile.LearningCourses.route)
+            })
     }
 }
 

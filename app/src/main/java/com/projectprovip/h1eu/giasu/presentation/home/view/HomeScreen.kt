@@ -58,6 +58,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.DateFormat
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
@@ -385,7 +386,7 @@ fun BottomContent(fee: Double, createdDate: String) {
                 color = EDSColors.costTextColor
             )
         )
-        IconAndText(Icons.Outlined.DateRange, createdDate)
+        IconAndText(Icons.Outlined.DateRange, DateFormat.DD_MM_YYYY(createdDate))
     }
 }
 

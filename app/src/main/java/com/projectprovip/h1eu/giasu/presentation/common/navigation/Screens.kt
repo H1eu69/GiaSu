@@ -47,6 +47,7 @@ sealed class Screens(val route: String) {
             icon = Icons.Outlined.AccountCircle, title = "Profile"
         ) {
             object TutorRegistration : Screens(route = "tutor_registration")
+            object LearningCourses : Screens(route = "learning_courses")
         }
 
         object PersonalInformation : Screens(route = "personal_information")

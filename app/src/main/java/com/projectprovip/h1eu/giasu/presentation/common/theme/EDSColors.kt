@@ -26,5 +26,11 @@ class EDSColors {
         val grayText = Color(128,128,128,255)
         val white = Color.White
         val yellowStar =  Color(255,212,94,255)
+        val learningModeOnlineTextColor = Color(149, 209, 255)
+        val learningModeOnlineBackgroundColor = Color(1, 137, 255)
+        val learningModeHybridTextColor = Color(170, 50, 255)
+        val learningModeHybridBackgroundColor = Color(215, 163, 255)
+        val learningModeOfflineBackgroundColor = Color(255,235,235,255)
+        val learningModeOfflineTextColor = Color(255,92,92,255)
     }
 }

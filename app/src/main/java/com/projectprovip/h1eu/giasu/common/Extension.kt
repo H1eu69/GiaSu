@@ -5,11 +5,9 @@ import java.time.format.DateTimeFormatter
 
 object DateFormat {
     fun DD_MM_YYYY(date: String): String {
-
-        val inputDate = "2023-06-22T21:29:19"
         val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
-        val dateTime = LocalDateTime.parse(inputDate)
+        val dateTime = LocalDateTime.parse(date)
 
         return dateTime.format(formatter)
     }

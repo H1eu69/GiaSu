@@ -1,7 +1,7 @@
 package com.projectprovip.h1eu.giasu.data.course.api
 
-import com.projectprovip.h1eu.giasu.data.course.dto.CourseInformationDtoItem
 import com.projectprovip.h1eu.giasu.data.course.dto.CoursesInformationDto
+import com.projectprovip.h1eu.giasu.data.course.dto.LearningCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
@@ -29,4 +29,7 @@ interface CourseApi {
     @GET("Profile/CourseRequestDetail/{id}")
     suspend fun getRequestedCourseDetail(@Path("id") courseId: Int,
                                          @Header("Authorization") token: String) : Response<RequestedCourseDetailDto>
+
+    @GET("Profile/GetLearningCourses")
+    suspend fun getLearningCourses(@Header("Authorization") token: String) : Response<LearningCoursesDto>
 }
