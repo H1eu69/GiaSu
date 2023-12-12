@@ -5,7 +5,10 @@ import com.projectprovip.h1eu.giasu.data.course.dto.LearningCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
+import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
+import retrofit2.Call
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
@@ -32,4 +35,9 @@ interface CourseApi {
 
     @GET("Profile/GetLearningCourses")
     suspend fun getLearningCourses(@Header("Authorization") token: String) : Response<LearningCoursesDto>
+
+    @POST("Profile/Review/{id}")
+    suspend fun reviewTutorOfByCourseId(@Header("Authorization") token: String,
+                                        @Path("id") id: Int,
+                                        @Body input: ReviewTutorInput) : Response<Unit>
 }

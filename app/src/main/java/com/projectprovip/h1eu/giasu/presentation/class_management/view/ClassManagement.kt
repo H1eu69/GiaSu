@@ -1,14 +1,15 @@
 package com.projectprovip.h1eu.giasu.presentation.class_management.view
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,18 +18,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material3.Tab
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.PermIdentity
 import androidx.compose.material.icons.outlined.Subject
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,19 +79,15 @@ fun ClassManagementScreen(navController: NavController, vm: CourseManagementView
     val list = listOf("All", "Success", "Canceled", "Pending")
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
-    var token = remember { mutableStateOf("") }
-    val state = vm.state
-    val listRequestedCourse = vm.filteredList
+    val token = remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = "") {
         coroutine.launch {
             context.dataStore.data.collect { preference ->
                 token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
+                vm.getRequestedCourses(token.value)
             }
         }
-    }
-    if(state.value.data.isEmpty()){
-        vm.getRequestedCourses(token.value)
     }
 
     Scaffold(
@@ -99,62 +97,133 @@ fun ClassManagementScreen(navController: NavController, vm: CourseManagementView
             })
         }
     ) {
-        LazyColumn(
-            Modifier
-                .padding(it)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(modifier = Modifier.padding(it)) {
+            ScrollableTabRow(
+                selectedTabIndex = tabSelectedIndex.intValue,
+                edgePadding = 8.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                list.forEachIndexed { index, item ->
+                    Tab(text = { Text(item) },
+                        selected = tabSelectedIndex.intValue == index,
+                        unselectedContentColor = Color.LightGray,
+                        onClick = {
+                            tabSelectedIndex.intValue = index
+                            vm.getListByFilter(item)
+                        }
+                    )
+                }
+            }
+            UIBasedOnState(vm, context, navController = navController)
+        }
+    }
+}
+
+@Composable
+fun UIBasedOnState(
+    vm: CourseManagementViewModel,
+    context: Context,
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
+    val listRequestedCourse = vm.filteredList
+    val state = vm.state
+    val openDialog = remember { mutableStateOf(true) }
+
+    when {
+        state.value.message.isNotEmpty() -> {
+            if (state.value.message == "Error403 Forbidden") {
+                Dialog(open = openDialog.value,
+                    onDismissRequest = {
+                        openDialog.value = false
+                        navController.popBackStack()
+                    }, onConfirmation = {
+                        openDialog.value = false
+                        navController.popBackStack()
+                        navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
+                    })
+            } else
+                Toast.makeText(context, state.value.message, Toast.LENGTH_SHORT).show()
+        }
+
+        state.value.isLoading -> {
+            showLoading(modifier = modifier.fillMaxSize())
+        }
+
+        state.value.data.isNotEmpty() -> {
+            if (listRequestedCourse.value.isNotEmpty()) {
+                ListCourses(
+                    modifier,
+                    data = listRequestedCourse.value,
+                    navController
+                )
+            } else {
+                Text(
+                    text = "No items to show",
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun Dialog(open: Boolean, onDismissRequest: () -> Unit, onConfirmation: () -> Unit) {
+    when {
+        open -> {
+            AlertDialog(
+                title = {
+                    Text(text = "You don't have permission to access")
+                },
+                text = {
+                    Text(text = "Please register as tutor to access this")
+                },
+                onDismissRequest = {
+                    onDismissRequest()
+                },
+                confirmButton = {
+                    TextButton(onClick = { onConfirmation() }) {
+                        Text("Accept")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            onDismissRequest()
+                        }
+                    ) {
+                        Text("Dismiss")
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun showLoading(modifier: Modifier = Modifier) {
+    Box(modifier = modifier) {
+        CircularProgressIndicator(
+            modifier = Modifier.align(Alignment.Center)
+        )
+    }
+}
+
+@Composable
+fun ListCourses(
+    modifier: Modifier = Modifier,
+    data: List<RequestedCourse>,
+    navController: NavController
+) {
+    LazyColumn(
+        modifier,
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        data.forEach {
             item {
-                ScrollableTabRow(
-                    selectedTabIndex = tabSelectedIndex.value,
-                    edgePadding = 8.dp,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    list.forEachIndexed { index, item ->
-                        Tab(text = { Text(item) },
-                            selected = tabSelectedIndex.value == index,
-                            unselectedContentColor = Color.LightGray,
-                            onClick = {
-                                tabSelectedIndex.value = index
-                                vm.getListByFilter(item)
-                            }
-                        )
-                    }
-                }
+                ClassItem(it, navController)
             }
-            when {
-                state.value.isLoading -> {
-                    item {
-                        CircularProgressIndicator(
-                            modifier = Modifier.fillMaxHeight()
-                        )
-                    }
-                }
-
-                state.value.message.isNotEmpty() -> {
-                    Toast.makeText(context, state.value.message, Toast.LENGTH_SHORT).show()
-                }
-
-                state.value.data.isNotEmpty() -> {
-                    if (listRequestedCourse.value.isNotEmpty()) {
-                        listRequestedCourse.value.forEach {
-                            item {
-                                ClassItem(it, navController)
-                            }
-                        }
-                    } else {
-                        item {
-                            Text(
-                                text = "No items to show",
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-                    }
-                }
-            }
-
         }
     }
 }

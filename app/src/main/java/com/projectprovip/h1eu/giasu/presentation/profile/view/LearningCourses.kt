@@ -55,6 +55,7 @@ import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.profile.model.LearningCourseBundle
 import com.projectprovip.h1eu.giasu.presentation.profile.model.LearningCoursesState
 import kotlinx.coroutines.launch
 
@@ -156,7 +157,10 @@ fun PreviewLearningCourseScreen() {
         ),
     )
     LearningCourseScreen(
-        state = LearningCoursesState(data = dummyData), {}, {}
+        state = LearningCoursesState(data = dummyData),
+        {},
+        {},
+        {}
     )
 }
 
@@ -195,7 +199,10 @@ fun PreviewCourseItem() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LearningCourseScreen(state: LearningCoursesState, getLearningCourseCallback: (String) -> Unit, onNavigationIconClick: () -> Unit ){
+fun LearningCourseScreen(state: LearningCoursesState,
+                         getLearningCourseCallback: (String) -> Unit,
+                         onNavigationIconClick: () -> Unit,
+                         onCourseItemClick: (LearningCourseBundle) -> Unit){
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val token = remember { mutableStateOf("") }
@@ -241,7 +248,11 @@ fun LearningCourseScreen(state: LearningCoursesState, getLearningCourseCallback:
                     item {
                         CourseItem(data = learningCourse,
                             onClick = {
-
+                                val bundle = LearningCourseBundle(
+                                    learningCourse.id,
+                                    learningCourse.tutorId,
+                                )
+                                onCourseItemClick(bundle)
                             })
                     }
                 }

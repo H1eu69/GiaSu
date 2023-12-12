@@ -231,7 +231,8 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
+                    .align(Alignment.BottomCenter)
+                    .padding(20.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
             ) {
 

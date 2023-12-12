@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -153,6 +154,7 @@ fun EduSmartButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: String,
+    isLoading: Boolean = false,
     buttonColor: Color = EDSColors.primaryColor,
  )  {
     Button(
@@ -160,6 +162,9 @@ fun EduSmartButton(
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
     ) {
-        Text(text = text)
+        if(!isLoading)
+            Text(text = text)
+        else
+            CircularProgressIndicator()
     }
 }

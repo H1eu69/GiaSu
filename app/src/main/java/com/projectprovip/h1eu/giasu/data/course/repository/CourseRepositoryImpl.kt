@@ -6,6 +6,7 @@ import com.projectprovip.h1eu.giasu.data.course.dto.LearningCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
+import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import retrofit2.Response
 import javax.inject.Inject
@@ -34,5 +35,9 @@ class CourseRepositoryImpl @Inject constructor(
 
     override suspend fun getLearningCourses(token: String): Response<LearningCoursesDto> {
         return api.getLearningCourses(token)
+    }
+
+    override suspend fun reviewTutorByCourseId(token: String, courseId: Int, input: ReviewTutorInput) : Response<Unit>{
+        return api.reviewTutorOfByCourseId(token, courseId, input)
     }
 }
