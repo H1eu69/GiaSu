@@ -1,7 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.profile.view
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,14 +19,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.AddCircle
+import androidx.compose.material.icons.rounded.Class
 import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -53,12 +54,12 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
+import com.projectprovip.h1eu.giasu.presentation.class_management.view.TutorRegisterAlertDialog
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.launch
-import org.jetbrains.annotations.Async
 
 @Preview
 @Composable
@@ -71,6 +72,7 @@ fun Preview() {
 fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
+    val showDialog = remember { mutableStateOf(false) }
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
     val useridKey = stringPreferencesKey(Constant.USERID_STRING)
     val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
@@ -82,6 +84,9 @@ fun ProfileScreen(navController: NavController) {
     }
     val userImage = remember {
         mutableStateOf("")
+    }
+    val onShowDialog: (Boolean) -> Unit = {
+        showDialog.value = it
     }
     LaunchedEffect(key1 = "") {
         coroutine.launch {
@@ -95,36 +100,53 @@ fun ProfileScreen(navController: NavController) {
     Scaffold(
         containerColor = Color.LightGray,
         topBar = {
-            CenterAlignedTopAppBar(title = {
-                AppBarTitle(text = "Profile")
-            }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = EDSColors.primaryColor,
-                titleContentColor = Color.White
-            ))
+            CenterAlignedTopAppBar(
+                title = {
+                    AppBarTitle(text = "Profile")
+                }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = EDSColors.primaryColor,
+                    titleContentColor = Color.White
+                )
+            )
         }
     ) {
+        if (showDialog.value) {
+            TutorRegisterAlertDialog(showDialog.value, {
+                showDialog.value = !showDialog.value
+            }, {
+                showDialog.value = !showDialog.value
+            })
+        }
         LazyColumn(modifier = Modifier.padding(it)) {
-            item { Profile(userImage.value ,userName.value, userId.value) }
+            item { Profile(userImage.value, userName.value, userId.value) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
-            item { ColumnOfButton(navController) }
+            item { ColumnOfButton(navController, onShowDialog) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
-            item { ButtonColumnItem(Icons.Rounded.ExitToApp, EDSColors.primaryColor,
-                "Change password", true) }
+            item {
+                ButtonColumnItem(
+                    Icons.Rounded.ExitToApp, EDSColors.primaryColor,
+                    "Change password", true
+                )
+            }
             item { Spacer(modifier = Modifier.height(30.dp)) }
-            item { ButtonColumnItem(Icons.Rounded.ExitToApp, Color.Red,
-                "Logout", false, onClick = {
-                    navController.navigate(Screens.Authentication.route) {
-                        popUpTo(Screens.InApp.route) {
-                            inclusive = true
+            item {
+                ButtonColumnItem(Icons.Rounded.ExitToApp, Color.Red,
+                    "Logout", false, onClick = {
+                        navController.navigate(Screens.Authentication.route) {
+                            popUpTo(Screens.InApp.route) {
+                                inclusive = true
+                            }
                         }
-                    }
-                }) }
+                    })
+            }
             item { Spacer(modifier = Modifier.height(50.dp)) }
 
-        }    }
+        }
+    }
 }
+
 @Composable
-fun Profile(image: String,name: String, id: String) {
+fun Profile(image: String, name: String, id: String) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -146,22 +168,28 @@ fun Profile(image: String,name: String, id: String) {
                     .clickable {
 
                     })
-            Icon(imageVector = Icons.Default.Create, contentDescription = null,
+            Icon(
+                imageVector = Icons.Default.Create, contentDescription = null,
                 tint = EDSColors.primaryColor,
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(Color.White)
                     .padding(2.dp)
-                    .align(Alignment.BottomCenter))
+                    .align(Alignment.BottomCenter)
+            )
         }
-        Text(text = name, style = TextStyle(
-            fontSize = 16.sp,
-            color = EDSColors.primaryColor
-        ))
-        MultiColorText(text1 = "ID: ",
+        Text(
+            text = name, style = TextStyle(
+                fontSize = 16.sp,
+                color = EDSColors.primaryColor
+            )
+        )
+        MultiColorText(
+            text1 = "ID: ",
             color1 = EDSColors.primaryColor,
             text2 = id,
-            color2 = Color.Black)
+            color2 = Color.Black
+        )
     }
 }
 
@@ -171,12 +199,14 @@ fun ProfileImage(image: String) {
 }
 
 @Composable
-fun ColumnOfButton(navController: NavController) {
+fun ColumnOfButton(navController: NavController, onShowDialog: (Boolean) -> Unit) {
     Column(
         Modifier.fillMaxWidth()
     ) {
-        ButtonColumnItem(Icons.Rounded.AccountCircle, EDSColors.primaryColor,
-            "Personal information", true)
+        ButtonColumnItem(
+            Icons.Rounded.AccountCircle, EDSColors.primaryColor,
+            "Personal information", true
+        )
         ButtonColumnItem(Icons.Rounded.AddCircle, EDSColors.primaryColor,
             "Register lecturer", true,
             onClick = {
@@ -188,12 +218,58 @@ fun ColumnOfButton(navController: NavController) {
             onClick = {
                 navController.navigate(Screens.InApp.Profile.LearningCourses.route)
             })
+        ButtonColumnItem(Icons.Rounded.Class, EDSColors.primaryColor,
+            "Tutoring Courses", true,
+            onClick = {
+                onShowDialog(true)
+                //navController.navigate(Screens.InApp.Profile.LearningCourses.route)
+            })
     }
 }
 
 @Composable
-fun ButtonColumnItem(imageVector: ImageVector, iconColor: Color ,title: String, hasNavigateIcon : Boolean,
-                     onClick: (() -> Unit) = {}) {
+fun TutorRegisterAlertDialog(
+    open: Boolean,
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit
+) {
+    when {
+        open -> {
+            AlertDialog(
+                title = {
+                    androidx.compose.material3.Text(text = "You don't have permission to access")
+                },
+                text = {
+                    androidx.compose.material3.Text(text = "Please register as tutor to access this")
+                },
+                onDismissRequest = {
+                    onDismissRequest()
+                },
+                confirmButton = {
+                    TextButton(onClick = { onConfirmation() }) {
+                        androidx.compose.material3.Text("Accept")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            onDismissRequest()
+                        }
+                    ) {
+                        androidx.compose.material3.Text("Dismiss")
+                    }
+                }
+            )
+        }
+    }
+}
+
+
+@Composable
+fun ButtonColumnItem(
+    imageVector: ImageVector, iconColor: Color, title: String, hasNavigateIcon: Boolean,
+    onClick: (() -> Unit) = {}
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -206,16 +282,22 @@ fun ButtonColumnItem(imageVector: ImageVector, iconColor: Color ,title: String, 
             .padding(12.dp)
 
     ) {
-        Icon(imageVector = imageVector, contentDescription = null,
+        Icon(
+            imageVector = imageVector, contentDescription = null,
             tint = iconColor,
-            modifier = Modifier.size(36.dp))
+            modifier = Modifier.size(36.dp)
+        )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text = title, style = TextStyle(
-            fontSize = 16.sp
-        ))
+        Text(
+            text = title, style = TextStyle(
+                fontSize = 16.sp
+            )
+        )
         Spacer(modifier = Modifier.weight(1f))
-        if(hasNavigateIcon)
-            Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null,
-                tint = iconColor)
+        if (hasNavigateIcon)
+            Icon(
+                imageVector = Icons.Default.ArrowForward, contentDescription = null,
+                tint = iconColor
+            )
     }
 }

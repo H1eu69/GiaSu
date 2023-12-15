@@ -21,7 +21,7 @@ private val coursesRepository: CoursesRepository
                 Log.d("Status code", response.code().toString())
                 Log.d("respone bodyu", response.body().toString())
 
-                val list = response.body()!!.learningCourseItem.map {
+                val list = response.body()!!.learningCourseList.map {
                     it.toLearningCourse()
                 }
                 Log.d("data list", list.toString())

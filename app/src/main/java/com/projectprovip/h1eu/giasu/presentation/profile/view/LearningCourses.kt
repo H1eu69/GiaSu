@@ -1,6 +1,5 @@
 package com.projectprovip.h1eu.giasu.presentation.profile.view
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,15 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Subject
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -56,7 +52,7 @@ import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.LearningCourseBundle
-import com.projectprovip.h1eu.giasu.presentation.profile.model.LearningCoursesState
+import com.projectprovip.h1eu.giasu.presentation.profile.model.ListLearningCourseState
 import kotlinx.coroutines.launch
 
 @Preview
@@ -64,100 +60,45 @@ import kotlinx.coroutines.launch
 fun PreviewLearningCourseScreen() {
     val dummyData = listOf(
         LearningCourse(
-            "",
-            "",
-            500.3,
-            "0967075340",
-            "sddas",
-            "heheehehehehe",
-            200.3,
-            "Male",
-            50, "",
-            "Female",
-            "Hybrid",
-            180,
-            2,
+            "2023-12-13T20:34:59.6344398",
             5,
-            "Available",
-            20,
-            "Khoa hoc java cap toc 20p",
-            "Vua java",
-            50,
-            "Huynh trung hieu",
-            "0967075340"
+            "2023-12-13T20:34:59.6344398",
+            "Cancel",
+            "Java programmisng",
+            "heheehehehehe",
+            "Online"
         ),
         LearningCourse(
-            "",
-            "",
-            500.3,
-            "0967075340",
-            "sddas",
-            "heheehehehehe",
-            200.3,
-            "Male",
-            50, "",
-            "Female",
-            "Online",
-            180,
-            2,
+            "2023-12-13T20:34:59.6344398",
             5,
+            "2023-12-13T20:34:59.6344398",
             "Available",
-            20,
-            "Khoa hoc java cap toc 20p",
-            "Vua java",
-            50,
-            "Huynh trung hieu",
-            "0967075340"
+            "Piano",
+            "heheehehehehe",
+            "Hybrid"
         ),
         LearningCourse(
-            "",
-            "",
-            500.3,
-            "0967075340",
-            "sddas",
-            "heheehehehehe",
-            200.3,
-            "Male",
-            50, "",
-            "Female",
-            "Offline",
-            180,
-            2,
+            "2023-12-13T20:34:59.6344398",
             5,
-            "Available",
-            20,
-            "Khoa hoc java cap toc 20p",
-            "Vua java",
-            50,
-            "Huynh trung hieu",
-            "0967075340"
+            "2023-12-13T20:34:59.6344398",
+            "0967075340",
+            "Khoa hoc lap trinh 10p",
+            "heheehehehehe",
+            "Offline"
+
         ),
         LearningCourse(
-            "",
-            "",
-            500.3,
-            "0967075340",
-            "sddas",
-            "heheehehehehe",
-            200.3,
-            "Male",
-            50, "",
-            "Female",
-            "Hybrid",
-            180,
-            2,
+            "2023-12-13T20:34:59.6344398",
             5,
-            "Available",
-            20,
-            "Khoa hoc java cap toc 20p",
-            "Vua java",
-            50,
-            "Huynh trung hieu",
-            "0967075340"
+            "2023-12-13T20:34:59.6344398",
+            "0967075340",
+            "Vua hai tac",
+            "heheehehehehe",
+            "Online"
         ),
     )
     LearningCourseScreen(
-        state = LearningCoursesState(data = dummyData),
+        state = ListLearningCourseState(data = dummyData),
         {},
         {},
         {}
@@ -169,28 +110,14 @@ fun PreviewLearningCourseScreen() {
 fun PreviewCourseItem() {
     CourseItem(
         data = LearningCourse(
-            "",
-            "",
-            500.3,
+            "2023-12-13T20:34:59.6344398",
+            5,
+            "2023-12-13T20:34:59.6344398",
             "0967075340",
             "sddas",
             "heheehehehehe",
-            200.3,
-            "Male",
-            50, "",
-            "Female",
-            "Hybrid",
-            180,
-            2,
-            5,
-            "Available",
-            20,
-            "Khoa hoc java cap toc 20p",
-            "Vua java",
-            50,
-            "Huynh trung hieu",
-            "0967075340"
-        ),
+            "Online"
+            ),
         onClick = {
 
         }
@@ -199,10 +126,12 @@ fun PreviewCourseItem() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LearningCourseScreen(state: LearningCoursesState,
-                         getLearningCourseCallback: (String) -> Unit,
-                         onNavigationIconClick: () -> Unit,
-                         onCourseItemClick: (LearningCourseBundle) -> Unit){
+fun LearningCourseScreen(
+    state: ListLearningCourseState,
+    getLearningCourseCallback: (String) -> Unit,
+    onNavigationIconClick: () -> Unit,
+    onCourseItemClick: (LearningCourseBundle) -> Unit
+) {
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val token = remember { mutableStateOf("") }
@@ -243,15 +172,12 @@ fun LearningCourseScreen(state: LearningCoursesState,
         if (state.isLoading)
             CircularLoading(modifier = Modifier.padding(it))
         else if (state.data.isNotEmpty()) {
-            LazyColumn() {
+            LazyColumn {
                 state.data.forEach { learningCourse ->
                     item {
                         CourseItem(data = learningCourse,
                             onClick = {
-                                val bundle = LearningCourseBundle(
-                                    learningCourse.id,
-                                    learningCourse.tutorId,
-                                )
+                                val bundle = LearningCourseBundle(learningCourse.id)
                                 onCourseItemClick(bundle)
                             })
                     }
@@ -295,7 +221,7 @@ fun CourseItem(data: LearningCourse, onClick: () -> Unit) {
         ) {
             AppBarTitle(text = data.title)
             SubTitle(data.id, data.status, data.learningMode)
-            MiddleContent(data.subjectName, data.subjectId, data.creationTime)
+            MiddleContent(data.subjectName, data.creationTime)
         }
     }
 }
@@ -369,11 +295,10 @@ fun IconAndText(imageVector: ImageVector, text: String) {
 }
 
 @Composable
-fun MiddleContent(subjectName: String, subjectId: Int, creationTime: String) {
+fun MiddleContent(subjectName: String, creationTime: String) {
     Column(
         Modifier.padding(top = 12.dp, bottom = 20.dp)
     ) {
-        IconAndText(Icons.Outlined.Info, "Subject ID: $subjectId")
         IconAndText(Icons.Outlined.Subject, subjectName)
         IconAndText(
             Icons.Outlined.DateRange, "Created at ${DateFormat.DD_MM_YYYY(creationTime)}"

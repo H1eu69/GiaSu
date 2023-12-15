@@ -23,7 +23,7 @@ class ReviewTutorUseCase @Inject constructor(
                 emit(EDSResult.Success(data = null))
             }
             else {
-                emit(EDSResult.Error(message = response.message()))
+                emit(EDSResult.Error(message = response.errorBody()?.string()))
             }
         } catch (e: HttpException) {
             emit(EDSResult.Error(e.localizedMessage))

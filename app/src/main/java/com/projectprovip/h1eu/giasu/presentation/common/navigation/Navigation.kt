@@ -2,6 +2,7 @@
 
 package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -172,24 +173,27 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                     navController.popBackStack()
                 },
                 onCourseItemClick = { bundle ->
-                    navController.navigate("${Screens.InApp.Profile.LearningCourses.TutorReview.route}/${bundle.courseId}/${bundle.tutorId}")
+                    navController.navigate("${Screens.InApp.Profile.LearningCourses.TutorReview.route}/${bundle.courseId}")
                 })
         }
         composable(
-            "${Screens.InApp.Profile.LearningCourses.TutorReview.route}/{courseId}/{tutorId}",
+            "${Screens.InApp.Profile.LearningCourses.TutorReview.route}/{courseId}",
             arguments = listOf(
                 navArgument("courseId") {
-                    type = NavType.IntType
-                },
-                navArgument("tutorId") {
                     type = NavType.IntType
                 },
             )
         ) {
             val courseId = it.arguments?.getInt("courseId")
             val vm = hiltViewModel<TutorReviewViewModel>()
+
+            LaunchedEffect(key1 = vm.learningCourseDetailState) {
+                vm.getLearningCourseData(token.value, courseId!!)
+            }
+
             TutorReviewScreen(
-                state = vm.reviewTutorState.value,
+                reviewState = vm.reviewTutorState.value,
+                learningCourseDetailState = vm.learningCourseDetailState.value ,
                 onReviewButtonClick = { input ->
                     vm.sendReviewRequest(token.value, courseId!!, input)
                 },

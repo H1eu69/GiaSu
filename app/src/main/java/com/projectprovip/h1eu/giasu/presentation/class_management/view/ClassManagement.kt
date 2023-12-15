@@ -133,7 +133,7 @@ fun UIBasedOnState(
     when {
         state.value.message.isNotEmpty() -> {
             if (state.value.message == "Error403 Forbidden") {
-                Dialog(open = openDialog.value,
+                TutorRegisterAlertDialog(open = openDialog.value,
                     onDismissRequest = {
                         openDialog.value = false
                         navController.popBackStack()
@@ -159,8 +159,9 @@ fun UIBasedOnState(
                 )
             } else {
                 Text(
-                    text = "No items to show",
+                    text = "No items",
                     textAlign = TextAlign.Center,
+                    modifier = modifier.fillMaxSize()
                 )
             }
         }
@@ -168,7 +169,7 @@ fun UIBasedOnState(
 }
 
 @Composable
-fun Dialog(open: Boolean, onDismissRequest: () -> Unit, onConfirmation: () -> Unit) {
+fun TutorRegisterAlertDialog(open: Boolean, onDismissRequest: () -> Unit, onConfirmation: () -> Unit) {
     when {
         open -> {
             AlertDialog(

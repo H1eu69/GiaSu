@@ -174,7 +174,7 @@ fun CourseDetailBody(
             )
         }
         item {
-            BottomContent(fee = course.fee, createdDate = DateFormat.DD_MM_YYYY(course.creationTime))
+            BottomContent(fee = course.fee, createdDate = course.creationTime)
         }
         item {
             DetailIconAndText(
