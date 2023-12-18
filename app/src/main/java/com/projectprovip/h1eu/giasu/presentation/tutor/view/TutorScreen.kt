@@ -128,7 +128,9 @@ fun TutorItemPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TutorScreen(state: State<TutorListState>, loadMore: (() -> Unit)) {
+fun TutorScreen(state: State<TutorListState>,
+                loadMore: (() -> Unit),
+                onItemClick: (Int) -> Unit = {}) {
 
     Scaffold(
         topBar = {
@@ -157,6 +159,7 @@ fun TutorScreen(state: State<TutorListState>, loadMore: (() -> Unit)) {
                 Log.d("Test Loading","2")
                 InfiniteList(state.value.data,
                     modifier = Modifier.padding(it),
+                    onItemClick = onItemClick,
                     onLoadMore = {
                         loadMore()
                     })
@@ -169,6 +172,7 @@ fun TutorScreen(state: State<TutorListState>, loadMore: (() -> Unit)) {
 fun InfiniteList(
     data: List<Tutor>,
     modifier: Modifier,
+    onItemClick: (Int) -> Unit,
     onLoadMore: (() -> Unit)
 ) {
     val listState = rememberLazyGridState()
@@ -180,7 +184,7 @@ fun InfiniteList(
         modifier = modifier
     ) {
         items(count = listCount) { index ->
-            TutorItem(data[index])
+            TutorItem(data[index], onItemClick = onItemClick)
             if ( index == listCount - 2) {
                 onLoadMore()
             }
@@ -189,23 +193,7 @@ fun InfiniteList(
 }
 
 @Composable
-fun GridBodyList(data: List<Tutor>, modifier: Modifier) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
-    ) {
-        data.forEach {
-            item {
-                TutorItem(it)
-            }
-        }
-
-    }
-}
-
-@Composable
-fun TutorItem(tutor: Tutor) {
+fun TutorItem(tutor: Tutor, onItemClick: (Int) -> Unit = {}) {
     Card(shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
             containerColor = EDSColors.white
@@ -219,6 +207,7 @@ fun TutorItem(tutor: Tutor) {
                 RoundedCornerShape(10)
             )
             .clickable {
+                onItemClick(tutor.id)
                 //navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${data.id}")
             }) {
         Column(

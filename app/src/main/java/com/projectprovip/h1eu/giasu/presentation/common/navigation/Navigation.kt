@@ -2,7 +2,6 @@
 
 package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -48,7 +47,9 @@ import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCours
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorReviewViewModel
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
+import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorScreen
+import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorViewModel
 import kotlinx.coroutines.launch
 
@@ -135,9 +136,31 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         }
         composable(Screens.InApp.Tutor.route) {
             val vm = hiltViewModel<TutorViewModel>()
-            TutorScreen(vm.state) {
-                vm.loadMore()
+            TutorScreen(vm.state,
+                loadMore = {
+                    vm.loadMore()
+                },
+                onItemClick = {
+                    navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$it")
+                })
+        }
+
+        composable("${Screens.InApp.Tutor.TutorDetail.route}/{tutorId}",
+            arguments = listOf(
+                navArgument("tutorId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            val tutorId = backStackEntry.arguments?.getInt("tutorId")
+            val vm = hiltViewModel<TutorDetailViewModel>()
+            LaunchedEffect(key1 = vm.state) {
+                vm.getTutorDetail(tutorId!!)
             }
+            TutorDetailScreen(state = vm.state.value,
+                onNavigateIconClick = {
+                    navController.popBackStack()
+                })
         }
 
         composable(Screens.InApp.Courses.route) {
@@ -193,7 +216,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
 
             TutorReviewScreen(
                 reviewState = vm.reviewTutorState.value,
-                learningCourseDetailState = vm.learningCourseDetailState.value ,
+                learningCourseDetailState = vm.learningCourseDetailState.value,
                 onReviewButtonClick = { input ->
                     vm.sendReviewRequest(token.value, courseId!!, input)
                 },

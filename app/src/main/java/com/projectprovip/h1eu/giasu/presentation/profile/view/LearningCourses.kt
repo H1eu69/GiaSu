@@ -228,16 +228,19 @@ fun CourseItem(data: LearningCourse, onClick: () -> Unit) {
 
 @Composable
 fun SubTitle(subTitle: Int, status: String, learningMode: String) {
-    var statusBackgroundColor = EDSColors.notScheduleBackgroundColor
-    var statusTextColor = EDSColors.notScheduleTextColor
+    var statusBackgroundColor = EDSColors.waitingBackgroundColor
+    var statusTextColor = EDSColors.waitingTextColor
+
+    if (status == "Available" || status == "Confirmed") {
+        statusBackgroundColor = EDSColors.teachingBackgroundColor
+        statusTextColor = EDSColors.teachingTextColor
+    } else if(status == "Canceled") {
+        statusBackgroundColor = EDSColors.notScheduleBackgroundColor
+        statusTextColor = EDSColors.notScheduleTextColor
+    }
 
     var learningModeBackgroundColor = EDSColors.learningModeOnlineBackgroundColor
     var learningModeTextColor = EDSColors.learningModeOnlineTextColor
-
-    if (status == "Available") {
-        statusBackgroundColor = EDSColors.teachingBackgroundColor
-        statusTextColor = EDSColors.teachingTextColor
-    }
 
     if (learningMode == "Offline") {
         learningModeBackgroundColor = EDSColors.learningModeOfflineBackgroundColor

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.StarRate
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.icons.outlined.StarRate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -57,7 +58,7 @@ fun RatingBar(
 
                 )
             else Icon(
-                imageVector = Icons.Outlined.StarRate,
+                imageVector = Icons.Outlined.StarOutline,
                 contentDescription = "",
                 tint = color,
                 modifier = Modifier

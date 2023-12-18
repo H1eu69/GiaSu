@@ -76,7 +76,7 @@ fun ClassManagementScreen(navController: NavController, vm: CourseManagementView
     val tabSelectedIndex = remember {
         mutableIntStateOf(0)
     }
-    val list = listOf("All", "Success", "Canceled", "Pending")
+    val list = listOf("All", "Success", "Canceled", "Verifying")
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val token = remember { mutableStateOf("") }
@@ -269,6 +269,9 @@ fun SubTitle(subTitle: Int, status: String) {
     if (status == "Success") {
         backgroundColor = EDSColors.teachingBackgroundColor
         textColor = EDSColors.teachingTextColor
+    } else if (status == "Verifying") {
+        backgroundColor = EDSColors.waitingTextColor
+        textColor = EDSColors.waitingBackgroundColor
     }
 
     Row(

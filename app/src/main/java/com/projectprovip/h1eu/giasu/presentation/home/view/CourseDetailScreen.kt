@@ -46,6 +46,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -286,14 +287,17 @@ fun DetailIconAndText(imageVector: ImageVector, boldedText: String, text: String
             tint = EDSColors.primaryColor
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(
+        androidx.compose.material.Text(
             text = boldedText,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
+        Spacer(modifier = Modifier.weight(1f))
+        androidx.compose.material.Text(
             text = text,
+            textAlign = TextAlign.End,
+            color = EDSColors.costTextColor,
+            fontWeight = FontWeight.Medium,
             fontSize = 16.sp
         )
     }
