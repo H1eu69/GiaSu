@@ -6,9 +6,10 @@ data class LearningCourse(
     val lastModificationTime: String,
     val status: String,
     val subjectName: String,
-    val title: String
+    val title: String,
+    val learningMode: String
 )
 
 fun LearningCourse.toLearningCourse() = com.projectprovip.h1eu.giasu.domain.course.model.LearningCourse(
-    creationTime, id, lastModificationTime, status, subjectName, title
+    creationTime, id, lastModificationTime, status, subjectName, title, learningMode
 )

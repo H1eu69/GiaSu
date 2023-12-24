@@ -217,6 +217,9 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             TutorReviewScreen(
                 reviewState = vm.reviewTutorState.value,
                 learningCourseDetailState = vm.learningCourseDetailState.value,
+                onNavigationIconClick = {
+                    navController.popBackStack()
+                },
                 onReviewButtonClick = { input ->
                     vm.sendReviewRequest(token.value, courseId!!, input)
                 },

@@ -76,13 +76,14 @@ import com.projectprovip.h1eu.giasu.presentation.profile.model.ReviewTutorState
 fun PreviewTutorReviewScreen() {
     TutorReviewScreen(reviewState = ReviewTutorState(),
         learningCourseDetailState = LearningCourseDetailState(),
-        {})
+        onReviewButtonClick = {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TutorReviewScreen(
     reviewState: ReviewTutorState,
+    onNavigationIconClick: () -> Unit = {},
     learningCourseDetailState: LearningCourseDetailState,
     onReviewButtonClick: (ReviewTutorInput) -> Unit,
     onReviewSuccess: () -> Unit = {},
@@ -95,7 +96,7 @@ fun TutorReviewScreen(
                     Text("Review Tutor", color = EDSColors.white)
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { onNavigationIconClick() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = null,
@@ -164,12 +165,15 @@ fun TutorReviewScreen(
                                 }
                             }
                         }
-                        var statusBackgroundColor = EDSColors.notScheduleBackgroundColor
-                        var statusTextColor = EDSColors.notScheduleTextColor
+                        var statusBackgroundColor = EDSColors.waitingBackgroundColor
+                        var statusTextColor = EDSColors.waitingTextColor
 
-                        if (learningCourseDetailState.data.status == "Available") {
+                        if (learningCourseDetailState.data.status == "Available" || learningCourseDetailState.data.status == "Confirmed") {
                             statusBackgroundColor = EDSColors.teachingBackgroundColor
                             statusTextColor = EDSColors.teachingTextColor
+                        } else if(learningCourseDetailState.data.status == "Canceled") {
+                            statusBackgroundColor = EDSColors.notScheduleBackgroundColor
+                            statusTextColor = EDSColors.notScheduleTextColor
                         }
 
                         androidx.compose.material.Text(
