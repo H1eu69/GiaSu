@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
+import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScreen
@@ -39,10 +40,12 @@ import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
+import com.projectprovip.h1eu.giasu.presentation.profile.view.CreateClassScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.LearningCourseScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.ProfileScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorRegisterScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorReviewScreen
+import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CreateClassViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCoursesViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorReviewViewModel
@@ -186,6 +189,13 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable(Screens.InApp.Profile.TutorRegistration.route) {
             val vm = hiltViewModel<TutorRegisterViewModel>()
             TutorRegisterScreen(navController, vm)
+        }
+        composable(Screens.InApp.Profile.RequestClass.route) {
+            val vm = hiltViewModel<CreateClassViewModel>()
+            val createCourse : (CreateCourseInput) -> Unit = {
+                vm.requestClass(token.value, it)
+            }
+            CreateClassScreen(navController, vm.state.value, createCourse)
         }
         composable(Screens.InApp.Profile.LearningCourses.route) {
             val vm = hiltViewModel<LearningCoursesViewModel>()

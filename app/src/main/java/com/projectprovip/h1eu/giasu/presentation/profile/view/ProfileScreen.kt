@@ -207,6 +207,12 @@ fun ColumnOfButton(navController: NavController, onShowDialog: (Boolean) -> Unit
             Icons.Rounded.AccountCircle, EDSColors.primaryColor,
             "Personal information", true
         )
+        ButtonColumnItem(
+            Icons.Rounded.Class, EDSColors.primaryColor,
+            "Request a new class", true,
+            onClick = {
+                navController.navigate(Screens.InApp.Profile.RequestClass.route)
+            })
         ButtonColumnItem(Icons.Rounded.AddCircle, EDSColors.primaryColor,
             "Register lecturer", true,
             onClick = {
