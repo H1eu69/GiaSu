@@ -1,13 +1,13 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,36 +26,51 @@ import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
+import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.DateFormat
+import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 fun PreviewScreen() {
     CourseDetailScreen(
         rememberNavController(),
+        hiltViewModel(),
         hiltViewModel(),
         1
     )
@@ -65,11 +80,25 @@ fun PreviewScreen() {
 @Composable
 fun CourseDetailScreen(
     navController: NavController,
-    vm: HomeViewModel,
+    homeViewModel: HomeViewModel,
+    courseDetailViewModel: CourseDetailViewModel,
     courseId: Int?
 ) {
-    val course = if (courseId != null) vm.getClassDetailById(courseId) else null
 
+    val course = if (courseId != null) homeViewModel.getClassDetailById(courseId) else null
+    val courseRegisterState = courseDetailViewModel.courseRegisterState
+    val context = LocalContext.current
+    val coroutine = rememberCoroutineScope()
+    var token = remember { mutableStateOf("") }
+
+
+    LaunchedEffect(key1 = ""){
+        coroutine.launch {
+            context.dataStore.data.collect { preference ->
+                token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
+            }
+        }
+    }
     Scaffold(
         topBar = {
             CourseDetailAppbar(navController)
@@ -80,13 +109,28 @@ fun CourseDetailScreen(
             .padding(20.dp)) {
             CourseDetailBody(navController = navController, course = course!!)
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    courseDetailViewModel.registerCourse(courseId!!, token.value)
+
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter),
                 colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
             ) {
-                androidx.compose.material3.Text(text = "Tax: $${course.chargeFee} Register now")
+                if (courseRegisterState.value.isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Text(text = "Tax: $${course.chargeFee} Register now", color = EDSColors.white)
+                }
+                LaunchedEffect(key1 = courseRegisterState.value, ){
+                    if (courseRegisterState.value.error) {
+                        showToast(context, courseRegisterState.value.message)
+                    } else if (courseRegisterState.value.isSuccess) {
+                        showToast(context, courseRegisterState.value.message)
+                        navController.popBackStack()
+                    }
+                }
             }
         }
     }
@@ -131,7 +175,7 @@ fun CourseDetailBody(
             )
         }
         item {
-            BottomContent(fee = course.fee, createdDate = DateFormat.DD_MM_YYYY(course.creationTime))
+            BottomContent(fee = course.fee, createdDate = course.creationTime)
         }
         item {
             DetailIconAndText(
@@ -243,17 +287,23 @@ fun DetailIconAndText(imageVector: ImageVector, boldedText: String, text: String
             tint = EDSColors.primaryColor
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(
+        androidx.compose.material.Text(
             text = boldedText,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
+        Spacer(modifier = Modifier.weight(1f))
+        androidx.compose.material.Text(
             text = text,
+            textAlign = TextAlign.End,
+            color = EDSColors.costTextColor,
+            fontWeight = FontWeight.Medium,
             fontSize = 16.sp
         )
     }
 }
 
+private fun showToast(context: Context, message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
 

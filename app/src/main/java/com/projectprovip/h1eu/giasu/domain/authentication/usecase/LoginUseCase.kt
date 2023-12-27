@@ -1,6 +1,6 @@
 package com.projectprovip.h1eu.giasu.domain.authentication.usecase
 
-import com.projectprovip.h1eu.giasu.common.Result
+import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.data.user.dto.UserLoginDto
 import com.projectprovip.h1eu.giasu.data.user.model.UserLoginInput
 import com.projectprovip.h1eu.giasu.domain.authentication.repository.UserRepository
@@ -13,17 +13,17 @@ import javax.inject.Inject
 class LoginUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(userLoginInput: UserLoginInput) : Flow<Result<UserLoginDto>> = flow {
+    operator fun invoke(userLoginInput: UserLoginInput) : Flow<EDSResult<UserLoginDto>> = flow {
         try {
-            emit(Result.Loading())
+            emit(EDSResult.Loading())
             val user = userRepository.login(userLoginInput)
-            emit(Result.Success(user))
+            emit(EDSResult.Success(user))
         }
         catch (e: HttpException) {
-            emit(Result.Error(e.localizedMessage))
+            emit(EDSResult.Error(e.localizedMessage))
         }
         catch (e: IOException){
-            emit(Result.Error(e.localizedMessage))
+            emit(EDSResult.Error(e.localizedMessage))
         }
     }
 }

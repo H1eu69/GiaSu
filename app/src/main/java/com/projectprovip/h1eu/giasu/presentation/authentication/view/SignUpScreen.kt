@@ -46,7 +46,6 @@ import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
-import com.projectprovip.h1eu.giasu.presentation.common.composes.MainTextField
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.launch
@@ -144,35 +143,35 @@ fun SignUpScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                MainTextField(
-                    value = firstNameTextField.value,
-                    label = "First name") {
-                    firstNameTextField.value = it
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                MainTextField(
-                    value = lastNameTextField.value,
-                    label = "Last name") {
-                    lastNameTextField.value = it
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                MainTextField(
-                    value = emailTextField.value,
-                    label = "Email") {
-                    emailTextField.value = it
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                MainTextField(
-                    value = passTextField.value,
-                    label = "Password") {
-                    passTextField.value = it
-                }
+//                MainTextField(
+//                    value = firstNameTextField.value,
+//                    label = "First name") {
+//                    firstNameTextField.value = it
+//                }
+//
+//                Spacer(modifier = Modifier.height(12.dp))
+//
+//                MainTextField(
+//                    value = lastNameTextField.value,
+//                    label = "Last name") {
+//                    lastNameTextField.value = it
+//                }
+//
+//                Spacer(modifier = Modifier.height(12.dp))
+//
+//                MainTextField(
+//                    value = emailTextField.value,
+//                    label = "Email") {
+//                    emailTextField.value = it
+//                }
+//
+//                Spacer(modifier = Modifier.height(12.dp))
+//
+//                MainTextField(
+//                    value = passTextField.value,
+//                    label = "Password") {
+//                    passTextField.value = it
+//                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 

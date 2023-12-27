@@ -1,6 +1,7 @@
 package com.projectprovip.h1eu.giasu.presentation.authentication.model
 
-import com.projectprovip.h1eu.giasu.domain.authentication.model.User
+import com.projectprovip.h1eu.giasu.data.user.dto.User
+
 
 data class SignUpState (
     var isLoading: Boolean = false,

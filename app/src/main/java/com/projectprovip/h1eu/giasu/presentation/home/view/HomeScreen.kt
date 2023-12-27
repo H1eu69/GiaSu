@@ -58,6 +58,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.DateFormat
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
@@ -65,8 +66,6 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.SubjectCategory
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Preview
@@ -162,7 +161,7 @@ fun BodyContent(
     navController: NavController,
     vm: HomeViewModel
 ) {
-    val newClassState = vm.courseState
+    val newClassState = vm.courseDetailState
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -178,8 +177,7 @@ fun BodyContent(
                     RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                 )
         ) {
-            item { RowTitle(title1 = "Category", title2 = "View all") }
-            item { CategoryItemList() }
+//            item { RowTitle(title1 = "Category", title2 = "View all") }
             item {
                 RowTitle(
                     modifier = Modifier.padding(
@@ -246,58 +244,6 @@ private fun SearchTextField(modifier: Modifier = Modifier) {
         onValueChange = {
             searchTextField.value = it
         })
-}
-
-@Composable
-private fun CategoryItemList() {
-    val list = listOf(
-        1,
-        2,
-        3,
-        4,
-        5,
-        5,
-        5,
-        5,
-        5,
-        55,
-        5,
-        5,
-        1,
-        2,
-        3,
-        4,
-        5,
-        5,
-        5,
-        5,
-        5,
-        55,
-        5,
-        5,
-        1,
-        2,
-        3,
-        4,
-        5,
-        5,
-        5,
-        5,
-        5,
-        55,
-        5,
-        5
-    )
-    LazyRow(
-        Modifier.fillMaxWidth(),
-        userScrollEnabled = true,
-        horizontalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(start = 20.dp, end = 20.dp),
-    ) {
-        items(list.size) {
-            SubjectCategoryItem()
-        }
-    }
 }
 
 @Composable
@@ -440,7 +386,7 @@ fun BottomContent(fee: Double, createdDate: String) {
                 color = EDSColors.costTextColor
             )
         )
-        IconAndText(Icons.Outlined.DateRange, createdDate)
+        IconAndText(Icons.Outlined.DateRange, DateFormat.DD_MM_YYYY(createdDate))
     }
 }
 

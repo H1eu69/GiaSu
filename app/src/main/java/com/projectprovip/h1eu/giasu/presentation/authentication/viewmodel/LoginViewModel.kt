@@ -5,8 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.projectprovip.h1eu.giasu.common.Result
-import com.projectprovip.h1eu.giasu.data.user.dto.toUser
+import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.data.user.model.UserLoginInput
 import com.projectprovip.h1eu.giasu.domain.authentication.usecase.LoginUseCase
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.LoginState
@@ -25,19 +24,21 @@ class LoginViewModel @Inject constructor(
 
     fun loginByEmail(email: String, password: String) {
         loginUseCase(UserLoginInput(email, password)).onEach { result ->
-            when(result) {
-                is Result.Success -> {
+            when (result) {
+                is EDSResult.Success -> {
                     Log.d("AuthViewModel", "Login success")
                     _loginState.value = LoginState(
-                        user = result.data!!.user.toUser(),
-                        token = result.data.token
+                        user = result.data!!.userWithToken.user ,
+                        token = result.data.userWithToken.token
                     )
                 }
-                is Result.Error -> {
+
+                is EDSResult.Error -> {
                     Log.e("AuthViewModel", result.message.toString())
                     _loginState.value = LoginState(error = result.message ?: "Unexpected error")
                 }
-                is Result.Loading -> {
+
+                is EDSResult.Loading -> {
                     Log.d("AuthViewModel", "Login loading")
                     _loginState.value = LoginState(isLoading = true)
                 }
