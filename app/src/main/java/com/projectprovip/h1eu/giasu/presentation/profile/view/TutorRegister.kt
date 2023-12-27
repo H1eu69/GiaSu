@@ -23,8 +23,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.IconButton
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Image
@@ -143,45 +146,69 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                 contentPadding = PaddingValues(bottom = 100.dp)
             ) {
                 item {
-                    CommonTextField(
-                        academicText,
-                        hint = "Academic level",
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Subtitles,
-                                contentDescription = "",
-                                tint = EDSColors.primaryColor
-                            )
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp)
+                            .padding(horizontal = 20.dp),
+                        label = {
+                            androidx.compose.material3.Text(text = "Academic Level")
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        keyboardActions = KeyboardActions(),
+                        shape = RoundedCornerShape(12.dp),
+                        onValueChange = { value ->
+                            academicText.value = value
+                        },
+                        value = academicText.value,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = EDSColors.primaryColor,
+                            focusedLabelColor = EDSColors.primaryColor,
+                            cursorColor = EDSColors.primaryColor,
+                        ),
                     )
                 }
                 item {
-                    CommonTextField(
-                        universityText,
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Outlined.School,
-                                contentDescription = "",
-                                tint = EDSColors.primaryColor
-                            )
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp)
+                            .padding(horizontal = 20.dp),
+                        label = {
+                            androidx.compose.material3.Text(text = "University")
                         },
-                        hint = "University",
-                        modifier = Modifier.fillMaxWidth()
+                        keyboardActions = KeyboardActions(),
+                        shape = RoundedCornerShape(12.dp),
+                        onValueChange = { value ->
+                            universityText.value = value
+                        },
+                        value = universityText.value,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = EDSColors.primaryColor,
+                            focusedLabelColor = EDSColors.primaryColor,
+                            cursorColor = EDSColors.primaryColor,
+                        ),
                     )
                 }
                 item {
-                    CommonTextField(
-                        majorText,
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Subtitles,
-                                contentDescription = "",
-                                tint = EDSColors.primaryColor
-                            )
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp)
+                            .padding(horizontal = 20.dp),
+                        label = {
+                            androidx.compose.material3.Text(text = "Major")
                         },
-                        hint = "Major",
-                        modifier = Modifier.fillMaxWidth()
+                        keyboardActions = KeyboardActions(),
+                        shape = RoundedCornerShape(12.dp),
+                        onValueChange = { value ->
+                            majorText.value = value
+                        },
+                        value = majorText.value,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = EDSColors.primaryColor,
+                            focusedLabelColor = EDSColors.primaryColor,
+                            cursorColor = EDSColors.primaryColor,
+                        ),
                     )
                 }
                 item {
