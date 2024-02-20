@@ -224,7 +224,7 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                                 tint = EDSColors.primaryColor
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = "Verification", fontSize = 16.sp)
+                                Text(text = "Verification", fontSize = 16.sp)
                             Text(
                                 text = "(*)", fontSize = 16.sp,
                                 color = EDSColors.notScheduleTextColor
