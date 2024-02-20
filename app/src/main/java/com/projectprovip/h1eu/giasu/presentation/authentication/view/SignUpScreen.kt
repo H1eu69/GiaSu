@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -30,23 +33,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.auth0.android.jwt.JWT
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
-import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.authentication.model.SignUpState
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.launch
 
@@ -55,39 +53,42 @@ import kotlinx.coroutines.launch
 @Composable
 fun PreviewSignUp() {
     SignUpScreen(
-        rememberNavController(),
-        hiltViewModel()
+        {}, {}, {}, {firstName, lastName, email, pwd ->  }, SignUpState()
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
-    navController: NavController,
-    vm: SignUpViewModel
-                 ) {
+    navigateInApp: () -> Unit,
+    navigateForgotPassword: () -> Unit,
+    pop: () -> Unit,
+    buttonClick: (
+        firstName: String, lastName: String, email: String, pwd: String
+    ) -> Unit,
+    state: SignUpState
+) {
     val fontFamily = FontFamily(
         Font(R.font.mont_bold, FontWeight.Bold),
         Font(R.font.mont_regular, FontWeight.Normal)
     )
 
-    val firstNameTextField = remember{
+    val firstNameTextField = remember {
         mutableStateOf("")
     }
-    val lastNameTextField = remember{
-        mutableStateOf("")
-    }
-
-    val emailTextField = remember{
+    val lastNameTextField = remember {
         mutableStateOf("")
     }
 
-    val passTextField = remember{
+    val emailTextField = remember {
+        mutableStateOf("")
+    }
+
+    val passTextField = remember {
         mutableStateOf("")
     }
     val interactionSource = remember { MutableInteractionSource() }
 
-    val state = vm.signUpState.value
     val tokenKey = stringPreferencesKey(Constant.TOKEN_STRING)
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
     val useridKey = stringPreferencesKey(Constant.USERID_STRING)
@@ -96,7 +97,7 @@ fun SignUpScreen(
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
 
-    if(state.user != null){
+    if (state.user != null) {
         LaunchedEffect(key1 = "") {
             coroutine.launch {
                 val jwt = JWT(state.token!!)
@@ -113,12 +114,7 @@ fun SignUpScreen(
                 }
             }
         }
-
-        navController.navigate(Screens.InApp.route) {
-            popUpTo(Screens.Splash.route) {
-                inclusive = true
-            }
-        }
+        navigateInApp()
     }
 
     Surface {
@@ -143,35 +139,85 @@ fun SignUpScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-//                MainTextField(
-//                    value = firstNameTextField.value,
-//                    label = "First name") {
-//                    firstNameTextField.value = it
-//                }
-//
-//                Spacer(modifier = Modifier.height(12.dp))
-//
-//                MainTextField(
-//                    value = lastNameTextField.value,
-//                    label = "Last name") {
-//                    lastNameTextField.value = it
-//                }
-//
-//                Spacer(modifier = Modifier.height(12.dp))
-//
-//                MainTextField(
-//                    value = emailTextField.value,
-//                    label = "Email") {
-//                    emailTextField.value = it
-//                }
-//
-//                Spacer(modifier = Modifier.height(12.dp))
-//
-//                MainTextField(
-//                    value = passTextField.value,
-//                    label = "Password") {
-//                    passTextField.value = it
-//                }
+                OutlinedTextField(
+                    value = firstNameTextField.value,
+                    onValueChange = {
+                        firstNameTextField.value = it
+                    },
+                    label = {
+                        Text("First name")
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLabelColor = EDSColors.primaryColor
+                    ),
+                    modifier = Modifier
+                )
+
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
+
+                OutlinedTextField(
+                    value = lastNameTextField.value,
+                    visualTransformation = PasswordVisualTransformation(),
+                    onValueChange = {
+                        lastNameTextField.value = it
+                    },
+                    label = {
+                        Text("Last name")
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLabelColor = EDSColors.primaryColor
+                    ),
+                    modifier = Modifier
+                )
+
+
+                OutlinedTextField(
+                    value = emailTextField.value,
+                    onValueChange = {
+                        emailTextField.value = it
+                    },
+                    label = {
+                        Text("Email")
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLabelColor = EDSColors.primaryColor
+                    ),
+                    modifier = Modifier
+                )
+
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
+
+                OutlinedTextField(
+                    value = passTextField.value,
+                    visualTransformation = PasswordVisualTransformation(),
+                    onValueChange = {
+                        passTextField.value = it
+                    },
+                    label = {
+                        Text("Password")
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    singleLine = true,
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLabelColor = EDSColors.primaryColor
+                    ),
+                    modifier = Modifier
+                )
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -182,7 +228,7 @@ fun SignUpScreen(
                             interactionSource = interactionSource,
                             indication = null
                         ) {
-                            navController.navigate(Screens.Authentication.ForgetPassword.route)
+                            navigateForgotPassword()
                         },
                     text = "Forget password?",
                     style = TextStyle(
@@ -196,8 +242,7 @@ fun SignUpScreen(
 
                 Button(
                     onClick = {
-                        signUp(
-                            vm,
+                        buttonClick(
                             firstNameTextField.value,
                             lastNameTextField.value,
                             emailTextField.value,
@@ -207,10 +252,9 @@ fun SignUpScreen(
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
                 ) {
-                    if(state.isLoading){
+                    if (state.isLoading) {
                         CircularProgressIndicator()
-                    }
-                    else
+                    } else
                         Text(text = "Register")
                 }
 
@@ -225,7 +269,7 @@ fun SignUpScreen(
                         interactionSource = interactionSource,
                         indication = null
                     ) {
-                        navController.popBackStack()
+                        pop()
                     },
                 text = "Already have account? Login here",
                 style = TextStyle(
@@ -237,19 +281,4 @@ fun SignUpScreen(
             )
         }
     }
-}
-
-private fun signUp(
-    vm: SignUpViewModel,
-    firstName: String,
-    lastName: String,
-    email: String,
-    pwd: String
-) {
-    vm.signUp(
-        firstName,
-        lastName,
-        email,
-        pwd
-    )
 }

@@ -81,7 +81,28 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
         }
         composable(Screens.Authentication.Signup.route) {
             val viewModel = hiltViewModel<SignUpViewModel>()
-            SignUpScreen(navController, viewModel)
+            SignUpScreen(
+                navigateInApp = {
+                    navController.navigate(Screens.InApp.route) {
+                        popUpTo(Screens.Splash.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                navigateForgotPassword = {
+                    navController.navigate(Screens.Authentication.ForgetPassword.route)
+                },
+                pop = { navController.popBackStack() },
+                buttonClick = { firstName, lastName, email, pwd ->
+                    viewModel.signUp(
+                        firstName,
+                        lastName,
+                        email,
+                        pwd
+                    )
+                },
+                state = viewModel.signUpState.value
+            )
         }
         composable(Screens.Authentication.ForgetPassword.route) {
             ForgetPasswordScreen(navController)
@@ -192,7 +213,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         }
         composable(Screens.InApp.Profile.RequestClass.route) {
             val vm = hiltViewModel<CreateClassViewModel>()
-            val createCourse : (CreateCourseInput) -> Unit = {
+            val createCourse: (CreateCourseInput) -> Unit = {
                 vm.requestClass(token.value, it)
             }
             CreateClassScreen(navController, vm.state.value, createCourse)
