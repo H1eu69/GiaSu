@@ -105,7 +105,7 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
             )
         }
         composable(Screens.Authentication.ForgetPassword.route) {
-            ForgetPasswordScreen(navController)
+            ForgetPasswordScreen({navController.popBackStack()})
         }
     }
 }
@@ -142,7 +142,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         modifier = modifier,
     ) {
         composable(Screens.InApp.Home.route) {
-            HomeScreen(navController, homeViewModel)
+            HomeScreen(navController, homeViewModel.courseDetailState.value)
         }
         composable(
             "${Screens.InApp.Home.ClassDetail.route}/{courseId}",
