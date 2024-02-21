@@ -164,9 +164,12 @@ fun BodyContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SearchTextField(onTap = {})
+        SearchTextField(onTap = {
+            navController.navigate(Screens.InApp.Home.SearchSuggest.route)
+        })
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -191,7 +194,9 @@ fun BodyContent(
                 when {
                     this.isLoading -> {
                         item {
-                            CircularProgressIndicator()
+                            CircularProgressIndicator(
+                                color = EDSColors.primaryColor
+                            )
                         }
                     }
 
@@ -299,7 +304,6 @@ fun CourseItem(navController: NavController, data: CourseDetail) {
         border = BorderStroke(2.dp, Color.LightGray),
         elevation = CardDefaults.outlinedCardElevation(3.dp),
         modifier = Modifier
-            .padding(8.dp)
             .fillMaxWidth()
             .clip(
                 RoundedCornerShape(10)
@@ -319,7 +323,7 @@ fun CourseItem(navController: NavController, data: CourseDetail) {
             MiddleContent(
                 minutePerSession = data.minutePerSession,
                 sessionPerWeek = data.sessionPerWeek,
-                info = data.description,
+                info = data.subjectName,
                 location = data.address
             )
             BottomContent(

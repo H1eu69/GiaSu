@@ -36,8 +36,11 @@ import com.projectprovip.h1eu.giasu.presentation.class_management.view.Requested
 import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.CourseManagementViewModel
 import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.RequestedCourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
+import com.projectprovip.h1eu.giasu.presentation.home.model.SearchSuggestState
 import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
+import com.projectprovip.h1eu.giasu.presentation.home.view.SearchResultHomeScreen
+import com.projectprovip.h1eu.giasu.presentation.home.view.SearchSuggestHomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CreateClassScreen
@@ -143,6 +146,12 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
     ) {
         composable(Screens.InApp.Home.route) {
             HomeScreen(navController, homeViewModel.courseDetailState.value)
+        }
+        composable(Screens.InApp.Home.SearchSuggest.route) {
+            SearchSuggestHomeScreen(navController, SearchSuggestState())
+        }
+        composable(Screens.InApp.Home.SearchResult.route) {
+            SearchResultHomeScreen(navController, homeViewModel.courseDetailState.value)
         }
         composable(
             "${Screens.InApp.Home.ClassDetail.route}/{courseId}",

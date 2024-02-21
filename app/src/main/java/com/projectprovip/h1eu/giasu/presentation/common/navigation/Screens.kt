@@ -26,7 +26,9 @@ sealed class Screens(val route: String) {
             icon = Icons.Outlined.Home, title = "Home"
         ) {
             object ClassDetail : Screens(route = "new_class_detail")
-        }
+             object SearchSuggest : Screens(route = "search_suggest")
+             object SearchResult : Screens(route = "search_result")
+         }
 
         object Courses : BottomBarScreens(
             route = "course", R.string.bottom_course,
