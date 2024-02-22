@@ -218,7 +218,7 @@ fun BodyContent(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SearchTextField(modifier: Modifier = Modifier, onTap: () -> Unit) {
+fun SearchTextField(modifier: Modifier = Modifier, onTap: () -> Unit) {
     val searchTextField = remember {
         mutableStateOf("")
     }

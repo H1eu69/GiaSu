@@ -1,6 +1,5 @@
 package com.projectprovip.h1eu.giasu.presentation.tutor.view
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,63 +43,71 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.domain.tutor.model.Tutor
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.home.view.SearchTextField
 import com.projectprovip.h1eu.giasu.presentation.tutor.model.TutorListState
 
 @Preview
 @Composable
 fun TutorPreview() {
-    val dummyData = remember {  mutableStateOf(
-        TutorListState(
-            data = listOf<Tutor>(
-                Tutor(
-                    "he",
-                    2022,
-                    "desdasdasas",
-                    "hehe",
-                    "gender",
-                    4,
-                    "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
-                    false,
-                    "last",
-                    "0967075340",
-                    3,
-                    "UIT"),
-                Tutor(
-                    "he",
-                    2022,
-                    "desdasdasas",
-                    "hehe",
-                    "gender",
-                    4,
-                    "https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-                    false,
-                    "last",
-                    "0967075340",
-                    3,
-                    "UIT"),
-                Tutor(
-                    "he",
-                    2022,
-                    "desdasdasas",
-                    "hehe",
-                    "gender",
-                    4,
-                    "https://cdn-icons-png.flaticon.com/512/5556/5556499.png",
-                    false,
-                    "last",
-                    "0967075340",
-                    3,
-                    "UIT"
+    val dummyData = remember {
+        mutableStateOf(
+            TutorListState(
+                data = listOf<Tutor>(
+                    Tutor(
+                        "he",
+                        2022,
+                        "desdasdasas",
+                        "hehe",
+                        "gender",
+                        4,
+                        "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
+                        false,
+                        "last",
+                        "0967075340",
+                        3,
+                        "UIT"
+                    ),
+                    Tutor(
+                        "he",
+                        2022,
+                        "desdasdasas",
+                        "hehe",
+                        "gender",
+                        4,
+                        "https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
+                        false,
+                        "last",
+                        "0967075340",
+                        3,
+                        "UIT"
+                    ),
+                    Tutor(
+                        "he",
+                        2022,
+                        "desdasdasas",
+                        "hehe",
+                        "gender",
+                        4,
+                        "https://cdn-icons-png.flaticon.com/512/5556/5556499.png",
+                        false,
+                        "last",
+                        "0967075340",
+                        3,
+                        "UIT"
+                    )
                 )
             )
         )
-    )
     }
     TutorScreen(
         state = dummyData,
+        navController = rememberNavController(),
         loadMore = {
 
         }
@@ -110,66 +117,85 @@ fun TutorPreview() {
 @Preview
 @Composable
 fun TutorItemPreview() {
-    TutorItem(tutor = Tutor(
-        "he",
-        2022,
-        "desdasdasas",
-        "hehe",
-        "gender",
-        4,
-        "dsadas",
-        false,
-        "last",
-        "0967075340",
-        3,
-        "UIT"
-    ))
+    TutorItem(
+        tutor = Tutor(
+            "he",
+            2022,
+            "desdasdasas",
+            "hehe",
+            "gender",
+            4,
+            "dsadas",
+            false,
+            "last",
+            "0967075340",
+            3,
+            "UIT"
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TutorScreen(state: State<TutorListState>,
-                loadMore: (() -> Unit),
-                onItemClick: (Int) -> Unit = {}) {
+fun TutorScreen(
+    state: State<TutorListState>,
+    navController: NavController,
+    loadMore: (() -> Unit),
+) {
 
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text(text = "Tutors") },
+                title = {
+                    Text(text = "Tutors")
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.primaryColor, titleContentColor = Color.White
+                    containerColor = EDSColors.primaryColor,
+                    titleContentColor = Color.White
                 )
             )
         },
     ) {
-        when {
-            state.value.isLoading -> {
-                Log.d("Test Loading","1")
-                Box(
-                    modifier = Modifier
-                        .padding(it)
-                        .fillMaxSize()
-                ) {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
+
+            when {
+                state.value.isLoading -> {
+                    Box(
+                        modifier = Modifier
+                            .padding(it)
+                            .fillMaxSize()
+                    ) {
+                        CircularProgressIndicator(Modifier.align(Alignment.Center))
+                    }
+
                 }
 
-            }
-
-            state.value.data.isNotEmpty() -> {
-                Log.d("Test Loading","2")
-                InfiniteList(state.value.data,
-                    modifier = Modifier.padding(it),
-                    onItemClick = onItemClick,
-                    onLoadMore = {
-                        loadMore()
-                    })
+                state.value.data.isNotEmpty() -> {
+                    SearchTextField(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                        onTap = {
+                            navController.navigate(Screens.InApp.Tutor.SearchSuggest.route)
+                        })
+                    InfiniteStaggeredList(state.value.data,
+                        modifier = Modifier.padding(it),
+                        onItemClick = { tutorId ->
+                            navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$tutorId")
+                        },
+                        onLoadMore = {
+                            loadMore()
+                        })
+                }
             }
         }
+
     }
 }
 
 @Composable
-fun InfiniteList(
+fun InfiniteStaggeredList(
     data: List<Tutor>,
     modifier: Modifier,
     onItemClick: (Int) -> Unit,
@@ -185,7 +211,7 @@ fun InfiniteList(
     ) {
         items(count = listCount) { index ->
             TutorItem(data[index], onItemClick = onItemClick)
-            if ( index == listCount - 2) {
+            if (index == listCount - 2) {
                 onLoadMore()
             }
         }
@@ -260,8 +286,10 @@ fun TutorItem(tutor: Tutor, onItemClick: (Int) -> Unit = {}) {
 }
 
 @Composable
-fun IconAndText(imageVector: ImageVector, text: String, modifier: Modifier = Modifier,
-                tint: Color = EDSColors.primaryColor) {
+fun IconAndText(
+    imageVector: ImageVector, text: String, modifier: Modifier = Modifier,
+    tint: Color = EDSColors.primaryColor
+) {
     Row(
         modifier = modifier
     ) {

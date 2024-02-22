@@ -53,6 +53,8 @@ import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCours
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorReviewViewModel
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
+import com.projectprovip.h1eu.giasu.presentation.tutor.view.SearchResultTutorScreen
+import com.projectprovip.h1eu.giasu.presentation.tutor.view.SearchSuggestTutorScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorDetailViewModel
@@ -108,7 +110,7 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
             )
         }
         composable(Screens.Authentication.ForgetPassword.route) {
-            ForgetPasswordScreen({navController.popBackStack()})
+            ForgetPasswordScreen({ navController.popBackStack() })
         }
     }
 }
@@ -169,13 +171,20 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         }
         composable(Screens.InApp.Tutor.route) {
             val vm = hiltViewModel<TutorViewModel>()
-            TutorScreen(vm.state,
+            TutorScreen(
+                vm.state,
                 loadMore = {
                     vm.loadMore()
                 },
-                onItemClick = {
-                    navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$it")
-                })
+                navController = navController,
+            )
+        }
+
+        composable(Screens.InApp.Tutor.SearchSuggest.route) {
+            SearchSuggestTutorScreen(navController)
+        }
+        composable(Screens.InApp.Tutor.SearchResult.route) {
+            SearchResultTutorScreen(navController)
         }
 
         composable("${Screens.InApp.Tutor.TutorDetail.route}/{tutorId}",
