@@ -24,8 +24,8 @@ sealed class Screens(val route: String) {
             icon = Icons.Outlined.Home, title = "Home"
         ) {
             object ClassDetail : Screens(route = "new_class_detail")
-            object SearchSuggest : Screens(route = "search_suggest")
-            object SearchResult : Screens(route = "search_result")
+            object SearchSuggest : Screens(route = "search_suggest_home")
+            object SearchResult : Screens(route = "search_result_home")
         }
 
         object Courses : BottomBarScreens(
@@ -40,8 +40,8 @@ sealed class Screens(val route: String) {
             icon = Icons.Outlined.Person, title = "Tutor"
         ) {
             object TutorDetail : Screens(route = "tutor_detail")
-            object SearchSuggest : Screens(route = "search_suggest")
-            object SearchResult : Screens(route = "search_result")
+            object SearchSuggest : Screens(route = "search_suggest_tutor")
+            object SearchResult : Screens(route = "search_result_tutor")
         }
 
         object Profile : BottomBarScreens(
