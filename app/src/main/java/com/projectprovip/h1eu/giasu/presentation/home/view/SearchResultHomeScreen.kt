@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -18,6 +19,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.sharp.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -184,6 +186,12 @@ fun SearchResultHomeScreen(
                             }
                         )
                     },
+                    trailingIcon = {
+                        Icon(imageVector = Icons.Sharp.Close,
+                            contentDescription = null,
+                            tint = EDSColors.darkCyan,
+                            modifier = Modifier.size(20.dp))
+                    },
                     shape = RoundedCornerShape(50),
                     border = AssistChipDefaults.assistChipBorder(
                         borderColor = EDSColors.transparent
@@ -193,7 +201,7 @@ fun SearchResultHomeScreen(
                         labelColor = EDSColors.chipTextColor,
                     ),
                     onClick = {
-
+                        navController.popBackStack()
                     }
                 )
             }

@@ -17,3 +17,8 @@ fun String.alphaNumericOnly() : String {
     val regex = Regex("[^A-Za-z0-9 ]")
     return regex.replace(this, "")
 }
+
+fun String.isEmailFormatted() : Boolean {
+    val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})"
+    return this.matches(emailRegex.toRegex())
+}
