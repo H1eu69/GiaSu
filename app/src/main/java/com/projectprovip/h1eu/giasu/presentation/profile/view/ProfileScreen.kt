@@ -25,8 +25,10 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.AddCircle
+import androidx.compose.material.icons.rounded.AppRegistration
 import androidx.compose.material.icons.rounded.Class
 import androidx.compose.material.icons.rounded.ExitToApp
+import androidx.compose.material.icons.rounded.Note
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -208,14 +210,14 @@ fun ColumnOfButton(navController: NavController, onShowDialog: (Boolean) -> Unit
             onClick = {
                 navController.navigate(Screens.InApp.Profile.RequestClass.route)
             })
-        ButtonColumnItem(Icons.Rounded.AddCircle, EDSColors.primaryColor,
-            "Register lecturer", true,
+        ButtonColumnItem(Icons.Rounded.AppRegistration, EDSColors.primaryColor,
+            "Register tutor", true,
             onClick = {
                 navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
             }
         )
-        ButtonColumnItem(Icons.Rounded.Star, EDSColors.primaryColor,
-            "Learning Courses", true,
+        ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
+            "Learning courses", true,
             onClick = {
                 navController.navigate(Screens.InApp.Profile.LearningCourses.route)
             })

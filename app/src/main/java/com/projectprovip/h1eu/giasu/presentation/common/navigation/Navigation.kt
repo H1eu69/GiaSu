@@ -82,7 +82,9 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
     ) {
         composable(Screens.Authentication.Login.route) {
             val viewModel = hiltViewModel<LoginViewModel>()
-            LoginScreen(navController, viewModel)
+            LoginScreen(navController, onLoginClick = {
+                s1, s2 -> viewModel.loginByEmail(s1,s2)
+            }, state = viewModel.loginState.value)
         }
         composable(Screens.Authentication.Signup.route) {
             val viewModel = hiltViewModel<SignUpViewModel>()

@@ -115,13 +115,11 @@ fun CommonRadioButton(title: String,
                       onOptionSelected: (String) -> Unit,
                       modifier: Modifier = Modifier) {
     val interactionSource = remember { MutableInteractionSource() }
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly,
+    Column(
+
         modifier = modifier
     ) {
-        Text(text = title,
-            modifier = Modifier.width(IntrinsicSize.Min))
+        Text(text = title,)
         radioOptions.forEach { text ->
             Row(
                 verticalAlignment = CenterVertically,

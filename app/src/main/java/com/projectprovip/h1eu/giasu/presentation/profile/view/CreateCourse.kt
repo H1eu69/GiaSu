@@ -39,7 +39,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +50,6 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CreateCourseState
-import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CreateClassViewModel
 
 @Preview
 @Composable
@@ -61,19 +59,23 @@ fun CreateClassScreenPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateClassScreen(navController: NavController,
-                      state: CreateCourseState,
-                      onButtonClick: (CreateCourseInput) -> Unit) {
+fun CreateClassScreen(
+    navController: NavController,
+    state: CreateCourseState,
+    onButtonClick: (CreateCourseInput) -> Unit
+) {
     val context = LocalContext.current
-    LaunchedEffect(key1 = state, ) {
+    LaunchedEffect(key1 = state) {
         when {
             state.isLoading -> {
 
             }
+
             state.isSuccessful -> {
                 Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                 navController.popBackStack()
             }
+
             state.message.isNotEmpty() -> {
                 Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
             }
@@ -97,7 +99,7 @@ fun CreateClassScreen(navController: NavController,
                 ),
                 title = {
                     Text(
-                        text = "Class request",
+                        text = "Course request",
                         style = TextStyle(
                             fontSize = 18.sp,
                             color = Color.White,
@@ -120,22 +122,24 @@ fun CreateClassScreen(navController: NavController,
 }
 
 @Composable
-fun ClassRequestBody(modifier: Modifier = Modifier,
-                     onButtonClick: (CreateCourseInput) -> Unit) {
+fun ClassRequestBody(
+    modifier: Modifier = Modifier,
+    onButtonClick: (CreateCourseInput) -> Unit
+) {
     val title = remember {
         mutableStateOf("")
     }
     val fee = remember {
-        mutableStateOf("0")
+        mutableStateOf("")
     }
     val chargeFee = remember {
-        mutableStateOf("0")
+        mutableStateOf("")
     }
     val address = remember {
         mutableStateOf("")
     }
     val numOfStudent = remember {
-        mutableStateOf("1")
+        mutableStateOf("")
     }
     val contactNumber = remember {
         mutableStateOf("")
@@ -144,10 +148,10 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
         mutableStateOf("")
     }
     val minutePerSession = remember {
-        mutableStateOf("60")
+        mutableStateOf("")
     }
     val sessionPerWeek = remember {
-        mutableStateOf("2")
+        mutableStateOf("")
     }
     val academicLevel = remember {
         mutableStateOf("")
@@ -168,6 +172,7 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
     val (learningModeSelectedOptions, learningModeOnOptionSelected) = remember {
         mutableStateOf(learningModeOptions[0])
     }
+
 
     val localFocus = LocalFocusManager.current
     Box(modifier = modifier) {
@@ -193,7 +198,7 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
         ) {
             item {
                 MultiColorText(
-                    text1 = "Class description",
+                    text1 = "Course description",
                     color1 = EDSColors.myBlackColor,
                     text2 = "*",
                     color2 = EDSColors.notScheduleTextColor,
@@ -207,8 +212,8 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Title")
+                    placeholder = {
+                        androidx.compose.material3.Text(text = "Title", color = EDSColors.lightGray)
                     },
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -230,8 +235,8 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Fee")
+                    placeholder = {
+                        androidx.compose.material3.Text(text = "Fee", color = EDSColors.lightGray)
                     },
                     keyboardActions = KeyboardActions(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -254,8 +259,11 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Charge Fee")
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Charge Fee",
+                            color = EDSColors.lightGray
+                        )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
@@ -278,8 +286,11 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Number of students")
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Number of students",
+                            color = EDSColors.lightGray
+                        )
                     },
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -302,8 +313,11 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Contact Number")
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Contact Number",
+                            color = EDSColors.lightGray
+                        )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
@@ -325,8 +339,11 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Subject Name")
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Subject Name",
+                            color = EDSColors.lightGray
+                        )
                     },
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -347,8 +364,11 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Location")
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Location",
+                            color = EDSColors.lightGray
+                        )
                     },
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -364,29 +384,6 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                 )
             }
 
-//            item {
-//                OutlinedTextField(
-//                    modifier = Modifier
-//                        .height(100.dp)
-//                        .fillMaxWidth()
-//                        .padding(horizontal = 20.dp),
-//                    label = {
-//                        androidx.compose.material3.Text(text = "Subject")
-//                    },
-//                    keyboardActions = KeyboardActions(),
-//                    shape = RoundedCornerShape(12.dp),
-//                    onValueChange = { value ->
-//                        contactNumber.value = value
-//                    },
-//                    value = contactNumber.value,
-//                    colors = TextFieldDefaults.outlinedTextFieldColors(
-//                        focusedBorderColor = EDSColors.primaryColor,
-//                        focusedLabelColor = EDSColors.primaryColor,
-//                        cursorColor = EDSColors.primaryColor,
-//                    ),
-//                )
-//            }
-
             item {
                 CommonRadioButton(
                     title = "Student Gender",
@@ -395,7 +392,7 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                     onOptionSelected = studentOnOptionSelected,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 12.dp)
+                        .padding(12.dp)
                         .background(Color.White)
                 )
             }
@@ -406,8 +403,11 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         .height(100.dp)
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Description")
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Description",
+                            color = EDSColors.lightGray
+                        )
                     },
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -449,25 +449,15 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
             }
 
             item {
-                CommonRadioButton(
-                    title = "Tutor Gender",
-                    radioOptions = genderOptions,
-                    selectedOption = tutorSelectedOptions,
-                    onOptionSelected = tutorOnOptionSelected,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp)
-                        .background(Color.White)
-                )
-            }
-
-            item {
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Minute per session")
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Minute per session",
+                            color = EDSColors.lightGray
+                        )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
@@ -491,9 +481,14 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Session per week")
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Session per week",
+                            color = EDSColors.lightGray
+                        )
                     },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
@@ -514,8 +509,11 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp),
-                    label = {
-                        androidx.compose.material3.Text(text = "Academic Level")
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Academic Level",
+                            color = EDSColors.lightGray
+                        )
                     },
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -528,6 +526,19 @@ fun ClassRequestBody(modifier: Modifier = Modifier,
                         focusedLabelColor = EDSColors.primaryColor,
                         cursorColor = EDSColors.primaryColor,
                     ),
+                )
+            }
+
+            item {
+                CommonRadioButton(
+                    title = "Tutor Gender",
+                    radioOptions = genderOptions,
+                    selectedOption = tutorSelectedOptions,
+                    onOptionSelected = tutorOnOptionSelected,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .background(Color.White)
                 )
             }
         }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -48,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.domain.tutor.model.Tutor
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.tutor.model.TutorListState
 
@@ -236,11 +236,13 @@ fun SearchResultTutorScreen(
                                     navController.popBackStack()
                                 }
                             )
-                            Box{}
+                            Box {}
                         }
                     }
                     items(count = state.data.count()) { index ->
-                        TutorItem(state.data[index], onItemClick = {})
+                        TutorItem(state.data[index], onItemClick = { tutorId ->
+                            navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$tutorId")
+                        })
                         if (index == state.data.count() - 2) {
                             //onLoadMore()
                         }
