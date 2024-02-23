@@ -93,8 +93,8 @@ fun ForgetPasswordScreen(pop: () -> Unit) {
                     onValueChange = {
                         emailTextField.value = it
                     },
-                    label = {
-                        Text("Email")
+                    placeholder = {
+                        Text("Email", color = EDSColors.lightGray)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,

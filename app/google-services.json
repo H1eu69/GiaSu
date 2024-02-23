@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "709832512941",
+    "project_id": "eds-storage",
+    "storage_bucket": "eds-storage.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709832512941:android:22a1be32d0edc437f2fd24",
+        "android_client_info": {
+          "package_name": "com.projectprovip.h1eu.giasu"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUHWx4mxcKG_k83xKd7t9X9l9tS1YkS_w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

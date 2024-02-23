@@ -144,8 +144,8 @@ fun SignUpScreen(
                     onValueChange = {
                         firstNameTextField.value = it
                     },
-                    label = {
-                        Text("First name")
+                    placeholder = {
+                        Text("First name", color = EDSColors.lightGray)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
@@ -166,8 +166,8 @@ fun SignUpScreen(
                     onValueChange = {
                         lastNameTextField.value = it
                     },
-                    label = {
-                        Text("Last name")
+                    placeholder = {
+                        Text("Last name", color = EDSColors.lightGray)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
@@ -178,14 +178,17 @@ fun SignUpScreen(
                     modifier = Modifier
                 )
 
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
 
                 OutlinedTextField(
                     value = emailTextField.value,
                     onValueChange = {
                         emailTextField.value = it
                     },
-                    label = {
-                        Text("Email")
+                    placeholder = {
+                        Text("Email", color = EDSColors.lightGray)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
@@ -206,8 +209,8 @@ fun SignUpScreen(
                     onValueChange = {
                         passTextField.value = it
                     },
-                    label = {
-                        Text("Password")
+                    placeholder = {
+                        Text("Password", color = EDSColors.lightGray)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
@@ -223,7 +226,7 @@ fun SignUpScreen(
 
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .align(Alignment.End)
                         .clickable(
                             interactionSource = interactionSource,
                             indication = null
@@ -235,7 +238,6 @@ fun SignUpScreen(
                         color = EDSColors.primaryColor,
                         fontSize = 12.sp,
                     ),
-                    textAlign = TextAlign.End,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

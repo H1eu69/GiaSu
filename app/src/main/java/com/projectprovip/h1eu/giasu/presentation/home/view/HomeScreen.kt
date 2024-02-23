@@ -164,7 +164,9 @@ fun BodyContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SearchTextField(onTap = {})
+        SearchTextField(onTap = {
+            navController.navigate(Screens.InApp.Home.SearchSuggest.route)
+        })
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -216,7 +218,7 @@ fun BodyContent(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SearchTextField(modifier: Modifier = Modifier, onTap: () -> Unit) {
+fun SearchTextField(modifier: Modifier = Modifier, onTap: () -> Unit) {
     val searchTextField = remember {
         mutableStateOf("")
     }

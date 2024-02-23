@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.SearchSuggestState
 
@@ -177,7 +178,7 @@ fun SearchSuggestHomeScreen(
                 .padding(it)
         ) {
             item {
-                SuggestChipRow()
+                SuggestChipRow(navController)
             }
             state.apply {
                 when {
@@ -208,7 +209,7 @@ fun SearchSuggestHomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SuggestChipRow() {
+fun SuggestChipRow(navController: NavController) {
     val listChip = listOf("Math", "Physics", "Geography", "advanced math", "java", "python")
     LazyRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         listChip.forEachIndexed { index, title ->
@@ -228,7 +229,7 @@ fun SuggestChipRow() {
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {
-
+                            navController.navigate(Screens.InApp.Home.SearchResult.route)
                         }
                     )
                 }

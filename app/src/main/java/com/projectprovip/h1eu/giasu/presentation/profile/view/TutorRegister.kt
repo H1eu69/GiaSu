@@ -9,6 +9,8 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,8 +33,6 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.outlined.School
-import androidx.compose.material.icons.outlined.Subtitles
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -67,11 +67,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonTextField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
@@ -135,6 +132,14 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
         val universityText = remember { mutableStateOf("") }
         val majorText = remember { mutableStateOf("") }
 
+        val academicInteractionSource = remember { MutableInteractionSource() }
+        val academicIsFocused = academicInteractionSource.collectIsFocusedAsState()
+
+        val universityInteractionSource = remember { MutableInteractionSource() }
+        val universityIsFocused = universityInteractionSource.collectIsFocusedAsState()
+
+        val majorInteractionSource = remember { MutableInteractionSource() }
+        val majorIsFocused = majorInteractionSource.collectIsFocusedAsState()
         Box(
             modifier = Modifier
                 .padding(it)
@@ -151,8 +156,14 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                             .fillMaxWidth()
                             .padding(top = 12.dp)
                             .padding(horizontal = 20.dp),
+                        interactionSource = academicInteractionSource,
                         label = {
-                            androidx.compose.material3.Text(text = "Academic Level")
+                            if (!academicIsFocused.value)
+                                Text(
+                                    text = "Academic Level", color = EDSColors.lightGray
+                                ) else Text(
+                                text = "Academic Level",
+                            )
                         },
                         keyboardActions = KeyboardActions(),
                         shape = RoundedCornerShape(12.dp),
@@ -173,8 +184,14 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                             .fillMaxWidth()
                             .padding(top = 12.dp)
                             .padding(horizontal = 20.dp),
+                        interactionSource = universityInteractionSource,
                         label = {
-                            androidx.compose.material3.Text(text = "University")
+                            if (!universityIsFocused.value)
+                                Text(
+                                    text = "University", color = EDSColors.lightGray
+                                ) else Text(
+                                text = "University",
+                            )
                         },
                         keyboardActions = KeyboardActions(),
                         shape = RoundedCornerShape(12.dp),
@@ -195,8 +212,14 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                             .fillMaxWidth()
                             .padding(top = 12.dp)
                             .padding(horizontal = 20.dp),
+                        interactionSource = majorInteractionSource,
                         label = {
-                            androidx.compose.material3.Text(text = "Major")
+                            if (!majorIsFocused.value)
+                                Text(
+                                    text = "Major", color = EDSColors.lightGray
+                                ) else Text(
+                                text = "Major",
+                            )
                         },
                         keyboardActions = KeyboardActions(),
                         shape = RoundedCornerShape(12.dp),
@@ -224,7 +247,7 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                                 tint = EDSColors.primaryColor
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                                Text(text = "Verification", fontSize = 16.sp)
+                            Text(text = "Verification", fontSize = 16.sp)
                             Text(
                                 text = "(*)", fontSize = 16.sp,
                                 color = EDSColors.notScheduleTextColor
@@ -247,7 +270,7 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
             }
             Button(
                 onClick = {
-                    Log.d("Token in tutor onclick" , token.value)
+                    Log.d("Token in tutor onclick", token.value)
 
                     vm.registerTutor(
                         token.value,
@@ -267,7 +290,7 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                     CircularProgressIndicator()
                 else
                     Text(text = "Register", color = EDSColors.white)
-                LaunchedEffect(key1 = registerState.value ) {
+                LaunchedEffect(key1 = registerState.value) {
                     if (registerState.value.error.isNotEmpty() || registerState.value.success) {
                         showToast(context, registerState.value.error)
                         navController.popBackStack()

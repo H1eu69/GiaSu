@@ -4,10 +4,8 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Class
-import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.projectprovip.h1eu.giasu.R
 
@@ -20,12 +18,14 @@ sealed class Screens(val route: String) {
     }
 
     data object InApp : Screens(route = "in_app") {
-         object Home : BottomBarScreens(
+        object Home : BottomBarScreens(
             route = "home", R.string.bottom_home,
 
             icon = Icons.Outlined.Home, title = "Home"
         ) {
             object ClassDetail : Screens(route = "new_class_detail")
+            object SearchSuggest : Screens(route = "search_suggest")
+            object SearchResult : Screens(route = "search_result")
         }
 
         object Courses : BottomBarScreens(
@@ -40,6 +40,8 @@ sealed class Screens(val route: String) {
             icon = Icons.Outlined.Person, title = "Tutor"
         ) {
             object TutorDetail : Screens(route = "tutor_detail")
+            object SearchSuggest : Screens(route = "search_suggest")
+            object SearchResult : Screens(route = "search_result")
         }
 
         object Profile : BottomBarScreens(

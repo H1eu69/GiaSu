@@ -36,8 +36,11 @@ import com.projectprovip.h1eu.giasu.presentation.class_management.view.Requested
 import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.CourseManagementViewModel
 import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.RequestedCourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
+import com.projectprovip.h1eu.giasu.presentation.home.model.SearchSuggestState
 import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
+import com.projectprovip.h1eu.giasu.presentation.home.view.SearchResultHomeScreen
+import com.projectprovip.h1eu.giasu.presentation.home.view.SearchSuggestHomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CreateClassScreen
@@ -50,6 +53,8 @@ import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCours
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorReviewViewModel
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
+import com.projectprovip.h1eu.giasu.presentation.tutor.view.SearchResultTutorScreen
+import com.projectprovip.h1eu.giasu.presentation.tutor.view.SearchSuggestTutorScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorDetailViewModel
@@ -77,7 +82,9 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
     ) {
         composable(Screens.Authentication.Login.route) {
             val viewModel = hiltViewModel<LoginViewModel>()
-            LoginScreen(navController, viewModel)
+            LoginScreen(navController, onLoginClick = {
+                s1, s2 -> viewModel.loginByEmail(s1,s2)
+            }, state = viewModel.loginState.value)
         }
         composable(Screens.Authentication.Signup.route) {
             val viewModel = hiltViewModel<SignUpViewModel>()
@@ -105,7 +112,7 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
             )
         }
         composable(Screens.Authentication.ForgetPassword.route) {
-            ForgetPasswordScreen({navController.popBackStack()})
+            ForgetPasswordScreen({ navController.popBackStack() })
         }
     }
 }
@@ -144,6 +151,12 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable(Screens.InApp.Home.route) {
             HomeScreen(navController, homeViewModel.courseDetailState.value)
         }
+        composable(Screens.InApp.Home.SearchSuggest.route) {
+            SearchSuggestHomeScreen(navController, SearchSuggestState())
+        }
+        composable(Screens.InApp.Home.SearchResult.route) {
+            SearchResultHomeScreen(navController, homeViewModel.courseDetailState.value)
+        }
         composable(
             "${Screens.InApp.Home.ClassDetail.route}/{courseId}",
             arguments = listOf(navArgument("courseId") {
@@ -160,13 +173,20 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         }
         composable(Screens.InApp.Tutor.route) {
             val vm = hiltViewModel<TutorViewModel>()
-            TutorScreen(vm.state,
+            TutorScreen(
+                vm.state,
                 loadMore = {
                     vm.loadMore()
                 },
-                onItemClick = {
-                    navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$it")
-                })
+                navController = navController,
+            )
+        }
+
+        composable(Screens.InApp.Tutor.SearchSuggest.route) {
+            SearchSuggestTutorScreen(navController)
+        }
+        composable(Screens.InApp.Tutor.SearchResult.route) {
+            SearchResultTutorScreen(navController)
         }
 
         composable("${Screens.InApp.Tutor.TutorDetail.route}/{tutorId}",
