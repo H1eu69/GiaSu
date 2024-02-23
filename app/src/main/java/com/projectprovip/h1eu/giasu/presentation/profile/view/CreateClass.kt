@@ -53,6 +53,12 @@ import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CreateCourseState
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CreateClassViewModel
 
+@Preview
+@Composable
+fun CreateClassScreenPreview() {
+    CreateClassScreen(rememberNavController(), CreateCourseState(), {})
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateClassScreen(navController: NavController,

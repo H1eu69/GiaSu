@@ -3,6 +3,7 @@ package com.projectprovip.h1eu.giasu.presentation.home.view
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
@@ -53,7 +53,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
@@ -62,21 +61,20 @@ import com.projectprovip.h1eu.giasu.common.DateFormat
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.presentation.common.composes.SubjectCategoryItem
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
+import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 fun PreviewHomeScreen() {
-    HomeScreen(rememberNavController(), hiltViewModel())
+    HomeScreen(rememberNavController(), CourseDetailState())
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController, vm: HomeViewModel) {
+fun HomeScreen(navController: NavController, state: CourseDetailState) {
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
@@ -108,7 +106,7 @@ fun HomeScreen(navController: NavController, vm: HomeViewModel) {
                     )
                 ),
             navController = navController,
-            vm = vm
+            state = state
         )
     }
 }
@@ -159,17 +157,17 @@ fun AppBar(text: String) {
 fun BodyContent(
     modifier: Modifier,
     navController: NavController,
-    vm: HomeViewModel
+    state: CourseDetailState
 ) {
-    val newClassState = vm.courseDetailState
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SearchTextField()
+        SearchTextField(onTap = {})
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -190,16 +188,18 @@ fun BodyContent(
                     title2 = "View all"
                 )
             }
-            newClassState.apply {
+            state.apply {
                 when {
-                    this.value.isLoading -> {
+                    this.isLoading -> {
                         item {
-                            CircularProgressIndicator()
+                            CircularProgressIndicator(
+                                color = EDSColors.primaryColor
+                            )
                         }
                     }
 
-                    this.value.data.isNotEmpty() -> {
-                        value.data.forEach {
+                    this.data.isNotEmpty() -> {
+                        data.forEach {
                             item {
                                 CourseItem(
                                     navController = navController,
@@ -216,16 +216,23 @@ fun BodyContent(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun SearchTextField(modifier: Modifier = Modifier) {
+private fun SearchTextField(modifier: Modifier = Modifier, onTap: () -> Unit) {
     val searchTextField = remember {
         mutableStateOf("")
     }
     val focusManager = LocalFocusManager.current
+    val interactionSource = remember { MutableInteractionSource() }
 
     OutlinedTextField(
-        modifier = modifier,
+        modifier = modifier.clickable(
+            interactionSource = interactionSource,
+            indication = null
+        ) {
+            onTap()
+        },
         value = searchTextField.value,
-        singleLine = true,
+        readOnly = true,
+        enabled = false,
         leadingIcon = {
             Icon(Icons.Default.Search, "")
         },
@@ -235,7 +242,8 @@ private fun SearchTextField(modifier: Modifier = Modifier) {
         shape = RoundedCornerShape(30),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             containerColor = Color.White,
-            ),
+            disabledBorderColor = Color.Gray
+        ),
         keyboardActions = KeyboardActions(
             onDone = {
                 focusManager.clearFocus()
@@ -294,7 +302,6 @@ fun CourseItem(navController: NavController, data: CourseDetail) {
         border = BorderStroke(2.dp, Color.LightGray),
         elevation = CardDefaults.outlinedCardElevation(3.dp),
         modifier = Modifier
-            .padding(8.dp)
             .fillMaxWidth()
             .clip(
                 RoundedCornerShape(10)
@@ -314,11 +321,13 @@ fun CourseItem(navController: NavController, data: CourseDetail) {
             MiddleContent(
                 minutePerSession = data.minutePerSession,
                 sessionPerWeek = data.sessionPerWeek,
-                info = data.description,
+                info = data.subjectName,
                 location = data.address
             )
-            BottomContent(fee = data.fee,
-                createdDate = data.creationTime)
+            BottomContent(
+                fee = data.fee,
+                createdDate = data.creationTime
+            )
         }
     }
 }

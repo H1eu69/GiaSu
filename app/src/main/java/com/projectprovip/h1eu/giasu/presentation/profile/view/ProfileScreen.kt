@@ -194,11 +194,6 @@ fun Profile(image: String, name: String, id: String) {
 }
 
 @Composable
-fun ProfileImage(image: String) {
-
-}
-
-@Composable
 fun ColumnOfButton(navController: NavController, onShowDialog: (Boolean) -> Unit) {
     Column(
         Modifier.fillMaxWidth()
