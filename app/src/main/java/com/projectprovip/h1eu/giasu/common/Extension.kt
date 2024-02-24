@@ -19,6 +19,6 @@ fun String.alphaNumericOnly() : String {
 }
 
 fun String.isEmailFormatted() : Boolean {
-    val emailRegex = "^[A-Za-z](.*)([@]{1})(.{1,})(\\.)(.{1,})"
-    return this.matches(emailRegex.toRegex())
+    val emailRegex = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
+    return emailRegex.matches(this)
 }

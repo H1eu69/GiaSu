@@ -6,12 +6,14 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -221,10 +223,15 @@ fun LoginScreen(
                         onLoginClick(emailTextField.value, passTextField.value)
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
+                    colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor),
+                    contentPadding = PaddingValues(0.dp)
                 ) {
                     if (state.isLoading) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = EDSColors.white,
+                            modifier = Modifier.size(30.dp),
+                            strokeWidth = 4.dp
+                        )
                     } else {
                         Text(
                             text = "Login"
