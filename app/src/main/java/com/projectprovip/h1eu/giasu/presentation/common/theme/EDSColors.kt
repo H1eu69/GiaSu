@@ -38,5 +38,6 @@ class EDSColors {
         val learningModeHybridTextColor = Color(215, 163, 255)
         val learningModeOfflineBackgroundColor = Color(255, 235, 235, 255)
         val learningModeOfflineTextColor = Color(255, 92, 92, 255)
+        val greenCheck = Color(94,193,93)
     }
 }

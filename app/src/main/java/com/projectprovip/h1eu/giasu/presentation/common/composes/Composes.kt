@@ -1,29 +1,19 @@
 package com.projectprovip.h1eu.giasu.presentation.common.composes
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Start
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -34,17 +24,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
@@ -62,7 +48,13 @@ fun AppBarTitle(text: String, fontSize: Int = 20) {
 }
 
 @Composable
-fun MultiColorText(text1: String, color1: Color, text2: String, color2 : Color, modifier: Modifier = Modifier) {
+fun MultiColorText(
+    text1: String,
+    color1: Color,
+    text2: String,
+    color2: Color,
+    modifier: Modifier = Modifier
+) {
     Text(
         buildAnnotatedString {
             withStyle(style = SpanStyle(color = color1, fontSize = 16.sp)) {
@@ -78,12 +70,14 @@ fun MultiColorText(text1: String, color1: Color, text2: String, color2 : Color, 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommonTextField(text: MutableState<String>,
-                    hint: String? = null,
-                    singleLine: Boolean = true,
-                    keyboardOptions:KeyboardOptions = KeyboardOptions.Default,
-                    icon: @Composable (() -> Unit)? = null,
-                    modifier: Modifier = Modifier) {
+fun CommonTextField(
+    text: MutableState<String>,
+    hint: String? = null,
+    singleLine: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    icon: @Composable (() -> Unit)? = null,
+    modifier: Modifier = Modifier
+) {
 
     TextField(
         value = text.value,
@@ -96,8 +90,10 @@ fun CommonTextField(text: MutableState<String>,
         leadingIcon = icon,
         placeholder = {
             if (hint != null) {
-                Text(text = hint,
-                    color = Color.LightGray)
+                Text(
+                    text = hint,
+                    color = Color.LightGray
+                )
             }
         },
         onValueChange = { name ->
@@ -108,18 +104,26 @@ fun CommonTextField(text: MutableState<String>,
         modifier = modifier
     )
 }
+
+@Preview
 @Composable
-fun CommonRadioButton(title: String,
-                      radioOptions: List<String>,
-                      selectedOption: String,
-                      onOptionSelected: (String) -> Unit,
-                      modifier: Modifier = Modifier) {
+fun CommonRadioButtonPreview() {
+    CommonRadioButton("test", listOf("1", "2", "3"), "1", { s1 -> })
+}
+
+@Composable
+fun CommonRadioButton(
+    title: String,
+    radioOptions: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val interactionSource = remember { MutableInteractionSource() }
     Column(
-
         modifier = modifier
     ) {
-        Text(text = title,)
+        Text(text = title)
         radioOptions.forEach { text ->
             Row(
                 verticalAlignment = CenterVertically,
@@ -159,15 +163,20 @@ fun EduSmartButton(
     text: String,
     isLoading: Boolean = false,
     buttonColor: Color = EDSColors.primaryColor,
- )  {
+) {
     Button(
         onClick = { onClick() },
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
     ) {
-        if(!isLoading)
+        if (!isLoading)
             Text(text = text)
         else
             CircularProgressIndicator()
     }
+}
+
+@Composable
+fun TutorRole() {
+
 }

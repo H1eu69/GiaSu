@@ -210,12 +210,6 @@ fun ColumnOfButton(navController: NavController, onShowDialog: (Boolean) -> Unit
             onClick = {
                 navController.navigate(Screens.InApp.Profile.RequestClass.route)
             })
-        ButtonColumnItem(Icons.Rounded.AppRegistration, EDSColors.primaryColor,
-            "Register tutor", true,
-            onClick = {
-                navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
-            }
-        )
         ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
             "Learning courses", true,
             onClick = {
