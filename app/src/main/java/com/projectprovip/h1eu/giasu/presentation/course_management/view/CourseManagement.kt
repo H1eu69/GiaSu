@@ -1,6 +1,7 @@
 package com.projectprovip.h1eu.giasu.presentation.course_management.view
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -29,11 +30,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +52,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.DateFormat
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
@@ -91,19 +99,19 @@ fun ClassManagementScreen(
         }
     ) {
         Column(modifier = Modifier.padding(it)) {
-            ScrollableTabRow(
+            TabRow(
                 selectedTabIndex = tabSelectedIndex.intValue,
-                edgePadding = 8.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 list.forEachIndexed { index, item ->
                     Tab(text = { Text(item) },
+
                         selected = tabSelectedIndex.intValue == index,
                         unselectedContentColor = Color.LightGray,
                         onClick = {
                             tabSelectedIndex.intValue = index
                             getListByFilter(item)
-                        }
+                        },
                     )
                 }
             }
@@ -150,10 +158,20 @@ fun UIBasedOnState(
                 )
             } else {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        text = "No items",
-                        modifier = modifier.align(Alignment.Center)
+                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_box),
+                        onRetry = {
+                                failCount, exception ->
+                            Log.d("LottieAnimation", failCount.toString())
+                            Log.d("LottieAnimation", exception.toString())
+                            // Continue retrying. Return false to stop trying.
+                            false
+                        })
+
+                    LottieAnimation(
+                        composition = composition,
+                        iterations = LottieConstants.IterateForever,
                     )
+
                 }
 
             }
