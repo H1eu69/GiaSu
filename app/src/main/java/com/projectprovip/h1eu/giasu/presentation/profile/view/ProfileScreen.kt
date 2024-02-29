@@ -23,6 +23,8 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Class
 import androidx.compose.material.icons.rounded.ExitToApp
@@ -53,6 +55,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.class_management.view.TutorRegisterAlertDialog
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
@@ -160,94 +163,90 @@ fun Profile(
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(20.dp)
             ) {
-            Column {
+                AsyncImage(
+                    image,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(150.dp)
+                        .clip(CircleShape)
+                        .clickable {
+
+                        })
                 Box(
                     modifier = Modifier
-                        .padding(20.dp)
+                        .size(40.dp)
+                        .align(Alignment.BottomEnd)
+                        .clip(CircleShape)
+                        .border(2.dp, EDSColors.white, CircleShape)
+                        .background(EDSColors.lightGray)
                 ) {
-                    AsyncImage(
-                        image,
-                        contentDescription = null,
+                    Icon(
+                        imageVector = Icons.Default.AddAPhoto, contentDescription = null,
+                        tint = EDSColors.blackColor,
                         modifier = Modifier
-                            .size(150.dp)
-                            .clip(CircleShape)
-                            .clickable {
-
-                            })
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .align(Alignment.BottomEnd)
-                            .offset(0.dp, 16.dp)
-                            .clip(CircleShape)
-                            .border(2.dp, EDSColors.white, CircleShape)
-                            .background(EDSColors.lightGray)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AddAPhoto, contentDescription = null,
-                            tint = EDSColors.blackColor,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .align(Alignment.Center)
-                                .offset((-1).dp, (-1).dp)
-                        )
-                    }
+                            .size(20.dp)
+                            .align(Alignment.Center)
+                            .offset((-1).dp, (-1).dp)
+                    )
                 }
+            }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = name, style = EDSTextStyle.Header(color = EDSColors.primaryColor),
+                )
 
                 Text(
-                    text = name, style = TextStyle(
-                        fontSize = 14.sp,
-                        color = EDSColors.primaryColor,
-                    ),
-                    modifier = Modifier.padding(12.dp)
-                        .align(Alignment.CenterHorizontally)
+                    text = "Tutored 9 courses", style = EDSTextStyle.Content(EDSColors.lightGray)
                 )
             }
-            Column {
-                Text(
-                    text = "Email", style = TextStyle(
-                        fontSize = 16.sp,
-                    ),
-                    modifier = Modifier.padding(top = 12.dp)
-                )
-                Text(
-                    text = email, style = TextStyle(
-                        fontSize = 14.sp,
-                        color = EDSColors.primaryColor,
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Phone", style = TextStyle(
-                        fontSize = 16.sp,
-                    ),
-                    modifier = Modifier.padding(top = 12.dp)
-                )
-                Text(
-                    text = phone, style = TextStyle(
-                        fontSize = 14.sp,
-                        color = EDSColors.primaryColor,
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Role", style = TextStyle(
-                        fontSize = 16.sp,
-                    ),
-                    modifier = Modifier.padding(top = 12.dp)
-                )
-                Text(
-                    text = role, style = TextStyle(
-                        fontSize = 14.sp,
-                        color = EDSColors.primaryColor,
-                    )
-                )
-            }
-
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Email,
+                contentDescription = null,
+                tint = EDSColors.lightGray,
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = email, style = EDSTextStyle.Content(
+                    EDSColors.lightGray
+                )
+            )
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Phone,
+                contentDescription = null,
+                tint = EDSColors.lightGray,
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = phone, style = EDSTextStyle.Content(
+                    EDSColors.lightGray
+                )
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
     }
 }
 
@@ -264,7 +263,7 @@ fun ColumnOfButton(
             Icons.Rounded.AccountCircle, EDSColors.primaryColor,
             "Update Profile", true,
             onClick = {
-                //navController.navigate(Screens.InApp.Profile. .route)
+                navController.navigate(Screens.InApp.Profile.UpdateProfile.route)
             }
         )
         ButtonColumnItem(

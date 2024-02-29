@@ -48,6 +48,7 @@ import com.projectprovip.h1eu.giasu.presentation.profile.view.LearningCourseScre
 import com.projectprovip.h1eu.giasu.presentation.profile.view.ProfileScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorRegisterScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorReviewScreen
+import com.projectprovip.h1eu.giasu.presentation.profile.view.UpdateProfile
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CreateClassViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCoursesViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
@@ -231,6 +232,11 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             val vm = hiltViewModel<TutorRegisterViewModel>()
             TutorRegisterScreen(navController, vm)
         }
+
+        composable(Screens.InApp.Profile.UpdateProfile .route) {
+            UpdateProfile(navController,)
+        }
+
         composable(Screens.InApp.Profile.RequestClass.route) {
             val vm = hiltViewModel<CreateClassViewModel>()
             val createCourse: (CreateCourseInput) -> Unit = {

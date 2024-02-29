@@ -33,7 +33,7 @@ class EDSTextStyle {
             certificates = R.array.com_google_android_gms_fonts_certs
         )
         fun Header(color : Color = Color.Black) : TextStyle {
-            val fontName = GoogleFont("Poppins")
+            val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
                 Font(googleFont = fontName, fontProvider = provider)
@@ -42,7 +42,22 @@ class EDSTextStyle {
             return TextStyle(
                 fontSize = 22.sp,
                 color = color,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.W900,
+                fontFamily = font
+            )
+        }
+
+        fun Content(color : Color = Color.Black) : TextStyle {
+            val fontName = GoogleFont("Inter")
+
+            val font = FontFamily(
+                Font(googleFont = fontName, fontProvider = provider)
+            )
+
+            return TextStyle(
+                fontSize = 15.sp,
+                color = color,
+                fontWeight = FontWeight.Medium,
                 fontFamily = font
             )
         }

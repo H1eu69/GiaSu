@@ -69,12 +69,12 @@ import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
 @Composable
 @Preview
 fun PreviewScreen() {
-    PersonalInformation(navController = rememberNavController())
+    UpdateProfile(navController = rememberNavController())
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PersonalInformation(navController: NavController) {
+fun UpdateProfile(navController: NavController) {
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(title = {

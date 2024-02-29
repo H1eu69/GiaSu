@@ -53,10 +53,9 @@ sealed class Screens(val route: String) {
             object LearningCourses : Screens(route = "learning_courses") {
                 object TutorReview : Screens(route = "tutor_review")
             }
+
+            object UpdateProfile : Screens(route = "update_profile")
         }
-
-        object PersonalInformation : Screens(route = "personal_information")
-
     }
 }
 
