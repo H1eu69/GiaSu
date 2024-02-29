@@ -230,7 +230,7 @@ fun LoginScreen(
                         CircularProgressIndicator(
                             color = EDSColors.white,
                             modifier = Modifier.size(30.dp),
-                            strokeWidth = 4.dp
+                            strokeWidth = 2.dp
                         )
                     } else {
                         Text(

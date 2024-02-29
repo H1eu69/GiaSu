@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,15 +21,13 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.AddCircle
-import androidx.compose.material.icons.rounded.AppRegistration
 import androidx.compose.material.icons.rounded.Class
 import androidx.compose.material.icons.rounded.ExitToApp
+import androidx.compose.material.icons.rounded.HowToReg
 import androidx.compose.material.icons.rounded.Note
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,7 +56,6 @@ import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.class_management.view.TutorRegisterAlertDialog
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.launch
@@ -120,9 +117,9 @@ fun ProfileScreen(navController: NavController) {
             })
         }
         LazyColumn(modifier = Modifier.padding(it)) {
-            item { Profile(userImage.value, userName.value, userId.value) }
+            item { Profile(navController, userImage.value, userName.value, id = userId.value) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
-            item { ColumnOfButton(navController, onShowDialog) }
+            item { ColumnOfButton(navController, onShowDialog, isTutor = true) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
             item {
                 ButtonColumnItem(
@@ -148,73 +145,153 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
-fun Profile(image: String, name: String, id: String) {
+fun Profile(
+    navController: NavController, image: String,
+    name: String = "Dummy name",
+    email: String = "DummyEmfdsfsdsail@gmail.com",
+    phone: String = "097845612",
+    role: String = "Dummy Role",
+    id: String
+) {
     Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
     ) {
-        Box(
-            modifier = Modifier
-                .clip(CircleShape)
-                .requiredSize(150.dp)
-        ) {
-            AsyncImage(
-                image,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(150.dp)
-                    .clip(CircleShape)
-                    .clickable {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
 
-                    })
-            Icon(
-                imageVector = Icons.Default.Create, contentDescription = null,
-                tint = EDSColors.primaryColor,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(2.dp)
-                    .align(Alignment.BottomCenter)
-            )
+            ) {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .padding(20.dp)
+                ) {
+                    AsyncImage(
+                        image,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(150.dp)
+                            .clip(CircleShape)
+                            .clickable {
+
+                            })
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .align(Alignment.BottomEnd)
+                            .offset(0.dp, 16.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, EDSColors.white, CircleShape)
+                            .background(EDSColors.lightGray)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AddAPhoto, contentDescription = null,
+                            tint = EDSColors.blackColor,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .align(Alignment.Center)
+                                .offset((-1).dp, (-1).dp)
+                        )
+                    }
+                }
+
+                Text(
+                    text = name, style = TextStyle(
+                        fontSize = 14.sp,
+                        color = EDSColors.primaryColor,
+                    ),
+                    modifier = Modifier.padding(12.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
+            Column {
+                Text(
+                    text = "Email", style = TextStyle(
+                        fontSize = 16.sp,
+                    ),
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+                Text(
+                    text = email, style = TextStyle(
+                        fontSize = 14.sp,
+                        color = EDSColors.primaryColor,
+                    )
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Phone", style = TextStyle(
+                        fontSize = 16.sp,
+                    ),
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+                Text(
+                    text = phone, style = TextStyle(
+                        fontSize = 14.sp,
+                        color = EDSColors.primaryColor,
+                    )
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = "Role", style = TextStyle(
+                        fontSize = 16.sp,
+                    ),
+                    modifier = Modifier.padding(top = 12.dp)
+                )
+                Text(
+                    text = role, style = TextStyle(
+                        fontSize = 14.sp,
+                        color = EDSColors.primaryColor,
+                    )
+                )
+            }
+
         }
-        Text(
-            text = name, style = TextStyle(
-                fontSize = 16.sp,
-                color = EDSColors.primaryColor
-            )
-        )
-        MultiColorText(
-            text1 = "ID: ",
-            color1 = EDSColors.primaryColor,
-            text2 = id,
-            color2 = Color.Black
-        )
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
 @Composable
-fun ColumnOfButton(navController: NavController, onShowDialog: (Boolean) -> Unit) {
+fun ColumnOfButton(
+    navController: NavController,
+    onShowDialog: (Boolean) -> Unit,
+    isTutor: Boolean = false
+) {
     Column(
         Modifier.fillMaxWidth()
     ) {
         ButtonColumnItem(
             Icons.Rounded.AccountCircle, EDSColors.primaryColor,
-            "Personal information", true
+            "Update Profile", true,
+            onClick = {
+                //navController.navigate(Screens.InApp.Profile. .route)
+            }
         )
         ButtonColumnItem(
             Icons.Rounded.Class, EDSColors.primaryColor,
-            "Request a new class", true,
+            "Create a new course", true,
             onClick = {
                 navController.navigate(Screens.InApp.Profile.RequestClass.route)
             })
-        ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
-            "Learning courses", true,
-            onClick = {
-                navController.navigate(Screens.InApp.Profile.LearningCourses.route)
-            })
+        if (!isTutor) {
+            ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
+                "Learning courses", true,
+                onClick = {
+                    navController.navigate(Screens.InApp.Profile.LearningCourses.route)
+                })
+            ButtonColumnItem(Icons.Rounded.HowToReg, EDSColors.primaryColor,
+                "Enroll as a tutor", true,
+                onClick = {
+                    navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
+                })
+        } else {
+            ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
+                "Course requested", true,
+                onClick = {
+                    navController.navigate(Screens.InApp.Profile.LearningCourses.route)
+                })
+        }
+
     }
 }
 

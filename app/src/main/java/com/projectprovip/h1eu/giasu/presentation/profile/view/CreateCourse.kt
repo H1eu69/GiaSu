@@ -2,9 +2,11 @@ package com.projectprovip.h1eu.giasu.presentation.profile.view
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,19 +16,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,6 +48,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +60,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CreateCourseState
+import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
 
 @Preview
 @Composable
@@ -99,7 +110,7 @@ fun CreateClassScreen(
                 ),
                 title = {
                     Text(
-                        text = "Course request",
+                        text = "Create course",
                         style = TextStyle(
                             fontSize = 18.sp,
                             color = Color.White,
@@ -112,15 +123,20 @@ fun CreateClassScreen(
         },
         containerColor = EDSColors.white
     ) {
-        ClassRequestBody(
+        Box(
             modifier = Modifier
                 .padding(it)
-                .fillMaxSize(),
-            onButtonClick = onButtonClick
-        )
+                .fillMaxSize()
+        ) {
+            ClassRequestBody(
+
+                onButtonClick = onButtonClick
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClassRequestBody(
     modifier: Modifier = Modifier,
@@ -172,10 +188,44 @@ fun ClassRequestBody(
     val (learningModeSelectedOptions, learningModeOnOptionSelected) = remember {
         mutableStateOf(learningModeOptions[0])
     }
+    val openEditSubjectDialog = remember { mutableStateOf(false) }
 
 
     val localFocus = LocalFocusManager.current
     Box(modifier = modifier) {
+        if (openEditSubjectDialog.value) {
+            val dummySubjects = remember {
+                mutableStateOf(
+                    listOf(
+                        SubjectChip("Java"),
+                        SubjectChip("C++"),
+                        SubjectChip("Python"),
+                        SubjectChip("Piano"),
+                        SubjectChip("Thu dao"),
+                        SubjectChip("English Advanced"),
+                        SubjectChip("Toan cao cap"),
+                        SubjectChip("1235 anh danh roi so 4"),
+                        SubjectChip("You just want attention"),
+                        SubjectChip("You dont want my heart"),
+                        SubjectChip("Ngay co ay di theo chan me cha"),
+                        SubjectChip("1 2 3 zo"),
+                        SubjectChip(),
+                        SubjectChip(),
+                        SubjectChip(),
+                    )
+
+                )
+            }
+            PickSubjectDialog(dummySubjects, onDisMiss = {
+                openEditSubjectDialog.value = false
+            },
+                onConfirm = {
+                    subject.value = it
+                    openEditSubjectDialog.value = false
+
+                })
+        }
+
         LazyColumn(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
@@ -187,14 +237,6 @@ fun ClassRequestBody(
 
                     }
                 }
-//                .clickable(
-//                interactionSource = remember {
-//                MutableInteractionSource()
-//            },
-//                indication = null,
-//                onClick = {
-//                    localFocus.clearFocus()
-//                })
         ) {
             item {
                 MultiColorText(
@@ -338,9 +380,13 @@ fun ClassRequestBody(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp)
-                        .padding(horizontal = 20.dp),
+                        .padding(horizontal = 20.dp)
+                        .clickable {
+                            openEditSubjectDialog.value = true
+                        },
+                    enabled = false,
                     placeholder = {
-                        androidx.compose.material3.Text(
+                        Text(
                             text = "Subject Name",
                             color = EDSColors.lightGray
                         )
@@ -355,6 +401,8 @@ fun ClassRequestBody(
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
                         cursorColor = EDSColors.primaryColor,
+                        disabledBorderColor = EDSColors.myBlackColor,
+                        disabledTextColor = EDSColors.myBlackColor
                     ),
                 )
             }
@@ -563,11 +611,120 @@ fun ClassRequestBody(
                     )
                 )
             },
-            text = "Request",
+            text = "Create",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
                 .align(Alignment.BottomCenter)
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PickSubjectDialog(
+    subjects: MutableState<List<SubjectChip>>,
+    onDisMiss: () -> Unit = {},
+    onConfirm: (String) -> Unit = {}
+) {
+    val searchText = remember { mutableStateOf("") }
+    val selectedText = remember { mutableStateOf("") }
+    AlertDialog(
+        modifier = Modifier
+            .fillMaxSize(),
+        title = {
+            androidx.compose.material3.Text(text = "Subjects")
+        },
+        containerColor = EDSColors.white,
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+
+            ) {
+                androidx.compose.material3.OutlinedTextField(
+                    value = searchText.value,
+                    onValueChange = {
+                        searchText.value = it
+                    },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(30),
+                    colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLeadingIconColor = EDSColors.primaryColor,
+                        cursorColor = EDSColors.primaryColor
+                    ),
+                )
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+
+                    subjects.value.forEachIndexed { index, chip ->
+                        item {
+                            FilterChip(
+                                modifier = Modifier.fillMaxWidth(),
+                                selected = chip.selected,
+                                onClick = {
+                                    val newList = subjects.value.toMutableList()
+                                    newList.forEach {
+                                        it.selected = false
+                                    }
+                                    newList[index] = chip.copy(selected = !chip.selected)
+
+                                    subjects.value = newList
+                                    selectedText.value = newList[index].name
+                                },
+                                label = {
+                                    androidx.compose.material3.Text(
+                                        chip.name, fontWeight = FontWeight.W300,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier
+                                            .fillMaxWidth(.85f)
+                                    )
+                                },
+                                trailingIcon = {
+                                    if (chip.selected)
+                                        Icon(
+                                            imageVector = Icons.Default.CheckCircle,
+                                            contentDescription = null
+                                        )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = EDSColors.greenCheck,
+                                    selectedLabelColor = EDSColors.white,
+                                    selectedTrailingIconColor = EDSColors.white
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        },
+
+        onDismissRequest = {
+            onDisMiss()
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onConfirm(selectedText.value)
+            }) {
+                androidx.compose.material3.Text("Accept", color = EDSColors.primaryColor)
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDisMiss()
+                }
+            ) {
+                androidx.compose.material3.Text("Dismiss", color = EDSColors.notScheduleTextColor)
+            }
+        }
+    )
 }
