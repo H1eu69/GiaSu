@@ -31,11 +31,11 @@ import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
-import com.projectprovip.h1eu.giasu.presentation.class_management.view.ClassManagementScreen
-import com.projectprovip.h1eu.giasu.presentation.class_management.view.RequestedCourseDetailScreen
-import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.CourseManagementViewModel
-import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.RequestedCourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
+import com.projectprovip.h1eu.giasu.presentation.course_management.view.ClassManagementScreen
+import com.projectprovip.h1eu.giasu.presentation.course_management.view.RequestedCourseDetailScreen
+import com.projectprovip.h1eu.giasu.presentation.course_management.viewmodel.CourseManagementViewModel
+import com.projectprovip.h1eu.giasu.presentation.course_management.viewmodel.RequestedCourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.model.SearchSuggestState
 import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
@@ -83,8 +83,8 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
     ) {
         composable(Screens.Authentication.Login.route) {
             val viewModel = hiltViewModel<LoginViewModel>()
-            LoginScreen(navController, onLoginClick = {
-                s1, s2 -> viewModel.loginByEmail(s1,s2)
+            LoginScreen(navController, onLoginClick = { s1, s2 ->
+                viewModel.loginByEmail(s1, s2)
             }, state = viewModel.loginState.value)
         }
         composable(Screens.Authentication.Signup.route) {
@@ -210,7 +210,15 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
 
         composable(Screens.InApp.Courses.route) {
             val vm = hiltViewModel<CourseManagementViewModel>()
-            ClassManagementScreen(navController, vm)
+
+            ClassManagementScreen(navController,
+                state = vm.state.value,
+                callback = {
+                    vm.getRequestedCourses(token.value)
+                },
+                getListByFilter = {
+                    vm.getListByFilter(it)
+                })
         }
 
         composable(
@@ -220,9 +228,13 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             })
         ) { backStackEntry ->
             val courseDetailViewModel = hiltViewModel<RequestedCourseDetailViewModel>()
+
             RequestedCourseDetailScreen(
                 navController,
-                courseDetailViewModel,
+                courseDetailViewModel.state.value,
+                { id ->
+                    courseDetailViewModel.getRequestedCourseDetail(id, token.value)
+                },
                 backStackEntry.arguments?.getInt("courseId")
             )
         }
@@ -233,8 +245,8 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             TutorRegisterScreen(navController, vm)
         }
 
-        composable(Screens.InApp.Profile.UpdateProfile .route) {
-            UpdateProfile(navController,)
+        composable(Screens.InApp.Profile.UpdateProfile.route) {
+            UpdateProfile(navController)
         }
 
         composable(Screens.InApp.Profile.RequestClass.route) {

@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.presentation.class_management.view
+package com.projectprovip.h1eu.giasu.presentation.course_management.view
 
 import android.content.Context
 import android.widget.Toast
@@ -37,7 +37,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,48 +45,42 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.DateFormat
-import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
-import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.CourseManagementViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import kotlinx.coroutines.launch
+import com.projectprovip.h1eu.giasu.presentation.course_management.model.RequestedCourseState
 
 @Preview
 @Composable
 fun PreviewClassManagementScreen() {
-    ClassManagementScreen(navController = rememberNavController(), hiltViewModel())
+    ClassManagementScreen(navController = rememberNavController(),
+        state = RequestedCourseState(),
+        getListByFilter = {s ->})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClassManagementScreen(navController: NavController, vm: CourseManagementViewModel) {
+fun ClassManagementScreen(
+    navController: NavController,
+    state: RequestedCourseState,
+    callback: () -> Unit = {},
+    getListByFilter: (String) -> Unit,
+) {
     val tabSelectedIndex = remember {
         mutableIntStateOf(0)
     }
     val list = listOf("All", "Success", "Canceled", "Verifying")
     val context = LocalContext.current
-    val coroutine = rememberCoroutineScope()
-    val token = remember { mutableStateOf("") }
 
-    LaunchedEffect(key1 = "") {
-        coroutine.launch {
-            context.dataStore.data.collect { preference ->
-                token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
-                vm.getRequestedCourses(token.value)
-            }
-        }
+    LaunchedEffect(key1 = "",) {
+        callback()
     }
 
     Scaffold(
@@ -109,30 +102,28 @@ fun ClassManagementScreen(navController: NavController, vm: CourseManagementView
                         unselectedContentColor = Color.LightGray,
                         onClick = {
                             tabSelectedIndex.intValue = index
-                            vm.getListByFilter(item)
+                            getListByFilter(item)
                         }
                     )
                 }
             }
-            UIBasedOnState(vm, context, navController = navController)
+            UIBasedOnState(state, context, navController = navController)
         }
     }
 }
 
 @Composable
 fun UIBasedOnState(
-    vm: CourseManagementViewModel,
+    state: RequestedCourseState,
     context: Context,
     modifier: Modifier = Modifier,
     navController: NavController
 ) {
-    val listRequestedCourse = vm.filteredList
-    val state = vm.state
     val openDialog = remember { mutableStateOf(true) }
 
     when {
-        state.value.message.isNotEmpty() -> {
-            if (state.value.message == "Error403 Forbidden") {
+        state.message.isNotEmpty() -> {
+            if (state.message == "Error403 Forbidden") {
                 TutorRegisterAlertDialog(open = openDialog.value,
                     onDismissRequest = {
                         openDialog.value = false
@@ -143,33 +134,39 @@ fun UIBasedOnState(
                         navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
                     })
             } else
-                Toast.makeText(context, state.value.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
         }
 
-        state.value.isLoading -> {
+        state.isLoading -> {
             showLoading(modifier = modifier.fillMaxSize())
         }
 
-        state.value.data.isNotEmpty() -> {
-            if (listRequestedCourse.value.isNotEmpty()) {
+        state.data.isNotEmpty() -> {
+            if (state.filteredData.isNotEmpty()) {
                 ListCourses(
                     modifier,
-                    data = listRequestedCourse.value,
+                    data = state.filteredData,
                     navController
                 )
             } else {
-                Text(
-                    text = "No items",
-                    textAlign = TextAlign.Center,
-                    modifier = modifier.fillMaxSize()
-                )
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = "No items",
+                        modifier = modifier.align(Alignment.Center)
+                    )
+                }
+
             }
         }
     }
 }
 
 @Composable
-fun TutorRegisterAlertDialog(open: Boolean, onDismissRequest: () -> Unit, onConfirmation: () -> Unit) {
+fun TutorRegisterAlertDialog(
+    open: Boolean,
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit
+) {
     when {
         open -> {
             AlertDialog(

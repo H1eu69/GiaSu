@@ -57,7 +57,7 @@ import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.presentation.class_management.view.TutorRegisterAlertDialog
+import com.projectprovip.h1eu.giasu.presentation.course_management.view.TutorRegisterAlertDialog
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors

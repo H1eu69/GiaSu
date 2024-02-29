@@ -319,7 +319,7 @@ fun CourseItem(navController: NavController, data: CourseDetail) {
                 .padding(20.dp)
         ) {
             AppBarTitle(text = data.title, fontSize = 16)
-            SubTitle(text = "ID: ${data.id}")
+            //SubTitle(text = "ID: ${data.id}")
             MiddleContent(
                 minutePerSession = data.minutePerSession,
                 sessionPerWeek = data.sessionPerWeek,

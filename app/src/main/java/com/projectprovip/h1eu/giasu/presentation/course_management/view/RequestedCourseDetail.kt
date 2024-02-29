@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.presentation.class_management.view
+package com.projectprovip.h1eu.giasu.presentation.course_management.view
 
 import android.content.Context
 import android.content.Intent
@@ -21,12 +21,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Face5
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Subject
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -45,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -53,15 +50,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourseDetail
-import com.projectprovip.h1eu.giasu.presentation.class_management.viewmodel.RequestedCourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.course_management.model.RequestedCourseDetailState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -69,8 +64,10 @@ import kotlinx.coroutines.launch
 fun PreviewDetailScreen() {
     RequestedCourseDetailScreen(
         rememberNavController(),
-        hiltViewModel(),
-        1
+        RequestedCourseDetailState(
+            data = RequestedCourseDetail()
+        ),
+        id = 1
     )
 }
 
@@ -78,24 +75,14 @@ fun PreviewDetailScreen() {
 @Composable
 fun RequestedCourseDetailScreen(
     navController: NavController,
-    vm: RequestedCourseDetailViewModel,
+    state: RequestedCourseDetailState,
+    callback: (Int) -> Unit = { id ->
+    },
     id: Int?
 ) {
 
-    val context = LocalContext.current
-    val coroutine = rememberCoroutineScope()
-    var token = remember { mutableStateOf("") }
-    val state = vm.state
-
-    LaunchedEffect(key1 = "") {
-        coroutine.launch {
-            context.dataStore.data.collect { preference ->
-                token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
-            }
-        }
-    }
-    if (state.value.data == null) {
-        vm.getRequestedCourseDetail(id = id!!, token.value)
+    if (state.data == null) {
+        callback(id!!)
     }
 
     Scaffold(
@@ -111,15 +98,15 @@ fun RequestedCourseDetailScreen(
         ) {
             state.apply {
                 when {
-                    state.value.isLoading -> {
+                    state.isLoading -> {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
 
-                    state.value.data != null -> {
-                        Log.d("z`", state.value.data.toString())
+                    state.data != null -> {
+                        Log.d("z`", state.data.toString())
                         RequestedCourseDetailBody(
                             navController = navController,
-                            course = state.value.data!!
+                            course = state.data
                         )
                     }
                 }
@@ -246,12 +233,12 @@ fun RequestedCourseDetailBody(
                 }
             )
         }
-    //        item {
-    //            DetailIconAndText(
-    //                Icons.Outlined.Person,
-    //                "Tutor email: ", course.tu
-    //            )
-    //        }
+        //        item {
+        //            DetailIconAndText(
+        //                Icons.Outlined.Person,
+        //                "Tutor email: ", course.tu
+        //            )
+        //        }
         item {
             Spacer(modifier = Modifier.height(50.dp))
         }
