@@ -180,7 +180,8 @@ fun RequestedCourseDetailBody(
         item {
             DetailIconAndText(
                 imageVector = Icons.Outlined.Phone,
-                boldedText = "Contact number: ", contentText = {
+                boldedText = "Contact number: ",
+                contentText = {
                     Text(
                         text = course.learnerContact,
                         fontSize = 16.sp,

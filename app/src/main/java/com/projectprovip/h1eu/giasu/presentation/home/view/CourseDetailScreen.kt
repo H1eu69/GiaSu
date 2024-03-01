@@ -1,10 +1,14 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -33,12 +37,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -56,13 +60,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
-import com.projectprovip.h1eu.giasu.common.DateFormat
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Preview
@@ -92,7 +94,7 @@ fun CourseDetailScreen(
     var token = remember { mutableStateOf("") }
 
 
-    LaunchedEffect(key1 = ""){
+    LaunchedEffect(key1 = "") {
         coroutine.launch {
             context.dataStore.data.collect { preference ->
                 token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
@@ -104,9 +106,11 @@ fun CourseDetailScreen(
             CourseDetailAppbar(navController)
         },
     ) {
-        Box(modifier = Modifier
-            .padding(it)
-            .padding(20.dp)) {
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .padding(20.dp)
+        ) {
             CourseDetailBody(navController = navController, course = course!!)
             Button(
                 onClick = {
@@ -123,7 +127,7 @@ fun CourseDetailScreen(
                 } else {
                     Text(text = "Tax: $${course.chargeFee} Register now", color = EDSColors.white)
                 }
-                LaunchedEffect(key1 = courseRegisterState.value, ){
+                LaunchedEffect(key1 = courseRegisterState.value) {
                     if (courseRegisterState.value.error) {
                         showToast(context, courseRegisterState.value.message)
                     } else if (courseRegisterState.value.isSuccess) {
@@ -142,6 +146,15 @@ fun CourseDetailBody(
     navController: NavController,
     course: CourseDetail
 ) {
+    var statusTextcolor = EDSColors.notScheduleTextColor
+
+    if (course.status == "Available") {
+        statusTextcolor = EDSColors.teachingTextColor
+    } else if (course.status == "Verifying") {
+        statusTextcolor = EDSColors.waitingBackgroundColor
+    }
+
+    val  context = LocalContext.current
     LazyColumn(
         modifier = modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -155,6 +168,42 @@ fun CourseDetailBody(
                     fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.Bold
                 )
+            )
+        }
+        item {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                androidx.compose.material3.Text(
+                    text = course.status,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Medium,
+                        color = statusTextcolor
+                    ),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(EDSColors.greenBackground)
+                        .padding(vertical = 8.dp, horizontal = 16.dp)
+                )
+
+                androidx.compose.material3.Text(
+                    text = course.learningMode,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Medium,
+                        color = EDSColors.purpleText
+                    ),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(EDSColors.purpleBackground)
+                        .padding(vertical = 8.dp, horizontal = 16.dp)
+                )
+            }
+
+        }
+
+        item {
+            SessionSection(
+                course.sessionPerWeek, course.minutePerSession
             )
         }
         item {
@@ -183,16 +232,22 @@ fun CourseDetailBody(
                 "Subject: ", course.subjectName
             )
         }
-        item {
-            DetailIconAndText(
-                Icons.Outlined.Info,
-                "Status: ", course.status
-            )
-        }
+//        item {
+//            DetailIconAndText(
+//                Icons.Outlined.Info,
+//                "Status: ", course.status
+//            )
+//        }
         item {
             DetailIconAndText(
                 Icons.Outlined.Phone,
-                "Contact number: ", course.contactNumber
+                "Contact number: ", course.contactNumber,
+                textColor = EDSColors.costTextColor,
+                modifier = Modifier.clickable {
+                    val uri = Uri.parse("tel: ${course.contactNumber}")
+                    val dialIntent = Intent(Intent.ACTION_DIAL, uri)
+                    context.startActivity(dialIntent)
+                }
             )
         }
         item {
@@ -216,12 +271,6 @@ fun CourseDetailBody(
         item {
             DetailIconAndText(
                 Icons.Outlined.Info,
-                "Learning mode: ", course.learningMode
-            )
-        }
-        item {
-            DetailIconAndText(
-                Icons.Outlined.Info,
                 "Academic Requirement: ", course.academicLevelRequirement
             )
         }
@@ -229,17 +278,6 @@ fun CourseDetailBody(
             DetailIconAndText(
                 Icons.Outlined.Place,
                 "Address: ", course.address
-            )
-        }
-        item {
-            DetailIconAndText(
-                Icons.Outlined.Info,
-                "Session: ", pluralStringResource(
-                    R.plurals.session_string,
-                    course.sessionPerWeek,
-                    course.sessionPerWeek,
-                    course.minutePerSession
-                )
             )
         }
         item {
@@ -280,25 +318,29 @@ fun CourseDetailAppbar(navController: NavController) {
 }
 
 @Composable
-fun DetailIconAndText(imageVector: ImageVector, boldedText: String, text: String) {
+fun DetailIconAndText(imageVector: ImageVector,
+                      boldedText: String,
+                      text: String,
+textColor: Color = EDSColors.blackColor,
+                      modifier: Modifier = Modifier) {
     Row {
         Icon(
             imageVector, null,
             tint = EDSColors.primaryColor
         )
         Spacer(modifier = Modifier.width(8.dp))
-        androidx.compose.material.Text(
+        Text(
             text = boldedText,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
         )
         Spacer(modifier = Modifier.weight(1f))
-        androidx.compose.material.Text(
+        Text(
             text = text,
             textAlign = TextAlign.End,
-            color = EDSColors.costTextColor,
-            fontWeight = FontWeight.Medium,
-            fontSize = 16.sp
+            color = textColor,
+             fontSize = 16.sp,
+            modifier = modifier
         )
     }
 }
@@ -307,3 +349,48 @@ private fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
+@Preview
+@Composable
+fun SessionSectionPreview() {
+    SessionSection(
+        dayAWeek = 1,
+        minPerDay = 45
+    )
+}
+
+@Composable
+fun SessionSection( dayAWeek: Int, minPerDay: Int) {
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(EDSColors.greenBackground)
+                .padding(vertical = 8.dp, horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = dayAWeek.toString(), color = EDSColors.greenText,
+                fontSize = 24.sp
+            )
+            Text(text = pluralStringResource(id = R.plurals.day_per_week_string, count = dayAWeek))
+        }
+
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(EDSColors.orangeBackground)
+                .padding(vertical = 8.dp, horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = minPerDay.toString(),
+                color = EDSColors.orangeText,
+                fontSize = 24.sp
+            )
+            Text(text = "minutes / day")
+        }
+    }
+}

@@ -40,5 +40,12 @@ class EDSColors {
         val learningModeOfflineBackgroundColor = Color(255, 235, 235, 255)
         val learningModeOfflineTextColor = Color(255, 92, 92, 255)
         val greenCheck = Color(94,193,93)
+
+        val  greenBackground = Color(239,247,246,255)
+        val greenText = Color(46,189,124,255)
+        val orangeBackground = Color(251,244,243,255)
+        val orangeText = Color(252,120,80,255)
+        val purpleBackground = Color(244,243,253,255)
+        val purpleText = Color(115,99,251,255)
     }
 }

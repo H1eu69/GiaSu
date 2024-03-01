@@ -9,4 +9,9 @@
         <item quantity="one">%1$d day / week ($2$d minutes / day)</item>
         <item quantity="other">%1$d days / week (%2$d minutes / day)</item>
     </plurals>
+
+    <plurals name="day_per_week_string">
+        <item quantity="one">day / week</item>
+        <item quantity="other">days / week</item>
+    </plurals>
 </resources>
