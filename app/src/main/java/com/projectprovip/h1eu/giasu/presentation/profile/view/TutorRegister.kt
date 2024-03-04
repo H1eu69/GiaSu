@@ -60,7 +60,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -68,19 +67,23 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
+import com.projectprovip.h1eu.giasu.presentation.profile.model.TutorRegisterState
 import kotlinx.coroutines.launch
 
 
 @Preview
 @Composable
 fun PreviewTutorRegister() {
-    TutorRegisterScreen(rememberNavController(), hiltViewModel())
+    TutorRegisterScreen(rememberNavController(), TutorRegisterState(), { s1, s2, s3 -> }, { u -> })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel) {
+fun TutorRegisterScreen(
+    navController: NavController, registerState: TutorRegisterState,
+    registerTutor: (String, String, String) -> Unit,
+    uploadImage: (Uri) -> Unit
+) {
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
     val tokenKey = stringPreferencesKey(Constant.TOKEN_STRING)
@@ -96,8 +99,6 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
             }
         }
     }
-
-    val registerState = vm.tutorRegisterState
 
     Scaffold(
         topBar = {
@@ -240,7 +241,9 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        Row {
+                        Row(
+
+                        ) {
                             Icon(
                                 imageVector = Icons.Outlined.Image,
                                 contentDescription = "",
@@ -252,10 +255,16 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                                 text = "(*)", fontSize = 16.sp,
                                 color = EDSColors.notScheduleTextColor
                             )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = "Add more", fontSize = 16.sp,
+                                color = EDSColors.primaryColor
+                            )
+
                         }
                         ImagePicker(
                             onImageUriChanged = { uri ->
-                                vm.uploadImage(uri)
+                                uploadImage(uri)
                             }
                         )
                     }
@@ -270,10 +279,7 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
             }
             Button(
                 onClick = {
-                    Log.d("Token in tutor onclick", token.value)
-
-                    vm.registerTutor(
-                        token.value,
+                    registerTutor(
                         academicText.value,
                         universityText.value,
                         majorText.value
@@ -286,13 +292,13 @@ fun TutorRegisterScreen(navController: NavController, vm: TutorRegisterViewModel
                 colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
             ) {
 
-                if (registerState.value.isLoading)
+                if (registerState.isLoading)
                     CircularProgressIndicator()
                 else
                     Text(text = "Register", color = EDSColors.white)
-                LaunchedEffect(key1 = registerState.value) {
-                    if (registerState.value.error.isNotEmpty() || registerState.value.success) {
-                        showToast(context, registerState.value.error)
+                LaunchedEffect(key1 = registerState) {
+                    if (registerState.error.isNotEmpty() || registerState.success) {
+                        showToast(context, registerState.error)
                         navController.popBackStack()
                     }
 
