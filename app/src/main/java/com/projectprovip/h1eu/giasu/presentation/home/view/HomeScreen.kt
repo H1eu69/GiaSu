@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,9 +29,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -70,7 +66,22 @@ import kotlinx.coroutines.launch
 @Preview
 @Composable
 fun PreviewHomeScreen() {
-    HomeScreen(rememberNavController(), CourseDetailState())
+    HomeScreen(
+        rememberNavController(), CourseDetailState(
+            data = listOf(
+                CourseDetail(),
+                CourseDetail(),
+                CourseDetail(),
+                CourseDetail(),
+                CourseDetail(),
+                CourseDetail(),
+                CourseDetail(),
+                CourseDetail(),
+                CourseDetail(),
+                CourseDetail(),
+            )
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,7 +90,7 @@ fun HomeScreen(navController: NavController, state: CourseDetailState) {
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
-    var userName = remember {
+    val userName = remember {
         mutableStateOf("")
     }
     LaunchedEffect(key1 = "") {
@@ -91,9 +102,6 @@ fun HomeScreen(navController: NavController, state: CourseDetailState) {
     }
 
     Scaffold(
-        topBar = {
-            AppBar(text = userName.value)
-        },
     ) {
         BodyContent(
             modifier = Modifier
@@ -107,29 +115,57 @@ fun HomeScreen(navController: NavController, state: CourseDetailState) {
                     )
                 ),
             navController = navController,
-            state = state
+            state = state,
+            name = userName.value
         )
     }
 }
 
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun AppBar(text: String) {
+//    TopAppBar(
+//        modifier = Modifier
+//            .background(
+//                brush = Brush.horizontalGradient(
+//                    colors = listOf(
+//                        Color(0xFF00FFA6),
+//                        Color(0xFFB2FFB2),
+//                    ),
+//                )
+//            ),
+//        colors = TopAppBarDefaults.largeTopAppBarColors(
+//            containerColor = Color.Transparent
+//        ),
+//        title = {
+//            Column() {
+//
+//            }
+//        },
+//    )
+//}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppBar(text: String) {
-    TopAppBar(
-        modifier = Modifier
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        Color(0xFF00FFA6),
-                        Color(0xFFB2FFB2),
-                    ),
-                )
-            ),
-        colors = TopAppBarDefaults.largeTopAppBarColors(
-            containerColor = Color.Transparent
-        ),
-        title = {
-            Column() {
+fun BodyContent(
+    modifier: Modifier,
+    navController: NavController,
+    state: CourseDetailState,
+    name: String
+) {
+    LazyColumn(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, start = 8.dp),
+                horizontalAlignment = Alignment.Start,
+            ) {
                 Text(
                     text = "Hello",
                     style = TextStyle(
@@ -139,7 +175,7 @@ fun AppBar(text: String) {
                     )
                 )
                 Text(
-                    text = text,
+                    text = name,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
@@ -147,39 +183,30 @@ fun AppBar(text: String) {
                         fontFamily = FontFamily.SansSerif
                     )
                 )
+
             }
-        },
-    )
-}
+        }
 
+        item {
+            SearchTextField(onTap = {
+                navController.navigate(Screens.InApp.Home.SearchSuggest.route)
+            })
+        }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BodyContent(
-    modifier: Modifier,
-    navController: NavController,
-    state: CourseDetailState
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        SearchTextField(onTap = {
-            navController.navigate(Screens.InApp.Home.SearchSuggest.route)
-        })
-        LazyColumn(
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Color.White,
-                    RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-                )
-        ) {
-//            item { RowTitle(title1 = "Category", title2 = "View all") }
-            item {
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Color.White,
+                        RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+                    )
+                    .padding(16.dp)
+                ,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+
+            ) {
                 RowTitle(
                     modifier = Modifier.padding(
                         start = 10.dp,
@@ -190,20 +217,16 @@ fun BodyContent(
                     title1 = "Newest Classes",
                     title2 = "View all"
                 )
-            }
-            state.apply {
-                when {
-                    this.isLoading -> {
-                        item {
+                state.apply {
+                    when {
+                        this.isLoading -> {
                             CircularProgressIndicator(
                                 color = EDSColors.primaryColor
                             )
                         }
-                    }
 
-                    this.data.isNotEmpty() -> {
-                        data.forEach {
-                            item {
+                        this.data.isNotEmpty() -> {
+                            data.forEach {
                                 CourseItem(
                                     navController = navController,
                                     data = it
