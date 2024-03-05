@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -24,6 +25,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.IconButton
@@ -31,7 +35,9 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Button
@@ -51,24 +57,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.TutorRegisterState
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
 
 
 @Preview
@@ -106,21 +118,21 @@ fun TutorRegisterScreen(
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            Icons.Rounded.ArrowBack,
+                            Icons.AutoMirrored.Rounded.ArrowBack,
                             null,
-                            tint = Color.White
+                            tint = EDSColors.primaryColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.primaryColor
+                    containerColor = EDSColors.white
                 ),
                 title = {
                     Text(
-                        text = "Tutor Registration",
+                        text = "Enroll",
                         style = TextStyle(
                             fontSize = 18.sp,
-                            color = Color.White,
+                            color = EDSColors.primaryColor,
                             fontFamily = FontFamily.SansSerif,
                             fontWeight = FontWeight.Bold
                         )
@@ -236,6 +248,13 @@ fun TutorRegisterScreen(
                     )
                 }
                 item {
+                    val images = remember {
+                        mutableStateOf(
+                            listOf(
+                                "".toUri(),
+                            )
+                        )
+                    }
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -258,24 +277,35 @@ fun TutorRegisterScreen(
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
                                 text = "Add more", fontSize = 16.sp,
-                                color = EDSColors.primaryColor
+                                color = EDSColors.primaryColor,
+                                modifier = Modifier.clickable {
+                                    val newList = images.value.toMutableList()
+                                    newList.add(Uri.EMPTY)
+                                    images.value = newList
+                                }
                             )
 
                         }
                         ImagePicker(
-                            onImageUriChanged = { uri ->
+                            images.value,
+                            onImageUriChanged = { uri, index ->
+                                val newList = images.value.toMutableList()
+                                newList.removeAt(index)
+                                newList.add(index, uri)
+                                images.value = newList
                                 uploadImage(uri)
-                            }
+                            },
+                            onDeleteUri = { index ->
+                                val newList = images.value.toMutableList()
+                                val emptyUri = Uri.EMPTY
+
+                                newList.removeAt(index)
+                                newList.add(index, emptyUri)
+                                images.value = newList
+                            },
                         )
                     }
                 }
-//                item() {
-//                    CommonTextField(remember { mutableStateOf("") },
-//                        hint = "last field",
-//                        singleLine = false,
-//                        modifier = Modifier.fillMaxWidth().
-//                        height(150.dp))
-//                }
             }
             Button(
                 onClick = {
@@ -311,59 +341,87 @@ fun TutorRegisterScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ImagePicker(onImageUriChanged: ((uri: Uri) -> Unit)) {
-//    val launcher =
-//        rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) {
-//            hasImage.value = it
-//        }
-    val uri = remember { mutableStateOf(Uri.parse("")) }
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
-            if (it != null) {
-                uri.value = it
-                onImageUriChanged(it)
-                Log.d("Test uri ", uri.value.lastPathSegment.toString())
+fun ImagePicker(images: List<Uri>, onImageUriChanged: ((uri: Uri, index: Int) -> Unit),
+                onDeleteUri: (( index: Int) -> Unit)) {
+
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val imageWidth = (screenWidth - 40) / 3
+    val rowCount = ceil(images.count().toDouble() / 3).toInt()
+    val listHeight = rowCount * imageWidth + ((rowCount - 1) * 8)
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        userScrollEnabled = false,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .padding(top = 20.dp)
+            .height(listHeight.dp)
+    ) {
+        images.forEachIndexed { index, u ->
+            item {
+                val launcher =
+                    rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
+                        if (it != null) {
+                            onImageUriChanged(it, index)
+                            Log.d("Test uri ", u.lastPathSegment.toString())
+                        }
+                    }
+
+                if (u.toString().isNotEmpty()) {
+                    Box {
+                        GlideImage(model = u, contentDescription = "",
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .size(imageWidth.dp)
+                                .clip(
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .clickable {
+                                    launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                }
+                        )
+                        Image(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.close_with_bg),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(top = 2.dp, end = 2.dp)
+                                .background(
+                                    EDSColors.imageBackground,
+                                    CircleShape
+                                )
+                                .clickable {
+                                    onDeleteUri( index)
+                                    Log.d("Test uri on delete", u.lastPathSegment.toString())
+                                }
+                        )
+                    }
+
+
+                } else {
+                    Box(modifier = Modifier
+                        .size(imageWidth.dp)
+                        .background(
+                            EDSColors.imageBackground,
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .clickable {
+                            launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            contentDescription = "",
+                            tint = EDSColors.plusBackground,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                        )
+                    }
+                }
             }
         }
-
-
-    if (uri.value.toString().isNotEmpty()) {
-        GlideImage(model = uri.value, contentDescription = "",
-            contentScale = ContentScale.FillBounds,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .padding(top = 20.dp)
-                .clip(
-                    shape = RoundedCornerShape(20.dp)
-                )
-                .clickable {
-                    launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                }
-        )
-
-    } else {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp)
-            .padding(top = 20.dp)
-            .background(
-                EDSColors.imageBackground,
-                shape = RoundedCornerShape(20.dp)
-            )
-            .clickable {
-                launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }) {
-            Icon(
-                imageVector = Icons.Outlined.Add,
-                contentDescription = "",
-                tint = EDSColors.plusBackground,
-                modifier = Modifier
-                    .size(150.dp)
-                    .align(Alignment.Center)
-            )
-        }
     }
+
 }
 
 private fun showToast(context: Context, message: String) {

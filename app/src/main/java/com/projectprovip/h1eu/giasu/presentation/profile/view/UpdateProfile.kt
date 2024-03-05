@@ -2,29 +2,37 @@
 
 package com.projectprovip.h1eu.giasu.presentation.profile.view
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,6 +43,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -49,11 +58,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -68,35 +81,48 @@ import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
 
 @Composable
 @Preview
-fun PreviewScreen() {
+fun UpdateProfilePreview() {
     UpdateProfile(navController = rememberNavController())
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateProfile(navController: NavController) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val interactionSource = remember { MutableInteractionSource() }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(title = {
                 AppBarTitle(text = "Personal Information")
             }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = EDSColors.primaryColor,
-                titleContentColor = Color.White
+                containerColor = EDSColors.white,
+                titleContentColor = EDSColors.primaryColor
             ), navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
-                        Icons.Rounded.ArrowBack,
+                        Icons.AutoMirrored.Rounded.ArrowBack,
                         "",
-                        tint = Color.White
+                        tint = EDSColors.primaryColor
                     )
                 }
             })
-        }
+        },
+        containerColor = EDSColors.white,
     ) {
         Box(
             Modifier
                 .padding(it)
                 .fillMaxSize()
+                .background(EDSColors.white)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null    // this gets rid of the ripple effect
+                ) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus(true)
+                }
         ) {
             TutorRole(navController = navController, modifier = Modifier.fillMaxHeight(.9f))
             EduSmartButton(
@@ -128,7 +154,7 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
     val descriptionText = remember { mutableStateOf("Tao la 1 thang gia su ngu hoc") }
     val phoneText = remember { mutableStateOf("0967075340") }
 
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier.background(EDSColors.white)) {
         item {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -150,10 +176,9 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
 
                             })
                     Icon(
-                        imageVector = Icons.Default.Create, contentDescription = null,
-                        tint = EDSColors.primaryColor,
+                        imageVector = Icons.Default.AddAPhoto, contentDescription = null,
+                        tint = EDSColors.blackColor,
                         modifier = Modifier
-                            .offset(0.dp, 16.dp)
                             .clip(CircleShape)
                             .background(Color.White)
                             .padding(2.dp)
@@ -197,10 +222,10 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                     nameText.value = value
                 },
                 singleLine = true, value = nameText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -221,10 +246,10 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                     descriptionText.value = value
                 },
                 value = descriptionText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -244,10 +269,10 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                     emailText.value = value
                 },
                 value = emailText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -268,10 +293,10 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                     addressText.value = value
                 },
                 value = addressText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -293,10 +318,10 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                     phoneText.value = value
                 },
                 value = phoneText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -315,13 +340,15 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 shape = RoundedCornerShape(12.dp),
                 onValueChange = { value ->
-                    birthYearText.value = value
+                    if (value.length <= 4){
+                        birthYearText.value = value
+                    }
                 },
                 value = birthYearText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -358,6 +385,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
     val descriptionText = remember { mutableStateOf("Tao la 1 thang gia su ngu hoc") }
     val phoneText = remember { mutableStateOf("0967075340") }
     val openEditSubjectDialog = remember { mutableStateOf(false) }
+    val isTutor = true
 
     if (openEditSubjectDialog.value) {
         val dummySubjects = remember {
@@ -390,14 +418,16 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
             })
     }
 
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier.background(EDSColors.white)) {
         item {
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(20.dp)
                 ) {
                     AsyncImage(
@@ -411,16 +441,19 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                             .clickable {
 
                             })
-                    Icon(
-                        imageVector = Icons.Default.Create, contentDescription = null,
-                        tint = EDSColors.primaryColor,
-                        modifier = Modifier
-                            .offset(0.dp, 16.dp)
-                            .clip(CircleShape)
-                            .background(Color.White)
-                            .padding(2.dp)
-                            .align(Alignment.BottomCenter)
-                    )
+                    Box( modifier = Modifier
+                        .clip(CircleShape)
+                        .background(EDSColors.lightGray)
+                        .border(1.dp, EDSColors.white, CircleShape)
+                        .padding(2.dp)
+                        .align(Alignment.BottomEnd)) {
+                        Icon(
+                            imageVector = Icons.Default.AddAPhoto, contentDescription = null,
+                            tint = EDSColors.blackColor,
+                            modifier = Modifier.padding(4.dp)
+                        )
+                    }
+
                 }
                 MultiColorText(
                     text1 = "Role: ", color1 = EDSColors.primaryColor,
@@ -554,10 +587,10 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                     nameText.value = value
                 },
                 singleLine = true, value = nameText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -578,10 +611,10 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                     descriptionText.value = value
                 },
                 value = descriptionText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -601,10 +634,10 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                     emailText.value = value
                 },
                 value = emailText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -625,10 +658,10 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                     addressText.value = value
                 },
                 value = addressText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -650,10 +683,10 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                     phoneText.value = value
                 },
                 value = phoneText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -669,16 +702,17 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                     )
                 },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 shape = RoundedCornerShape(12.dp),
                 onValueChange = { value ->
+                    if(value.length <= 4)
                     birthYearText.value = value
                 },
                 value = birthYearText.value,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
                     focusedLabelColor = EDSColors.primaryColor,
-                    cursorColor = EDSColors.primaryColor,
                 ),
             )
         }
@@ -693,6 +727,67 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                     .padding(20.dp)
                     .background(Color.White)
             )
+        }
+        if(isTutor) {
+            item {
+                val images = remember {
+                    mutableStateOf(
+                        listOf(
+                            "".toUri(),
+                        )
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Image,
+                            contentDescription = "",
+                            tint = EDSColors.primaryColor
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        androidx.compose.material.Text(text = "Verification", fontSize = 16.sp)
+                        androidx.compose.material.Text(
+                            text = "(*)", fontSize = 16.sp,
+                            color = EDSColors.notScheduleTextColor
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        androidx.compose.material.Text(
+                            text = "Add more", fontSize = 16.sp,
+                            color = EDSColors.primaryColor,
+                            modifier = Modifier.clickable {
+                                val newList = images.value.toMutableList()
+                                newList.add(Uri.EMPTY)
+                                images.value = newList
+                            }
+                        )
+
+                    }
+                    ImagePicker(
+                        images.value,
+                        onImageUriChanged = { uri, index ->
+                            val newList = images.value.toMutableList()
+                            newList.removeAt(index)
+                            newList.add(index, uri)
+                            images.value = newList
+                            //uploadImage(uri)
+                        },
+                        onDeleteUri = { index ->
+                            val newList = images.value.toMutableList()
+                            val emptyUri = Uri.EMPTY
+
+                            newList.removeAt(index)
+                            newList.add(index, emptyUri)
+                            images.value = newList
+                        },
+                    )
+                }
+            }
         }
     }
 }
@@ -757,10 +852,10 @@ fun SubjectDialog(
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(30),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLeadingIconColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor
                     ),
                 )
                 LazyColumn(

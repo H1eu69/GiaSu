@@ -30,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -263,10 +264,10 @@ fun ClassRequestBody(
                         title.value = value
                     },
                     value = title.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -287,10 +288,10 @@ fun ClassRequestBody(
                         fee.value = value
                     },
                     value = fee.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -314,10 +315,10 @@ fun ClassRequestBody(
                         chargeFee.value = value
                     },
                     value = chargeFee.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -341,10 +342,10 @@ fun ClassRequestBody(
                         numOfStudent.value = value
                     },
                     value = numOfStudent.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -368,10 +369,10 @@ fun ClassRequestBody(
                         contactNumber.value = value
                     },
                     value = contactNumber.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -397,12 +398,12 @@ fun ClassRequestBody(
                         subject.value = value
                     },
                     value = subject.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = EDSColors.primaryColor,
-                        focusedLabelColor = EDSColors.primaryColor,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = EDSColors.myBlackColor,
                         cursorColor = EDSColors.primaryColor,
+                        focusedBorderColor = EDSColors.primaryColor,
                         disabledBorderColor = EDSColors.myBlackColor,
-                        disabledTextColor = EDSColors.myBlackColor
+                        focusedLabelColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -424,10 +425,10 @@ fun ClassRequestBody(
                         address.value = value
                     },
                     value = address.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -463,10 +464,10 @@ fun ClassRequestBody(
                         description.value = value
                     },
                     value = description.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -514,10 +515,10 @@ fun ClassRequestBody(
                         minutePerSession.value = value
                     },
                     value = minutePerSession.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -543,10 +544,10 @@ fun ClassRequestBody(
                         sessionPerWeek.value = value
                     },
                     value = sessionPerWeek.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -569,10 +570,10 @@ fun ClassRequestBody(
                         academicLevel.value = value
                     },
                     value = academicLevel.value,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLabelColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor,
                     ),
                 )
             }
@@ -654,10 +655,10 @@ fun PickSubjectDialog(
                     },
                     singleLine = true,
                     shape = RoundedCornerShape(30),
-                    colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
                         focusedLeadingIconColor = EDSColors.primaryColor,
-                        cursorColor = EDSColors.primaryColor
                     ),
                 )
                 LazyColumn(

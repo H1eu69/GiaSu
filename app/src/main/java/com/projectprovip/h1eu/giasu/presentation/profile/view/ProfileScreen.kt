@@ -88,6 +88,7 @@ fun ProfileScreen(navController: NavController) {
     val onShowDialog: (Boolean) -> Unit = {
         showDialog.value = it
     }
+    val isTutor = false
     LaunchedEffect(key1 = "") {
         coroutine.launch {
             context.dataStore.data.collect {
@@ -120,7 +121,44 @@ fun ProfileScreen(navController: NavController) {
         LazyColumn(modifier = Modifier.padding(it)) {
             item { Profile(navController, userImage.value, userName.value, id = userId.value) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
-            item { ColumnOfButton(navController, onShowDialog, isTutor = true) }
+            item {
+                Column(
+                    Modifier.fillMaxWidth()
+                ) {
+                    ButtonColumnItem(
+                        Icons.Rounded.AccountCircle, EDSColors.primaryColor,
+                        "Profile", true,
+                        onClick = {
+                            navController.navigate(Screens.InApp.Profile.UpdateProfile.route)
+                        }
+                    )
+                    ButtonColumnItem(
+                        Icons.Rounded.Class, EDSColors.primaryColor,
+                        "Create a new course", true,
+                        onClick = {
+                            navController.navigate(Screens.InApp.Profile.RequestClass.route)
+                        })
+                    if (!isTutor) {
+                        ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
+                            "Learning courses", true,
+                            onClick = {
+                                navController.navigate(Screens.InApp.Profile.LearningCourses.route)
+                            })
+                        ButtonColumnItem(Icons.Rounded.HowToReg, EDSColors.primaryColor,
+                            "Enroll as a tutor", true,
+                            onClick = {
+                                navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
+                            })
+                    } else {
+                        ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
+                            "Course requested", true,
+                            onClick = {
+                                navController.navigate(Screens.InApp.Profile.LearningCourses.route)
+                            })
+                    }
+
+                }
+            }
             item { Spacer(modifier = Modifier.height(30.dp)) }
             item {
                 ButtonColumnItem(
@@ -195,50 +233,6 @@ fun Profile(
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-    }
-}
-
-@Composable
-fun ColumnOfButton(
-    navController: NavController,
-    onShowDialog: (Boolean) -> Unit,
-    isTutor: Boolean = false
-) {
-    Column(
-        Modifier.fillMaxWidth()
-    ) {
-        ButtonColumnItem(
-            Icons.Rounded.AccountCircle, EDSColors.primaryColor,
-            "Profile", true,
-            onClick = {
-                navController.navigate(Screens.InApp.Profile.UpdateProfile.route)
-            }
-        )
-        ButtonColumnItem(
-            Icons.Rounded.Class, EDSColors.primaryColor,
-            "Create a new course", true,
-            onClick = {
-                navController.navigate(Screens.InApp.Profile.RequestClass.route)
-            })
-        if (!isTutor) {
-            ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
-                "Learning courses", true,
-                onClick = {
-                    navController.navigate(Screens.InApp.Profile.LearningCourses.route)
-                })
-            ButtonColumnItem(Icons.Rounded.HowToReg, EDSColors.primaryColor,
-                "Enroll as a tutor", true,
-                onClick = {
-                    navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
-                })
-        } else {
-            ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
-                "Course requested", true,
-                onClick = {
-                    navController.navigate(Screens.InApp.Profile.LearningCourses.route)
-                })
-        }
-
     }
 }
 
