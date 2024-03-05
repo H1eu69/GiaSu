@@ -76,7 +76,7 @@ fun SearchResultHomeScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val searchTextField = remember {
-        mutableStateOf("")
+        mutableStateOf("Note 13 Pro")
     }
 
     Scaffold(
@@ -86,7 +86,8 @@ fun SearchResultHomeScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 8.dp)
             ) {
-                IconButton(onClick = { }) {
+                IconButton(onClick = {                    navController.popBackStack()
+                }) {
                     Icon(
                         Icons.Rounded.ArrowBack,
                         "",

@@ -89,7 +89,7 @@ fun SearchResultTutorScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val searchTextField = remember {
-        mutableStateOf("")
+        mutableStateOf("Lap trinh java Ho Chi Minh")
     }
 
     Scaffold(
@@ -99,7 +99,9 @@ fun SearchResultTutorScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 8.dp)
             ) {
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
                     Icon(
                         Icons.Rounded.ArrowBack,
                         "",
@@ -143,7 +145,7 @@ fun SearchResultTutorScreen(
                             innerTextField()
                             if (searchTextField.value.isEmpty()) {
                                 Text(
-                                    text = "Find courses, tutor and so on",
+                                    text = "Lap Trinh Java",
                                     style = TextStyle.Default,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.W400,
@@ -212,7 +214,7 @@ fun SearchResultTutorScreen(
                                                 append("Result for")
                                             }
                                             append(" ")
-                                            append("Note 13 Pro")
+                                            append("Lap trinh Java Ho Chi Mnh")
                                         }
                                     )
                                 },

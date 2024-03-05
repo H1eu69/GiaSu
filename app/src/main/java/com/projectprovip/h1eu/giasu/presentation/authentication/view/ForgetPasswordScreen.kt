@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -98,9 +99,9 @@ fun ForgetPasswordScreen(pop: () -> Unit) {
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = EDSColors.primaryColor,
-                        focusedLabelColor = EDSColors.primaryColor
+                        focusedLabelColor = EDSColors.primaryColor,
                     ),
                     modifier = Modifier
                 )

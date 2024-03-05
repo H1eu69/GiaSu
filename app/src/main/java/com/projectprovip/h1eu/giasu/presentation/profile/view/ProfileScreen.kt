@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,15 +20,14 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.AddCircle
-import androidx.compose.material.icons.rounded.AppRegistration
 import androidx.compose.material.icons.rounded.Class
 import androidx.compose.material.icons.rounded.ExitToApp
+import androidx.compose.material.icons.rounded.HowToReg
 import androidx.compose.material.icons.rounded.Note
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,12 +53,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.presentation.class_management.view.TutorRegisterAlertDialog
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.course_management.view.TutorRegisterAlertDialog
 import kotlinx.coroutines.launch
 
 @Preview
@@ -90,6 +88,7 @@ fun ProfileScreen(navController: NavController) {
     val onShowDialog: (Boolean) -> Unit = {
         showDialog.value = it
     }
+    val isTutor = false
     LaunchedEffect(key1 = "") {
         coroutine.launch {
             context.dataStore.data.collect {
@@ -100,14 +99,14 @@ fun ProfileScreen(navController: NavController) {
         }
     }
     Scaffold(
-        containerColor = Color.LightGray,
+        containerColor = EDSColors.mainBackground,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     AppBarTitle(text = "Profile")
                 }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.primaryColor,
-                    titleContentColor = Color.White
+                    containerColor = EDSColors.white,
+                    titleContentColor = EDSColors.primaryColor
                 )
             )
         }
@@ -120,13 +119,50 @@ fun ProfileScreen(navController: NavController) {
             })
         }
         LazyColumn(modifier = Modifier.padding(it)) {
-            item { Profile(userImage.value, userName.value, userId.value) }
+            item { Profile(navController, userImage.value, userName.value, id = userId.value) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
-            item { ColumnOfButton(navController, onShowDialog) }
+            item {
+                Column(
+                    Modifier.fillMaxWidth()
+                ) {
+                    ButtonColumnItem(
+                        Icons.Rounded.AccountCircle, EDSColors.primaryColor,
+                        "Profile", true,
+                        onClick = {
+                            navController.navigate(Screens.InApp.Profile.UpdateProfile.route)
+                        }
+                    )
+                    ButtonColumnItem(
+                        Icons.Rounded.Class, EDSColors.primaryColor,
+                        "Create a new course", true,
+                        onClick = {
+                            navController.navigate(Screens.InApp.Profile.RequestClass.route)
+                        })
+                    if (!isTutor) {
+                        ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
+                            "Learning courses", true,
+                            onClick = {
+                                navController.navigate(Screens.InApp.Profile.LearningCourses.route)
+                            })
+                        ButtonColumnItem(Icons.Rounded.HowToReg, EDSColors.primaryColor,
+                            "Enroll as a tutor", true,
+                            onClick = {
+                                navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
+                            })
+                    } else {
+                        ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
+                            "Course requested", true,
+                            onClick = {
+                                navController.navigate(Screens.InApp.Profile.LearningCourses.route)
+                            })
+                    }
+
+                }
+            }
             item { Spacer(modifier = Modifier.height(30.dp)) }
             item {
                 ButtonColumnItem(
-                    Icons.Rounded.ExitToApp, EDSColors.primaryColor,
+                    Icons.AutoMirrored.Rounded.ExitToApp, EDSColors.primaryColor,
                     "Change password", true
                 )
             }
@@ -148,79 +184,55 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
-fun Profile(image: String, name: String, id: String) {
+fun Profile(
+    navController: NavController, image: String,
+    name: String = "Dummy name",
+    email: String = "DummyEmfdsfsdsail@gmail.com",
+    phone: String = "097845612",
+    role: String = "Dummy Role",
+    id: String
+) {
     Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(EDSColors.mainBackground),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .clip(CircleShape)
-                .requiredSize(150.dp)
+                .padding(20.dp)
         ) {
             AsyncImage(
                 image,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(100.dp)
                     .clip(CircleShape)
                     .clickable {
 
                     })
-            Icon(
-                imageVector = Icons.Default.Create, contentDescription = null,
-                tint = EDSColors.primaryColor,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(2.dp)
-                    .align(Alignment.BottomCenter)
-            )
         }
         Text(
-            text = name, style = TextStyle(
-                fontSize = 16.sp,
-                color = EDSColors.primaryColor
+            text = name, style = EDSTextStyle.H1Med()
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(start = 20.dp, top = 4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Email,
+                contentDescription = null,
+                tint = Color(79, 79, 79),
+                modifier = Modifier.size(20.dp)
             )
-        )
-        MultiColorText(
-            text1 = "ID: ",
-            color1 = EDSColors.primaryColor,
-            text2 = id,
-            color2 = Color.Black
-        )
-    }
-}
-
-@Composable
-fun ColumnOfButton(navController: NavController, onShowDialog: (Boolean) -> Unit) {
-    Column(
-        Modifier.fillMaxWidth()
-    ) {
-        ButtonColumnItem(
-            Icons.Rounded.AccountCircle, EDSColors.primaryColor,
-            "Personal information", true
-        )
-        ButtonColumnItem(
-            Icons.Rounded.Class, EDSColors.primaryColor,
-            "Request a new class", true,
-            onClick = {
-                navController.navigate(Screens.InApp.Profile.RequestClass.route)
-            })
-        ButtonColumnItem(Icons.Rounded.AppRegistration, EDSColors.primaryColor,
-            "Register tutor", true,
-            onClick = {
-                navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
-            }
-        )
-        ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
-            "Learning courses", true,
-            onClick = {
-                navController.navigate(Screens.InApp.Profile.LearningCourses.route)
-            })
+            Text(
+                text = email, style = EDSTextStyle.H3Reg(
+                    Color(79, 79, 79)
+                )
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -274,7 +286,6 @@ fun ButtonColumnItem(
             .clickable {
                 onClick()
             }
-            .border(BorderStroke(0.3.dp, Color.LightGray))
             .background(Color.White)
             .padding(12.dp)
 

@@ -96,7 +96,9 @@ fun SearchSuggestHomeScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 8.dp)
             ) {
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
                     Icon(
                         Icons.Rounded.ArrowBack,
                         "",
@@ -139,7 +141,7 @@ fun SearchSuggestHomeScreen(
                             innerTextField()
                             if (searchTextField.value.isEmpty()) {
                                 Text(
-                                    text = "Find courses, tutor and so on",
+                                    text = "Enter course name, subjects and so on",
                                     style = TextStyle.Default,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.W400,

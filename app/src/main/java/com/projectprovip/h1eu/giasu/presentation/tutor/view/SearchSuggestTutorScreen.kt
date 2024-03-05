@@ -119,7 +119,8 @@ fun SearchSuggestTutorScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 8.dp)
             ) {
-                IconButton(onClick = { }) {
+                IconButton(onClick = {                    navController.popBackStack()
+                }) {
                     Icon(
                         Icons.Rounded.ArrowBack,
                         "",

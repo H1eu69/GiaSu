@@ -18,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -149,9 +150,9 @@ fun SignUpScreen(
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = EDSColors.primaryColor,
-                        focusedLabelColor = EDSColors.primaryColor
+                        focusedLabelColor = EDSColors.primaryColor,
                     ),
                     modifier = Modifier
                 )
@@ -171,9 +172,9 @@ fun SignUpScreen(
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = EDSColors.primaryColor,
-                        focusedLabelColor = EDSColors.primaryColor
+                        focusedLabelColor = EDSColors.primaryColor,
                     ),
                     modifier = Modifier
                 )
@@ -192,9 +193,9 @@ fun SignUpScreen(
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = EDSColors.primaryColor,
-                        focusedLabelColor = EDSColors.primaryColor
+                        focusedLabelColor = EDSColors.primaryColor,
                     ),
                     modifier = Modifier
                 )
@@ -214,9 +215,9 @@ fun SignUpScreen(
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = EDSColors.primaryColor,
-                        focusedLabelColor = EDSColors.primaryColor
+                        focusedLabelColor = EDSColors.primaryColor,
                     ),
                     modifier = Modifier
                 )

@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.presentation.class_management.model
+package com.projectprovip.h1eu.giasu.presentation.course_management.model
 
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourseDetail
 
