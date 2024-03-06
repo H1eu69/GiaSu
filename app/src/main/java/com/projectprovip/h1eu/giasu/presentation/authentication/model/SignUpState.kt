@@ -1,6 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.authentication.model
 
-import com.projectprovip.h1eu.giasu.data.user.dto.User
+import com.projectprovip.h1eu.giasu.data.user.dto.signupDto.User
 
 
 data class SignUpState (

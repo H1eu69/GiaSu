@@ -43,8 +43,8 @@ class SignUpViewModel @Inject constructor(
                     _signUpState.value = SignUpState(error = result.message ?: "Unexpected error")
                 }
                 is EDSResult.Success -> {
-                    _signUpState.value = SignUpState(user = result.data!!.userWithToken.user,
-                        token = result.data.userWithToken.token)
+                    _signUpState.value = SignUpState(user = result.data!!.user,
+                        token = result.data.token)
                 }
             }
         }.launchIn(viewModelScope)

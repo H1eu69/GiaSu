@@ -16,7 +16,7 @@ import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 object Constant {
-    const val API_BASE_URL = "http://subedusmart.somee.com/api/"
+    const val API_BASE_URL = "http://escenter.somee.com/api/"
     const val TOKEN_STRING = "token"
     const val USERNAME_STRING = "username"
     const val USERID_STRING = "userid"

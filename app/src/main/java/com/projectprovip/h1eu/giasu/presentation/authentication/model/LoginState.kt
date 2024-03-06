@@ -1,6 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.authentication.model
 
-import com.projectprovip.h1eu.giasu.data.user.dto.User
+import com.projectprovip.h1eu.giasu.data.user.dto.loginDto.User
 
 data class LoginState(
     val isLoading: Boolean = false,

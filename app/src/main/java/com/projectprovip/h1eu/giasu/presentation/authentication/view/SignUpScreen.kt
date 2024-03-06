@@ -109,7 +109,7 @@ fun SignUpScreen(
                     preferences[tokenKey] = state.token.toString()
                     preferences[usernameKey] = state.user!!.fullName
                     preferences[useridKey] = state.user!!.id.toString()
-                    preferences[userImageKey] = state.user!!.image
+                    preferences[userImageKey] = state.user!!.avatar
 
                     Log.d("Token in Sign up", state.token.toString())
                 }

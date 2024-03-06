@@ -101,8 +101,8 @@ fun LoginScreen(
                 context.dataStore.edit { preferences ->
                     preferences[tokenKey] = state.token.toString()
                     preferences[usernameKey] = state.user.fullName
-                    preferences[useridKey] = state.user.id.toString()
-                    preferences[userImageKey] = state.user.image
+                    preferences[useridKey] = state.user.id
+                    preferences[userImageKey] = state.user.avatar
                 }
                 navController.navigate(Screens.InApp.route) {
                     popUpTo(Screens.Authentication.route) {
@@ -118,13 +118,15 @@ fun LoginScreen(
 
     Surface {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .padding(horizontal = 40.dp),
             horizontalAlignment = CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             Column(
-                Modifier.width(IntrinsicSize.Min)
-            ) {
+                Modifier.fillMaxSize()
+
+                ) {
                 Spacer(
                     modifier = Modifier.fillMaxHeight(.2f)
                 )
@@ -171,6 +173,7 @@ fun LoginScreen(
                         focusedLabelColor = EDSColors.primaryColor,
                     ),
                     modifier = Modifier
+                        .fillMaxWidth()
                 )
 
                 Spacer(
@@ -193,6 +196,7 @@ fun LoginScreen(
                         focusedLabelColor = EDSColors.primaryColor,
                     ),
                     modifier = Modifier
+                        .fillMaxWidth()
                 )
 
                 Spacer(

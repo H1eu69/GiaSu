@@ -1,7 +1,7 @@
 package com.projectprovip.h1eu.giasu.domain.authentication.repository
 
-import com.projectprovip.h1eu.giasu.data.user.dto.UserLoginDto
-import com.projectprovip.h1eu.giasu.data.user.dto.UserSignUpDto
+import com.projectprovip.h1eu.giasu.data.user.dto.loginDto.UserLoginDto
+import com.projectprovip.h1eu.giasu.data.user.dto.signupDto.UserSignUpDto
 import com.projectprovip.h1eu.giasu.data.user.model.UserLoginInput
 import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
 
