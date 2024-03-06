@@ -40,9 +40,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -147,11 +149,13 @@ fun TutorScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Tutors")
+                    Text(text = "Tutors",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp)
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.primaryColor,
-                    titleContentColor = Color.White
+                    containerColor = EDSColors.white,
+                    titleContentColor = EDSColors.primaryColor
                 )
             )
         },

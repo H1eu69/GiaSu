@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Subject
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Cake
@@ -28,6 +32,8 @@ import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -61,7 +67,7 @@ fun PreviewTutorDetailScreen() {
     TutorDetailScreen(dummyData)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun TutorDetailScreen(
     state: TutorDetailState,
@@ -71,20 +77,23 @@ fun TutorDetailScreen(
         topBar = {
             CenterAlignedTopAppBar(title = { },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.primaryColor
+                    containerColor = EDSColors.white
+
                 ),
                 navigationIcon = {
                     IconButton(onClick = {
                         onNavigateIconClick()
                     }) {
                         Icon(
-                            Icons.Default.ArrowBack,
+                            Icons.AutoMirrored.Filled.ArrowBack,
                             null,
-                            tint = EDSColors.white
+                            tint = EDSColors.primaryColor
                         )
                     }
                 })
-        }
+        },
+        containerColor = EDSColors.white
+
     ) {
         if (state.isLoading) {
             Box(
@@ -128,7 +137,26 @@ fun TutorDetailScreen(
                             .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                     )
                 }
+                item {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        state.data.subjects.forEach { subject ->
 
+                            FilterChip(
+                                selected = true,
+                                onClick = { /*TODO*/ },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = EDSColors.primaryColor,
+                                    selectedLabelColor = EDSColors.white,
+                                    selectedTrailingIconColor = EDSColors.white
+                                ),
+                                label = { Text(subject, fontWeight = FontWeight.W300) }
+                            )
+                        }
+
+                    }
+                }
                 item {
                     DetailIconAndText(
                         Icons.Filled.LocationCity,
@@ -173,19 +201,7 @@ fun TutorDetailScreen(
                     }
 
                 }
-                item {
-                    DetailIconAndText(Icons.Filled.Subject, "Subjects") {
-                        Column(horizontalAlignment = Alignment.End) {
-                            state.data.subjects.forEach { subject ->
-                                Text(
-                                    text = subject,
-                                    textAlign = TextAlign.End,
-                                    fontSize = 16.sp
-                                )
-                            }
-                        }
-                    }
-                }
+
                 item {
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -228,7 +244,7 @@ fun TutorDetailScreen(
 @Composable
 fun Profile(image: String, name: String, id: Int, rate: Int) {
     Column(
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
@@ -259,7 +275,9 @@ fun Profile(image: String, name: String, id: Int, rate: Int) {
             text2 = id.toString(),
             color2 = Color.Black
         )
-        Row {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = rate.toString(), style = TextStyle(
                     fontSize = 16.sp,
@@ -305,7 +323,6 @@ fun PreviewReviewItem() {
 @Composable
 fun ReviewItem(rate: Int, reviewer: String, review: String) {
     Row() {
-        //AsyncImage(model = "", contentDescription = null)
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
