@@ -228,7 +228,7 @@ fun TutorItem(tutor: Tutor, onItemClick: (Int) -> Unit = {}) {
         colors = CardDefaults.elevatedCardColors(
             containerColor = EDSColors.white
         ),
-        border = BorderStroke(1.dp, EDSColors.grayText),
+        border = BorderStroke(1.dp, EDSColors.gray),
         elevation = CardDefaults.outlinedCardElevation(3.dp),
         modifier = Modifier
             .padding(8.dp)
@@ -302,7 +302,7 @@ fun IconAndText(
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = text, maxLines = 1, overflow = TextOverflow.Ellipsis, color = EDSColors.grayText
+            text = text, maxLines = 1, overflow = TextOverflow.Ellipsis, color = EDSColors.gray
         )
     }
 }

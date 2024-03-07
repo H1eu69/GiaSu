@@ -167,7 +167,7 @@ fun SearchSuggestTutorScreen(
                                     style = TextStyle.Default,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.W400,
-                                    color = EDSColors.grayText,
+                                    color = EDSColors.gray,
                                     modifier = Modifier.padding(start = 2.dp)
                                 )
                             }
@@ -249,7 +249,7 @@ fun SuggestChipRow(navController: NavController) {
                             borderColor = EDSColors.transparent
                         ),
                         colors = AssistChipDefaults.assistChipColors(
-                            containerColor = EDSColors.lightGray.copy(0.3f),
+                            containerColor = EDSColors.grayX2.copy(0.3f),
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {
@@ -269,7 +269,7 @@ fun SuggestChipRow(navController: NavController) {
                             borderColor = EDSColors.transparent
                         ),
                         colors = AssistChipDefaults.assistChipColors(
-                            containerColor = EDSColors.lightGray.copy(0.3f),
+                            containerColor = EDSColors.grayX2.copy(0.3f),
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {
@@ -288,7 +288,7 @@ fun SuggestChipRow(navController: NavController) {
                             borderColor = EDSColors.transparent
                         ),
                         colors = AssistChipDefaults.assistChipColors(
-                            containerColor = EDSColors.lightGray.copy(0.3f),
+                            containerColor = EDSColors.grayX2.copy(0.3f),
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {

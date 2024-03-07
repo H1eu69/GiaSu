@@ -75,7 +75,19 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
+        fun H2Reg(color : Color = Color.Black) : TextStyle {
+            val fontName = GoogleFont("Inter")
 
+            val font = FontFamily(
+                Font(googleFont = fontName, fontProvider = provider)
+            )
+
+            return TextStyle(
+                fontSize = 15.sp,
+                color = color,
+                fontFamily = font
+            )
+        }
         fun H3Reg(color : Color = Color.Black) : TextStyle {
             val fontName = GoogleFont("Inter")
 

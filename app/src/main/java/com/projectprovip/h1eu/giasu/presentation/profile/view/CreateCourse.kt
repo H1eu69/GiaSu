@@ -19,7 +19,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Search
@@ -256,7 +255,7 @@ fun ClassRequestBody(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
                     placeholder = {
-                        androidx.compose.material3.Text(text = "Title", color = EDSColors.lightGray)
+                        androidx.compose.material3.Text(text = "Title", color = EDSColors.grayX2)
                     },
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -279,7 +278,7 @@ fun ClassRequestBody(
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp),
                     placeholder = {
-                        androidx.compose.material3.Text(text = "Fee", color = EDSColors.lightGray)
+                        androidx.compose.material3.Text(text = "Fee", color = EDSColors.grayX2)
                     },
                     keyboardActions = KeyboardActions(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -305,7 +304,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Charge Fee",
-                            color = EDSColors.lightGray
+                            color = EDSColors.grayX2
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -332,7 +331,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Number of students",
-                            color = EDSColors.lightGray
+                            color = EDSColors.grayX2
                         )
                     },
                     keyboardActions = KeyboardActions(),
@@ -359,7 +358,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Contact Number",
-                            color = EDSColors.lightGray
+                            color = EDSColors.grayX2
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -389,7 +388,7 @@ fun ClassRequestBody(
                     placeholder = {
                         Text(
                             text = "Subject Name",
-                            color = EDSColors.lightGray
+                            color = EDSColors.grayX2
                         )
                     },
                     keyboardActions = KeyboardActions(),
@@ -416,7 +415,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Location",
-                            color = EDSColors.lightGray
+                            color = EDSColors.grayX2
                         )
                     },
                     keyboardActions = KeyboardActions(),
@@ -455,7 +454,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Description",
-                            color = EDSColors.lightGray
+                            color = EDSColors.grayX2
                         )
                     },
                     keyboardActions = KeyboardActions(),
@@ -505,7 +504,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Minute per session",
-                            color = EDSColors.lightGray
+                            color = EDSColors.grayX2
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -533,7 +532,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Session per week",
-                            color = EDSColors.lightGray
+                            color = EDSColors.grayX2
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -561,7 +560,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Academic Level",
-                            color = EDSColors.lightGray
+                            color = EDSColors.grayX2
                         )
                     },
                     keyboardActions = KeyboardActions(),

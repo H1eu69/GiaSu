@@ -11,5 +11,5 @@ data class LoginState(
 )
 
 enum class AuthState(val text: String?) {
-    IDLE(text = null), ACCOUNT_NOT_FOUND(text = "User not exist"), WRONG_EMAIL_FORMAT("Wrong email format")
+    IDLE(text = null), ACCOUNT_NOT_FOUND(text = "Wrong email or password"), WRONG_EMAIL_FORMAT("Wrong email format")
 }

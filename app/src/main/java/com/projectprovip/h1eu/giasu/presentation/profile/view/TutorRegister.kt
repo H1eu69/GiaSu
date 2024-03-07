@@ -37,9 +37,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -56,7 +54,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -173,7 +170,7 @@ fun TutorRegisterScreen(
                         label = {
                             if (!academicIsFocused.value)
                                 Text(
-                                    text = "Academic Level", color = EDSColors.lightGray
+                                    text = "Academic Level", color = EDSColors.grayX2
                                 ) else Text(
                                 text = "Academic Level",
                             )
@@ -201,7 +198,7 @@ fun TutorRegisterScreen(
                         label = {
                             if (!universityIsFocused.value)
                                 Text(
-                                    text = "University", color = EDSColors.lightGray
+                                    text = "University", color = EDSColors.grayX2
                                 ) else Text(
                                 text = "University",
                             )
@@ -229,7 +226,7 @@ fun TutorRegisterScreen(
                         label = {
                             if (!majorIsFocused.value)
                                 Text(
-                                    text = "Major", color = EDSColors.lightGray
+                                    text = "Major", color = EDSColors.grayX2
                                 ) else Text(
                                 text = "Major",
                             )

@@ -21,7 +21,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -146,7 +145,7 @@ fun SignUpScreen(
                         firstNameTextField.value = it
                     },
                     placeholder = {
-                        Text("First name", color = EDSColors.lightGray)
+                        Text("First name", color = EDSColors.grayX2)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
@@ -168,7 +167,7 @@ fun SignUpScreen(
                         lastNameTextField.value = it
                     },
                     placeholder = {
-                        Text("Last name", color = EDSColors.lightGray)
+                        Text("Last name", color = EDSColors.grayX2)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
@@ -189,7 +188,7 @@ fun SignUpScreen(
                         emailTextField.value = it
                     },
                     placeholder = {
-                        Text("Email", color = EDSColors.lightGray)
+                        Text("Email", color = EDSColors.grayX2)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
@@ -211,7 +210,7 @@ fun SignUpScreen(
                         passTextField.value = it
                     },
                     placeholder = {
-                        Text("Password", color = EDSColors.lightGray)
+                        Text("Password", color = EDSColors.grayX2)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
