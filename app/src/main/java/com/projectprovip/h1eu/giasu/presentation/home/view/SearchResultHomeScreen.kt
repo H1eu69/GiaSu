@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,18 +20,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.sharp.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
@@ -38,13 +39,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,6 +59,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
@@ -63,6 +68,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,8 +80,10 @@ import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
+import com.projectprovip.h1eu.giasu.presentation.common.composes.VerticalGrid
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
+import com.projectprovip.h1eu.giasu.presentation.home.model.FilterSelect
 import kotlinx.coroutines.launch
 
 @Preview
@@ -134,43 +142,123 @@ fun SearchResultHomeScreen(
                         drawerShape = RectangleShape,
                         drawerContainerColor = EDSColors.white,
                         modifier = Modifier.fillMaxWidth(.8f)
-
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(EDSColors.grayX3)
-                                .padding(12.dp)
+                        LazyColumn(
+                            modifier = Modifier.weight(.8f)
                         ) {
-                            Text("Search Filters", style = EDSTextStyle.H1Med())
-                        }
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(EDSColors.primaryColor)
+                                        .padding(12.dp)
+                                ) {
+                                    Text(
+                                        "Search Filters", style = EDSTextStyle.H1Med(
+                                            EDSColors.white
+                                        )
+                                    )
+                                }
+                            }
 
-                        FilterItem(
-                            modifier = Modifier.padding(8.dp),
-                            title = "location",
-                            filterItems = listOf(
-                                "Tay ninh",
-                                "TP HCm",
-                                "Ha long",
-                                "Vinh phuc",
-                                "Ha noi",
-                                "TP HCm",
-                                "Ha long",
-                                "Vinh phuc",
-                                "Ha noi",
-                                "TP HCm",
-                                "Ha long",
-                                "Vinh phuc",
-                                "Ha noi",
-                                "TP HCm",
-                                "Ha long",
-                                "Vinh phuc",
-                                "Ha noi"
-                            )
-                        )
-                        BudgetRangeSection(
-                            modifier = Modifier.padding(8.dp),
-                        )
+                            item {
+                                FilterItem(
+                                    modifier = Modifier.padding(8.dp),
+                                    title = "location",
+                                    filterItemsState = remember {
+                                        mutableStateOf(
+                                            listOf(
+                                                FilterSelect("Tay ninh 1"),
+                                                FilterSelect("Tay ninh2"),
+                                                FilterSelect("Tay ninh3"),
+                                                FilterSelect("Tay ninh4"),
+                                                FilterSelect("Tay ninh5"),
+                                                FilterSelect("Tay ninh6"),
+                                                FilterSelect("Tay ninh7"),
+                                                FilterSelect("Tay ninh8"),
+                                                FilterSelect("Tay ninh9"),
+
+                                                )
+                                        )
+                                    }
+
+                                )
+                            }
+
+                            item {
+                                BudgetRangeSection(
+                                    modifier = Modifier.padding(8.dp),
+                                )
+                            }
+
+                            item {
+                                FilterItem(
+                                    modifier = Modifier.padding(8.dp),
+                                    title = "location",
+                                    filterItemsState = remember {
+                                        mutableStateOf(
+                                            listOf(
+                                                FilterSelect("Tay ninh 1"),
+                                                FilterSelect("Tay ninh2"),
+                                                FilterSelect("Tay ninh3"),
+                                                FilterSelect("Tay ninh4"),
+                                                FilterSelect("Tay ninh5"),
+                                                FilterSelect("Tay ninh6"),
+                                                FilterSelect("Tay ninh7"),
+                                                FilterSelect("Tay ninh8"),
+                                                FilterSelect("Tay ninh9"),
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+
+                            item {
+                                FilterItem(
+                                    modifier = Modifier.padding(8.dp),
+                                    title = "location",
+                                    filterItemsState = remember {
+                                        mutableStateOf(
+                                            listOf(
+                                                FilterSelect("Tay ninh 1"),
+                                                FilterSelect("Tay ninh2"),
+                                                FilterSelect("Tay ninh3"),
+                                                FilterSelect("Tay ninh4"),
+                                                FilterSelect("Tay ninh5"),
+                                                FilterSelect("Tay ninh6"),
+                                                FilterSelect("Tay ninh7"),
+                                                FilterSelect("Tay ninh8"),
+                                                FilterSelect("Tay ninh9"),
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+
+                            item {
+                                FilterItem(
+                                    modifier = Modifier.padding(8.dp),
+                                    title = "location",
+                                    filterItemsState = remember {
+                                        mutableStateOf(
+                                            listOf(
+                                                FilterSelect("Tay ninh 1"),
+                                                FilterSelect("Tay ninh2"),
+                                                FilterSelect("Tay ninh3"),
+                                                FilterSelect("Tay ninh4"),
+                                                FilterSelect("Tay ninh5"),
+                                                FilterSelect("Tay ninh6"),
+                                                FilterSelect("Tay ninh7"),
+                                                FilterSelect("Tay ninh8"),
+                                                FilterSelect("Tay ninh9"),
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+
+                        }
+                        ApplyFilterButtons(Modifier.padding(8.dp))
                     }
                 }
             },
@@ -395,51 +483,70 @@ fun FilterButton(onClick: () -> Unit) {
 @Preview
 @Composable
 fun FilterItemPreview() {
-    val list1 = listOf(
-        "Tay ninh",
-        "TP HCm",
-        "Ha long",
-        "Vinh phuc",
-        "Ha noi",
-        "Tay ninh",
-        "TP HCm",
-        "Ha long",
-        "Vinh phuc",
-        "Ha noi",
-        "Tay ninh",
-        "TP HCm",
-        "Ha long",
-        "Vinh phuc",
-        "Ha noi"
-    )
-    val list2 = listOf("Ha long", "Vinh phuc", "Ha noi")
-    val list3 = listOf("Tay ninh", "Ha long")
-    val list4 = listOf("Tay ninh")
+    val list1 = remember {
+        mutableStateOf(
+            listOf(
+                FilterSelect("Tay ninh 1", true),
+                FilterSelect("Tay ninh2", true),
+                FilterSelect("Tay ninh3"),
+                FilterSelect("Tay ninh4"),
+                FilterSelect("Tay ninh5"),
+                FilterSelect("Tay ninh6"),
+                FilterSelect("Tay ninh7"),
+                FilterSelect("Tay ninh8"),
+                FilterSelect("Tay ninh9"),
+            )
+        )
+    }
+    val list2 = remember {
+        mutableStateOf(
+            listOf(
+                FilterSelect("Tay ninh 1", true),
+                FilterSelect("Tay ninh2"),
+                FilterSelect("Tay ninh3"),
+            )
+        )
+    }
+    val list3 = remember {
+        mutableStateOf(
+            listOf(
+                FilterSelect("Tay ninh 1", true),
+                FilterSelect("Tay ninh2"),
+            )
+        )
+    }
+    val list4 = remember {
+        mutableStateOf(
+            listOf(
+                FilterSelect("Tay ninh 1"),
+            )
+        )
+    }
 
     Column {
         FilterItem(
             modifier = Modifier.background(EDSColors.white),
             title = "location",
-            filterItems = list1,
-            hasViewMore = list1.count() > 4
+            filterItemsState = list1,
+            hasViewMore = list1.value.count() > 4
         )
         FilterItem(
             modifier = Modifier.background(EDSColors.white),
             title = "location",
-            filterItems = list2,
-            hasViewMore = list2.count() > 4
+            filterItemsState = list2,
+            hasViewMore = list2.value.count() > 4
         )
         FilterItem(
             modifier = Modifier.background(EDSColors.white),
             title = "location",
-            filterItems = list3,
-            hasViewMore = list3.count() > 4
+            filterItemsState = list3,
+            hasViewMore = list3.value.count() > 4
         )
         FilterItem(
             modifier = Modifier.background(EDSColors.white),
             title = "location",
-            filterItems = list4,
-            hasViewMore = list4.count() > 4
+            filterItemsState = list4,
+            hasViewMore = list4.value.count() > 4
         )
     }
 
@@ -448,14 +555,21 @@ fun FilterItemPreview() {
 @Composable
 fun FilterItem(
     modifier: Modifier = Modifier,
-    title: String, filterItems: List<String>,
+    title: String,
+    filterItemsState: MutableState<List<FilterSelect>>,
     hasViewMore: Boolean = true,
-    onSelected: () -> Unit = {}
+    multipleSelection: Boolean = false,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val wantViewMore = remember {
         mutableStateOf(false)
     }
+    val filterItems = filterItemsState.value
+
+    val totalItem = if (!wantViewMore.value) {
+        if (filterItems.count() > 4) 4 else filterItems.count()
+    } else filterItems.count()
+
     Column(
         modifier = modifier
     ) {
@@ -463,52 +577,25 @@ fun FilterItem(
             title, style = EDSTextStyle.H2Reg(),
             modifier = Modifier.padding(vertical = 12.dp)
         )
-        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-            filterItems.forEachIndexed { index, filterItem ->
-                if (!wantViewMore.value) {
-                    if (index <= 3)
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 2.dp, vertical = 2.dp)
-                                    .fillMaxWidth()
-                                    .background(EDSColors.grayX3)
-                                    .clickable {
-                                        onSelected()
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = filterItem, style = EDSTextStyle.H3Reg(),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.padding(vertical = 8.dp)
-                                )
-                            }
-                        }
-                } else {
-                    if (index <= 9)
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .padding(horizontal = 2.dp, vertical = 2.dp)
-                                    .fillMaxWidth()
-                                    .background(EDSColors.grayX3)
-                                    .clickable {
-                                        onSelected()
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = filterItem, style = EDSTextStyle.H3Reg(),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.padding(vertical = 8.dp)
-                                )
-                            }
-                        }
-                }
-            }
+        VerticalGrid(
+            gridCells = com.projectprovip.h1eu.giasu.presentation.common.composes.GridCells.Fixed(2),
+            totalItems = totalItem
+        ) { index ->
+            if (filterItems[index].selected)
+                SelectedItem(title = filterItems[index].title,
+                    onClick = {
+                        val newList = filterItemsState.value.toMutableList()
+                        newList[index] = filterItems[index].copy(selected = false)
+                        filterItemsState.value = newList
+                    })
+            else
+                UnselectItem(title = filterItems[index].title,
+                    onClick = {
+                        val newList = filterItemsState.value.toMutableList()
+                        newList[index] = filterItems[index].copy(selected = true)
+                        filterItemsState.value = newList
+                    })
+
         }
         if (hasViewMore) {
             Row(
@@ -547,12 +634,94 @@ fun FilterItem(
     }
 }
 
+@Composable
+fun SelectedItem(title: String, onClick: () -> Unit) {
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 2.dp, vertical = 2.dp)
+            .fillMaxWidth()
+            .border(1.dp, EDSColors.primaryColor)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                onClick()
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text =
+            if (LocalInspectionMode.current)
+            // Show this text in a preview window:
+                "Preview Item"
+            else
+            // Show this text in the app:
+                title,
+            style = EDSTextStyle.H3Reg(
+                EDSColors.primaryColor
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        Image(
+            imageVector = Icons.Default.Check, contentDescription = null,
+            colorFilter = ColorFilter.tint(EDSColors.primaryColor),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 4.dp)
+        )
+    }
+}
+
+@Composable
+fun UnselectItem(title: String, onClick: () -> Unit) {
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 2.dp, vertical = 2.dp)
+            .fillMaxWidth()
+            .background(EDSColors.grayX3)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                onClick()
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text =
+            if (LocalInspectionMode.current)
+            // Show this text in a preview window:
+                "Preview Item"
+            else
+            // Show this text in the app:
+                title,
+            style = EDSTextStyle.H3Reg(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+    }
+}
+
 @Preview
 @Composable
 fun BudgetSectionPreview() {
-    BudgetRangeSection()
+    Surface {
+        BudgetRangeSection(
+            Modifier.padding(8.dp)
+        )
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = true) {
     val minimum = remember {
@@ -560,6 +729,9 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
     }
     val maximum = remember {
         mutableStateOf("")
+    }
+    val interactionSource = remember {
+        MutableInteractionSource()
     }
     Column(
         modifier = modifier,
@@ -580,10 +752,16 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                 }, singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                 shape = RectangleShape,
+
                 placeholder = {
-                    Text(text = "Minimum", color = EDSColors.gray)
+                    Text(
+                        text = "Minimum", color = EDSColors.gray, textAlign = TextAlign.Center
+                    )
                 },
-                modifier = Modifier.weight(.45f),
+                modifier = Modifier
+                    .weight(.45f)
+                    .height(52.dp),
+
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = EDSColors.white,
                     focusedContainerColor = EDSColors.white,
@@ -592,26 +770,29 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                     cursorColor = EDSColors.primaryColor
                 )
             )
+
             Divider(
                 color = EDSColors.gray,
                 thickness = 1.dp,
                 modifier = Modifier
                     .weight(.05f)
-                    .padding(horizontal = 2.dp)
+                    .padding(horizontal = 4.dp)
             )
             OutlinedTextField(
                 value = maximum.value, onValueChange = {
                     maximum.value = it
-                },
-                singleLine = true,
-                shape = RectangleShape, placeholder = {
+                }, singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+
+                shape = RectangleShape,
+                placeholder = {
                     Text(
-                        text = "Maximum" +
-                                "", color = EDSColors.gray
+                        text = "Maximum", color = EDSColors.gray, textAlign = TextAlign.Center
                     )
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                modifier = Modifier.weight(.45f),
+                modifier = Modifier
+                    .weight(.45f)
+                    .height(52.dp),
                 colors = TextFieldDefaults.colors(
                     unfocusedContainerColor = EDSColors.white,
                     focusedContainerColor = EDSColors.white,
@@ -628,9 +809,11 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                     .padding(horizontal = 2.dp, vertical = 2.dp)
                     .background(EDSColors.grayX3)
                     .weight(1f)
-
-                    .clickable {
-
+                    .clickable(
+                        interactionSource = interactionSource, indication = null
+                    ) {
+                        minimum.value = "0"
+                        maximum.value = "500000"
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -646,8 +829,11 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                     .padding(horizontal = 2.dp, vertical = 2.dp)
                     .background(EDSColors.grayX3)
                     .weight(1f)
-                    .clickable {
-
+                    .clickable(
+                        interactionSource = interactionSource, indication = null
+                    ) {
+                        minimum.value = "500000"
+                        maximum.value = "1000000"
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -665,8 +851,11 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                     .background(EDSColors.grayX3)
                     .weight(1f)
 
-                    .clickable {
-
+                    .clickable(
+                        interactionSource = interactionSource, indication = null
+                    ) {
+                        minimum.value = "1000000"
+                        maximum.value = "2000000"
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -680,5 +869,57 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
         }
         Spacer(modifier = Modifier.height(12.dp))
         Divider(color = EDSColors.grayX3, thickness = 1.dp)
+    }
+}
+
+@Preview
+@Composable
+fun ApplyFilterButtonsPreview() {
+    Surface {
+        ApplyFilterButtons(
+            Modifier.padding(8.dp)
+        )
+    }
+}
+
+
+@Composable
+fun ApplyFilterButtons(modifier: Modifier = Modifier) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
+        OutlinedButton(
+            onClick = { /*TODO*/ },
+            shape = RoundedCornerShape(4.dp),
+            border = BorderStroke(
+                1.dp,
+                EDSColors.primaryColor
+            ),
+            modifier = Modifier.weight(.5f)
+        ) {
+            Text(
+                text = "Reset",
+                style = EDSTextStyle.H2Reg(
+                    EDSColors.primaryColor
+                )
+            )
+        }
+        OutlinedButton(
+            onClick = { /*TODO*/ },
+            shape = RoundedCornerShape(4.dp),
+            border = null,
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = EDSColors.primaryColor,
+            ),
+            modifier = Modifier.weight(.5f)
+        ) {
+            Text(
+                text = "Apply Filters",
+                style = EDSTextStyle.H2Reg(
+                    EDSColors.white
+                )
+            )
+        }
     }
 }
