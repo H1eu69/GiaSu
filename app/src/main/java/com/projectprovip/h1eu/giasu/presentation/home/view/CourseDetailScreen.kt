@@ -63,6 +63,8 @@ import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
+import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import kotlinx.coroutines.launch
@@ -72,9 +74,9 @@ import kotlinx.coroutines.launch
 fun PreviewScreen() {
     CourseDetailScreen(
         rememberNavController(),
-        hiltViewModel(),
-        hiltViewModel(),
-        1
+        course = CourseDetail(),
+        courseRegisterState = CourseRegisterState(),
+        onRegisterClicked = {}
     )
 }
 
@@ -82,25 +84,13 @@ fun PreviewScreen() {
 @Composable
 fun CourseDetailScreen(
     navController: NavController,
-    homeViewModel: HomeViewModel,
-    courseDetailViewModel: CourseDetailViewModel,
-    courseId: Int?
+    course: CourseDetail?,
+    courseRegisterState: CourseRegisterState,
+    onRegisterClicked: () -> Unit,
 ) {
 
-    val course = if (courseId != null) homeViewModel.getClassDetailById(courseId) else null
-    val courseRegisterState = courseDetailViewModel.courseRegisterState
     val context = LocalContext.current
-    val coroutine = rememberCoroutineScope()
-    var token = remember { mutableStateOf("") }
 
-
-    LaunchedEffect(key1 = "") {
-        coroutine.launch {
-            context.dataStore.data.collect { preference ->
-                token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
-            }
-        }
-    }
     Scaffold(
         topBar = {
             CourseDetailAppbar(navController)
@@ -114,24 +104,23 @@ fun CourseDetailScreen(
             CourseDetailBody(navController = navController, course = course!!)
             Button(
                 onClick = {
-                    courseDetailViewModel.registerCourse(courseId!!, token.value)
-
+                    onRegisterClicked()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter),
                 colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
             ) {
-                if (courseRegisterState.value.isLoading) {
+                if (courseRegisterState.isLoading) {
                     CircularProgressIndicator()
                 } else {
                     Text(text = "Tax: $${course.chargeFee} Register now", color = EDSColors.white)
                 }
-                LaunchedEffect(key1 = courseRegisterState.value) {
-                    if (courseRegisterState.value.error) {
-                        showToast(context, courseRegisterState.value.message)
-                    } else if (courseRegisterState.value.isSuccess) {
-                        showToast(context, courseRegisterState.value.message)
+                LaunchedEffect(key1 = courseRegisterState) {
+                    if (courseRegisterState.error) {
+                        showToast(context, courseRegisterState.message)
+                    } else if (courseRegisterState.isSuccess) {
+                        showToast(context, courseRegisterState.message)
                         navController.popBackStack()
                     }
                 }
@@ -146,12 +135,12 @@ fun CourseDetailBody(
     navController: NavController,
     course: CourseDetail
 ) {
-    var statusTextcolor = EDSColors.notScheduleTextColor
+    var statusTextColor = EDSColors.notScheduleTextColor
 
     if (course.status == "Available") {
-        statusTextcolor = EDSColors.teachingTextColor
+        statusTextColor = EDSColors.teachingTextColor
     } else if (course.status == "Verifying") {
-        statusTextcolor = EDSColors.waitingBackgroundColor
+        statusTextColor = EDSColors.waitingBackgroundColor
     }
 
     val  context = LocalContext.current
@@ -178,7 +167,7 @@ fun CourseDetailBody(
                     text = course.status,
                     style = TextStyle(
                         fontWeight = FontWeight.Medium,
-                        color = statusTextcolor
+                        color = statusTextColor
                     ),
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -253,7 +242,7 @@ fun CourseDetailBody(
         item {
             DetailIconAndText(
                 Icons.Outlined.Person,
-                "Tutor gender requirement: ", course.genderRequirement
+                "Tutor gender: ", course.genderRequirement
             )
         }
         item {
@@ -271,7 +260,7 @@ fun CourseDetailBody(
         item {
             DetailIconAndText(
                 Icons.Outlined.Info,
-                "Academic Requirement: ", course.academicLevelRequirement
+                "Academic: ", course.academicLevelRequirement
             )
         }
         item {

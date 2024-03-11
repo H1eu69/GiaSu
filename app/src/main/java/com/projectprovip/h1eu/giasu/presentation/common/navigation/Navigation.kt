@@ -165,11 +165,17 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             })
         ) { backStackEntry ->
             val courseDetailViewModel = hiltViewModel<CourseDetailViewModel>()
+
+            val courseId = backStackEntry.arguments?.getInt("courseId")
+            val courseDetail = if (courseId != null) homeViewModel.getClassDetailById(courseId) else null
+
             CourseDetailScreen(
                 navController,
-                homeViewModel,
-                courseDetailViewModel,
-                backStackEntry.arguments?.getInt("courseId")
+                courseDetail,
+                courseDetailViewModel.courseRegisterState.value,
+                onRegisterClicked = {
+                    courseDetailViewModel.registerCourse(courseId!!, token.value)
+                }
             )
         }
         composable(Screens.InApp.Tutor.route) {

@@ -378,7 +378,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
 
     val addressText = remember { mutableStateOf("So 35 duong B KP 1 phuong 3") }
     val birthYearText = remember { mutableStateOf("2002") }
-    val descriptionText = remember { mutableStateOf("Tao la 1 thang gia su ngu hoc") }
+    val descriptionText = remember { mutableStateOf("Chuyen day lap trinh, toan cao cap cho dai hoc") }
     val phoneText = remember { mutableStateOf("0967075340") }
     val openEditSubjectDialog = remember { mutableStateOf(false) }
     val isTutor = true
@@ -519,7 +519,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
                         ),
-                        label = { Text("1235 anh co danh roi", fontWeight = FontWeight.W400) }
+                        label = { Text("Lap trinh cho nguoi mat goc", fontWeight = FontWeight.W400) }
                     )
 
                     FilterChip(
@@ -539,7 +539,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
                         ),
-                        label = { Text("Ly cui cap", fontWeight = FontWeight.W400 )}
+                        label = { Text("Ly dai cuong", fontWeight = FontWeight.W400 )}
                     )
 
                     FilterChip(
@@ -549,7 +549,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
                         ),
-                        label = { Text("Hoa hoc cho tre em", fontWeight = FontWeight.W400) }
+                        label = { Text("Hoa hoc dai cuong", fontWeight = FontWeight.W400) }
                     )
 
                     FilterChip(
