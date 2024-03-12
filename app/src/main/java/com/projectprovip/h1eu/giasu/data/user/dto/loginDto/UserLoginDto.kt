@@ -9,5 +9,5 @@ data class UserLoginDto(
     val isFailure: Boolean,
     val isSuccess: Boolean,
     @SerializedName(value = "value")
-    val value: UserToken
+    val value: UserToken?
 )

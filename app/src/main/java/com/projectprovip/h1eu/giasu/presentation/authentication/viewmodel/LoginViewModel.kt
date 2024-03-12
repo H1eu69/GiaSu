@@ -42,7 +42,6 @@ class LoginViewModel @Inject constructor(
                     is EDSResult.Error -> {
                         _loginState.value = LoginState(
                             error = result.message ?: "Unexpected error",
-                            auth = AuthState.ACCOUNT_NOT_FOUND
                         )
                     }
 

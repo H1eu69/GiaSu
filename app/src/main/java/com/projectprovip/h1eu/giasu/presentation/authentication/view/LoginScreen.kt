@@ -109,8 +109,8 @@ fun LoginScreen(
         }
     }
 
-    val isError =
-        (state.auth.name == AuthState.WRONG_EMAIL_FORMAT.name) || (state.auth.name == AuthState.ACCOUNT_NOT_FOUND.name)
+    val isError = state.error.isNotEmpty()
+
 
     Surface {
         Column(
@@ -159,7 +159,7 @@ fun LoginScreen(
                         if (isError) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = state.auth.text!!,
+                                text = state.error,
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
