@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -201,8 +202,7 @@ fun BodyContent(
                         Color.White,
                         RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
                     )
-                    .padding(16.dp)
-                ,
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
 
@@ -320,6 +320,33 @@ private fun RowTitle(
     }
 }
 
+@Preview
+@Composable
+fun PreviewCourseItem() {
+    Surface {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            CourseItem(
+                rememberNavController(),
+                CourseDetail()
+            )
+            CourseItem(
+                rememberNavController(),
+                CourseDetail()
+            )
+            CourseItem(
+                rememberNavController(),
+                CourseDetail()
+            )
+            CourseItem(
+                rememberNavController(),
+                CourseDetail()
+            )
+        }
+    }
+}
+
 @Composable
 fun CourseItem(navController: NavController, data: CourseDetail) {
     Card(
@@ -347,7 +374,7 @@ fun CourseItem(navController: NavController, data: CourseDetail) {
             AppBarTitle(text = data.title, fontSize = 16)
             //SubTitle(text = "ID: ${data.id}")
             MiddleContent(
-                minutePerSession = data.minutePerSession,
+                sessionDuration = data.sessionDuration,
                 sessionPerWeek = data.sessionPerWeek,
                 info = data.subjectName,
                 location = data.address
@@ -380,12 +407,12 @@ fun SubTitle(text: String) {
 }
 
 @Composable
-fun MiddleContent(minutePerSession: Int, sessionPerWeek: Int, info: String, location: String) {
+fun MiddleContent(sessionDuration: Int, sessionPerWeek: Int, info: String, location: String) {
     val session = pluralStringResource(
         id = R.plurals.session_string,
         count = sessionPerWeek,
         sessionPerWeek,
-        minutePerSession
+        sessionDuration
     )
     Column(
         Modifier.padding(top = 12.dp, bottom = 20.dp),
@@ -410,7 +437,7 @@ fun IconAndText(imageVector: ImageVector, text: String) {
 }
 
 @Composable
-fun BottomContent(fee: Double, createdDate: String) {
+fun BottomContent(fee: Int, createdDate: String) {
     Row(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween

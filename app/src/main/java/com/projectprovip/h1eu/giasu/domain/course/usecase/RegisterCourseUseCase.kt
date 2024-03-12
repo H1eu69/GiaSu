@@ -11,7 +11,7 @@ import javax.inject.Inject
 class RegisterCourseUseCase @Inject constructor(
     private val repository: CoursesRepository
 ) {
-    operator fun invoke(id: Int, token: String?) = flow<EDSResult<RequestCourseDto>> {
+    operator fun invoke(id: String, token: String?) = flow<EDSResult<RequestCourseDto>> {
         try {
             emit(EDSResult.Loading())
             val response = repository.registerCourse(id, token)

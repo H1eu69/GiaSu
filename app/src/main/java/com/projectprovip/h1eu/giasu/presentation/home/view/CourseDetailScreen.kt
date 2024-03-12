@@ -192,7 +192,7 @@ fun CourseDetailBody(
 
         item {
             SessionSection(
-                course.sessionPerWeek, course.minutePerSession
+                course.sessionPerWeek, course.sessionDuration
             )
         }
         item {

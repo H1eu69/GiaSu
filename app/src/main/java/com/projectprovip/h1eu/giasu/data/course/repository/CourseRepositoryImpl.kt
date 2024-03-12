@@ -1,9 +1,9 @@
 package com.projectprovip.h1eu.giasu.data.course.repository
 
 import com.projectprovip.h1eu.giasu.data.course.api.CourseApi
-import com.projectprovip.h1eu.giasu.data.course.dto.CoursesInformationDto
 import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class CourseRepositoryImpl @Inject constructor(
     private val api: CourseApi
 ) : CoursesRepository{
-    override suspend fun getAllClasses(): CoursesInformationDto {
+    override suspend fun getAllClasses(): NewCoursesDto {
         return api.getAllClasses()
     }
 
@@ -24,7 +24,7 @@ class CourseRepositoryImpl @Inject constructor(
         return api.createCourse(token, input)
     }
 
-    override suspend fun registerCourse(id: Int, token: String?): Response<RequestCourseDto> {
+    override suspend fun registerCourse(id: String, token: String?): Response<RequestCourseDto> {
         return api.registerCourse(id, token!!)
     }
 

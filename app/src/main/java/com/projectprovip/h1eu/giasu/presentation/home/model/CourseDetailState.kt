@@ -7,6 +7,7 @@ data class CourseDetailState(
     var data: List<CourseDetail> = emptyList(),
     var error: String? = null
 )
+/*
 
 data class CourseDetail(
     val academicLevelRequirement: String = "dummy academicLevelRequirement",
@@ -26,5 +27,5 @@ data class CourseDetail(
     val subjectId: Int = -1,
     val subjectName: String = "dummy academicLevelRequirement",
     val title: String = "dummy academicLevelRequirement",
-    val creationTime: String = "dummy academicLevelRequirement"
-)
+    val creationTime: String  = "dummy academicLevelRequirement"
+)*/

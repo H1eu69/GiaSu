@@ -6,11 +6,12 @@ import java.time.format.DateTimeFormatter
 
 object DateFormat {
     fun DD_MM_YYYY(date: String): String {
-        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
-        val dateTime = LocalDateTime.parse(date)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSXXX")
+        val dateTime = LocalDateTime.parse(date, formatter)
+        val formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        return formattedDateTime
 
-        return dateTime.format(formatter)
     }
 }
 
@@ -22,8 +23,4 @@ fun String.alphaNumericOnly() : String {
 fun String.isEmailFormatted() : Boolean {
     val emailRegex = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
     return emailRegex.matches(this)
-}
-
-fun Context.font() {
-
 }
