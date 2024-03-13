@@ -48,6 +48,7 @@ class EDSColors {
         val purpleBackground = Color(244,243,253,255)
         val purpleText = Color(115,99,251,255)
         val mainBackground = Color(253,253,253,255)
-        val grayX3 = Color(245,245,245)
+        val grayX3 = Color(220,220,220)
+        val grayX4 = Color(245,245,245)
     }
 }

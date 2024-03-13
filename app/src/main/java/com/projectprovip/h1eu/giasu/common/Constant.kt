@@ -75,6 +75,33 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
+        fun H1Large(color : Color = Color.Black) : TextStyle {
+            val fontName = GoogleFont("Inter")
+
+            val font = FontFamily(
+                Font(googleFont = fontName, fontProvider = provider)
+            )
+
+            return TextStyle(
+                fontSize = 24.sp,
+                color = color,
+                fontFamily = font
+            )
+        }
+        fun H1MedBold(color : Color = Color.Black) : TextStyle {
+            val fontName = GoogleFont("Inter")
+
+            val font = FontFamily(
+                Font(googleFont = fontName, fontProvider = provider)
+            )
+
+            return TextStyle(
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = color,
+                fontFamily = font
+            )
+        }
         fun H2Reg(color : Color = Color.Black) : TextStyle {
             val fontName = GoogleFont("Inter")
 
@@ -97,6 +124,36 @@ class EDSTextStyle {
 
             return TextStyle(
                 fontSize = 12.sp,
+                color = color,
+                fontFamily = font
+            )
+        }
+
+        fun H2Thin(color : Color = Color.Black) : TextStyle {
+            val fontName = GoogleFont("Inter")
+
+            val font = FontFamily(
+                Font(googleFont = fontName, fontProvider = provider)
+            )
+
+            return TextStyle(
+                fontSize = 15.sp,
+                fontWeight = FontWeight.W300,
+                color = color,
+                fontFamily = font
+            )
+        }
+
+        fun H2Bold(color : Color = Color.Black) : TextStyle {
+            val fontName = GoogleFont("Inter")
+
+            val font = FontFamily(
+                Font(googleFont = fontName, fontProvider = provider)
+            )
+
+            return TextStyle(
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
                 color = color,
                 fontFamily = font
             )
