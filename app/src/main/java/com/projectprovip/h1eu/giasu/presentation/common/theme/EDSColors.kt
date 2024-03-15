@@ -14,7 +14,7 @@ class EDSColors {
 
         val chipTextColor = Color(4,86,90)
         val transparent = Color.Transparent
-        val lightGray = Color(196,196,196,255)
+        val grayX2 = Color(196,196,196,255)
         val darkCyan = Color(0, 139, 139, 255)
         val primaryColor = Color(95, 207, 128, 255)
         val notScheduleBackgroundColor = Color(255, 235, 235, 255)
@@ -30,7 +30,7 @@ class EDSColors {
         val imageBackground = Color(237, 237, 237)
         val plusBackground = Color(130, 130, 130)
         val backgroundApp = Color(240, 255, 248)
-        val grayText = Color(128, 128, 128, 255)
+        val gray = Color(128, 128, 128, 255)
         val white = Color.White
         val yellowStar = Color(255, 212, 94, 255)
         val learningModeOnlineBackgroundColor = Color(149, 209, 255)
@@ -48,6 +48,7 @@ class EDSColors {
         val purpleBackground = Color(244,243,253,255)
         val purpleText = Color(115,99,251,255)
         val mainBackground = Color(253,253,253,255)
-
+        val grayX3 = Color(220,220,220)
+        val grayX4 = Color(245,245,245)
     }
 }

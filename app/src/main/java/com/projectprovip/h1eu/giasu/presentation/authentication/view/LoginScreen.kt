@@ -1,11 +1,9 @@
 package com.projectprovip.h1eu.giasu.presentation.authentication.view
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,7 +22,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -101,8 +97,8 @@ fun LoginScreen(
                 context.dataStore.edit { preferences ->
                     preferences[tokenKey] = state.token.toString()
                     preferences[usernameKey] = state.user.fullName
-                    preferences[useridKey] = state.user.id.toString()
-                    preferences[userImageKey] = state.user.image
+                    preferences[useridKey] = state.user.id
+                    preferences[userImageKey] = state.user.avatar
                 }
                 navController.navigate(Screens.InApp.route) {
                     popUpTo(Screens.Authentication.route) {
@@ -113,18 +109,21 @@ fun LoginScreen(
         }
     }
 
-    val isError =
-        (state.auth.name == AuthState.WRONG_EMAIL_FORMAT.name) || (state.auth.name == AuthState.ACCOUNT_NOT_FOUND.name)
+    val isError = state.error.isNotEmpty()
+
 
     Surface {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 40.dp),
             horizontalAlignment = CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             Column(
-                Modifier.width(IntrinsicSize.Min)
-            ) {
+                Modifier.fillMaxWidth()
+
+                ) {
                 Spacer(
                     modifier = Modifier.fillMaxHeight(.2f)
                 )
@@ -152,7 +151,7 @@ fun LoginScreen(
                         emailTextField.value = it
                     },
                     placeholder = {
-                        Text("Email", color = EDSColors.lightGray)
+                        Text("Email", color = EDSColors.grayX2)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
@@ -161,7 +160,7 @@ fun LoginScreen(
                         if (isError) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = state.auth.text!!,
+                                text = state.error,
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
@@ -171,6 +170,7 @@ fun LoginScreen(
                         focusedLabelColor = EDSColors.primaryColor,
                     ),
                     modifier = Modifier
+                        .fillMaxWidth()
                 )
 
                 Spacer(
@@ -184,7 +184,7 @@ fun LoginScreen(
                         passTextField.value = it
                     },
                     placeholder = {
-                        Text("Password", color = EDSColors.lightGray)
+                        Text("Password", color = EDSColors.grayX2)
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
@@ -193,6 +193,7 @@ fun LoginScreen(
                         focusedLabelColor = EDSColors.primaryColor,
                     ),
                     modifier = Modifier
+                        .fillMaxWidth()
                 )
 
                 Spacer(
@@ -243,9 +244,7 @@ fun LoginScreen(
                     modifier = Modifier.height(16.dp)
                 )
             }
-            Spacer(
-                modifier = Modifier.weight(1f)
-            )
+            Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier
                     .padding(bottom = 30.dp)
@@ -261,7 +260,6 @@ fun LoginScreen(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                textAlign = TextAlign.Center,
             )
         }
     }

@@ -21,7 +21,7 @@ class CourseDetailViewModel @Inject constructor(
 
     private var _courseRegisterState = mutableStateOf(CourseRegisterState())
     val courseRegisterState : State<CourseRegisterState> =  _courseRegisterState
-    fun registerCourse(courseId: Int, token: String) {
+    fun registerCourse(courseId: String, token: String) {
         registerCourseUseCase(courseId, token).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,37 +16,48 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Place
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -54,27 +66,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.common.Constant
-import com.projectprovip.h1eu.giasu.common.dataStore
+import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
+import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
-import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
-import kotlinx.coroutines.launch
+import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
 
 @Preview
 @Composable
 fun PreviewScreen() {
     CourseDetailScreen(
         rememberNavController(),
-        hiltViewModel(),
-        hiltViewModel(),
-        1
+        course = CourseDetail(),
+        courseRegisterState = CourseRegisterState(),
+        onRegisterClicked = {}
     )
 }
 
@@ -82,61 +90,65 @@ fun PreviewScreen() {
 @Composable
 fun CourseDetailScreen(
     navController: NavController,
-    homeViewModel: HomeViewModel,
-    courseDetailViewModel: CourseDetailViewModel,
-    courseId: Int?
+    course: CourseDetail?,
+    courseRegisterState: CourseRegisterState,
+    onRegisterClicked: () -> Unit,
 ) {
 
-    val course = if (courseId != null) homeViewModel.getClassDetailById(courseId) else null
-    val courseRegisterState = courseDetailViewModel.courseRegisterState
     val context = LocalContext.current
-    val coroutine = rememberCoroutineScope()
-    var token = remember { mutableStateOf("") }
+    val showBottomSheet = remember { mutableStateOf(false) }
 
-
-    LaunchedEffect(key1 = "") {
-        coroutine.launch {
-            context.dataStore.data.collect { preference ->
-                token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
-            }
-        }
-    }
     Scaffold(
         topBar = {
             CourseDetailAppbar(navController)
         },
     ) {
-        Box(
-            modifier = Modifier
-                .padding(it)
-                .padding(20.dp)
-        ) {
-            CourseDetailBody(navController = navController, course = course!!)
-            Button(
-                onClick = {
-                    courseDetailViewModel.registerCourse(courseId!!, token.value)
-
+        if (showBottomSheet.value) {
+            CourseRegisterPaymentBottomSheet(
+                modifier = Modifier.padding(16.dp),
+                onDismissRequest = {
+                    showBottomSheet.value = false
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-                colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
-            ) {
-                if (courseRegisterState.value.isLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    Text(text = "Tax: $${course.chargeFee} Register now", color = EDSColors.white)
+                onButtonClick = {
+                    onRegisterClicked()
                 }
-                LaunchedEffect(key1 = courseRegisterState.value) {
-                    if (courseRegisterState.value.error) {
-                        showToast(context, courseRegisterState.value.message)
-                    } else if (courseRegisterState.value.isSuccess) {
-                        showToast(context, courseRegisterState.value.message)
-                        navController.popBackStack()
+            )
+        } else
+            Box(
+                modifier = Modifier
+                    .padding(it)
+                    .padding(20.dp)
+            ) {
+                CourseDetailBody(navController = navController, course = course!!)
+                Button(
+                    onClick = {
+                        showBottomSheet.value = true
+                        onRegisterClicked()
+
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                    colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
+                ) {
+                    if (courseRegisterState.isLoading) {
+                        CircularProgressIndicator()
+                    } else {
+                        Text(
+                            text = "Tax: $${course.chargeFee} Register now",
+                            color = EDSColors.white
+                        )
+                    }
+                    LaunchedEffect(key1 = courseRegisterState) {
+                        if (courseRegisterState.error) {
+                            showToast(context, courseRegisterState.message)
+                        } else if (courseRegisterState.isSuccess) {
+                            showToast(context, courseRegisterState.message)
+                            navController.popBackStack()
+                        }
                     }
                 }
             }
-        }
     }
 }
 
@@ -146,15 +158,15 @@ fun CourseDetailBody(
     navController: NavController,
     course: CourseDetail
 ) {
-    var statusTextcolor = EDSColors.notScheduleTextColor
+    var statusTextColor = EDSColors.notScheduleTextColor
 
     if (course.status == "Available") {
-        statusTextcolor = EDSColors.teachingTextColor
+        statusTextColor = EDSColors.teachingTextColor
     } else if (course.status == "Verifying") {
-        statusTextcolor = EDSColors.waitingBackgroundColor
+        statusTextColor = EDSColors.waitingBackgroundColor
     }
 
-    val  context = LocalContext.current
+    val context = LocalContext.current
     LazyColumn(
         modifier = modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -178,7 +190,7 @@ fun CourseDetailBody(
                     text = course.status,
                     style = TextStyle(
                         fontWeight = FontWeight.Medium,
-                        color = statusTextcolor
+                        color = statusTextColor
                     ),
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -203,7 +215,7 @@ fun CourseDetailBody(
 
         item {
             SessionSection(
-                course.sessionPerWeek, course.minutePerSession
+                course.sessionPerWeek, course.sessionDuration
             )
         }
         item {
@@ -232,12 +244,7 @@ fun CourseDetailBody(
                 "Subject: ", course.subjectName
             )
         }
-//        item {
-//            DetailIconAndText(
-//                Icons.Outlined.Info,
-//                "Status: ", course.status
-//            )
-//        }
+
         item {
             DetailIconAndText(
                 Icons.Outlined.Phone,
@@ -253,7 +260,7 @@ fun CourseDetailBody(
         item {
             DetailIconAndText(
                 Icons.Outlined.Person,
-                "Tutor gender requirement: ", course.genderRequirement
+                "Tutor gender: ", course.genderRequirement
             )
         }
         item {
@@ -271,7 +278,7 @@ fun CourseDetailBody(
         item {
             DetailIconAndText(
                 Icons.Outlined.Info,
-                "Academic Requirement: ", course.academicLevelRequirement
+                "Academic: ", course.academicLevelRequirement
             )
         }
         item {
@@ -297,7 +304,7 @@ fun CourseDetailAppbar(navController: NavController) {
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
-                    Icons.Rounded.ArrowBack,
+                    Icons.AutoMirrored.Rounded.ArrowBack,
                     "",
                     tint = Color.White
                 )
@@ -318,11 +325,13 @@ fun CourseDetailAppbar(navController: NavController) {
 }
 
 @Composable
-fun DetailIconAndText(imageVector: ImageVector,
-                      boldedText: String,
-                      text: String,
-textColor: Color = EDSColors.blackColor,
-                      modifier: Modifier = Modifier) {
+fun DetailIconAndText(
+    imageVector: ImageVector,
+    boldedText: String,
+    text: String,
+    textColor: Color = EDSColors.blackColor,
+    modifier: Modifier = Modifier
+) {
     Row {
         Icon(
             imageVector, null,
@@ -339,7 +348,7 @@ textColor: Color = EDSColors.blackColor,
             text = text,
             textAlign = TextAlign.End,
             color = textColor,
-             fontSize = 16.sp,
+            fontSize = 16.sp,
             modifier = modifier
         )
     }
@@ -359,8 +368,7 @@ fun SessionSectionPreview() {
 }
 
 @Composable
-fun SessionSection( dayAWeek: Int, minPerDay: Int) {
-
+fun SessionSection(dayAWeek: Int, minPerDay: Int) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -392,5 +400,240 @@ fun SessionSection( dayAWeek: Int, minPerDay: Int) {
             )
             Text(text = "minutes / day")
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@Preview
+fun CourseRegisterPaymentDialogPreview() {
+    Surface {
+        CourseRegisterPaymentBottomSheet(
+            modifier = Modifier.padding(16.dp), onDismissRequest = {
+
+            })
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CourseRegisterPaymentBottomSheet(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    sheetState: SheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    ),
+    onButtonClick: () -> Unit = {},
+    fee: Int = -10,
+    tax: Int = -9
+) {
+    val context = LocalContext.current
+    val otpValue = remember { mutableStateOf("") }
+    val isOtpFilled = remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    ModalBottomSheet(sheetState = sheetState, onDismissRequest = { onDismissRequest() }) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = "To complete registration, please transfer money according to content:",
+                style = EDSTextStyle.H2Reg()
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Vietinbank (VTB): ", style = EDSTextStyle.H2Thin(
+                        EDSColors.gray
+                    )
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Image(
+                        imageVector = Icons.Default.ContentCopy, contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        colorFilter = ColorFilter.tint(
+                            EDSColors.gray
+                        )
+                    )
+                    Text(
+                        text = "107867236970",
+                        style = EDSTextStyle.H2Reg(
+                            EDSColors.primaryColor
+                        )
+                    )
+
+                }
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Account Owner: ", style = EDSTextStyle.H2Thin(
+                        EDSColors.gray
+                    )
+                )
+                Text(
+                    text = "Huỳnh Trung Hiếu",
+                    style = EDSTextStyle.H2Reg(
+                        EDSColors.primaryColor
+                    )
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Content: ", style = EDSTextStyle.H2Thin(
+                        EDSColors.gray
+                    )
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Image(
+                        imageVector = Icons.Default.ContentCopy, contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        colorFilter = ColorFilter.tint(
+                            EDSColors.gray
+                        )
+                    )
+                    Text(
+                        text = "Register ES 123456",
+                        style = EDSTextStyle.H2Reg(
+                            EDSColors.primaryColor
+                        )
+                    )
+
+                }
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Course fee: ", style = EDSTextStyle.H2Reg(
+                        EDSColors.gray
+
+                    )
+                )
+                Text(
+                    text = "200.000 đ",
+                    style = EDSTextStyle.H1MedBold(
+                    )
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Tax: ", style = EDSTextStyle.H2Reg(
+                        EDSColors.gray
+
+                    )
+                )
+                Text(
+                    text = "30.000 đ",
+                    style = EDSTextStyle.H1MedBold(
+                    )
+                )
+            }
+            Divider(modifier = Modifier.padding(horizontal = 8.dp), color = EDSColors.grayX3)
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Total amount: ", style = EDSTextStyle.H2Reg(
+                        EDSColors.gray
+
+                    )
+                )
+                Text(
+                    text = "500.000 đ",
+                    style = EDSTextStyle.H1MedBold(
+                    )
+                )
+            }
+            Text(
+                text = "After transferring money, please fill in the Registration Code in a box below. Registration Code is:",
+                style = EDSTextStyle.H2Reg()
+            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "1 2 3 4 5 6",
+                    style = EDSTextStyle.H1Large(
+                        EDSColors.primaryColor
+                    )
+                )
+            }
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OtpInputField(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .focusRequester(focusRequester),
+                    otpText = otpValue.value,
+                    shouldCursorBlink = false,
+                    onOtpModified = { value, otpFilled ->
+                        otpValue.value = value
+                        isOtpFilled.value = otpFilled
+                        if (otpFilled) {
+                            keyboardController?.hide()
+                        }
+                    }
+                )
+            }
+            ElevatedButton(
+                onClick = { onButtonClick() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.elevatedButtonColors(
+                    containerColor = EDSColors.primaryColor,
+                )
+            ) {
+                Text("Send request", style = EDSTextStyle.H2Reg(EDSColors.white))
+            }
+        }
+    }
+
+}
+
+@Composable
+private fun CourseRegisterDialogText(
+    modifier: Modifier = Modifier,
+    title: @Composable () -> Unit,
+    subTitle: @Composable () -> Unit,
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        title()
+        subTitle()
     }
 }

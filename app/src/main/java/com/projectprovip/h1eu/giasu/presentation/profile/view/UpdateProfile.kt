@@ -3,7 +3,6 @@
 package com.projectprovip.h1eu.giasu.presentation.profile.view
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,7 +28,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.AlertDialog
@@ -47,7 +44,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -382,7 +378,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
 
     val addressText = remember { mutableStateOf("So 35 duong B KP 1 phuong 3") }
     val birthYearText = remember { mutableStateOf("2002") }
-    val descriptionText = remember { mutableStateOf("Tao la 1 thang gia su ngu hoc") }
+    val descriptionText = remember { mutableStateOf("Chuyen day lap trinh, toan cao cap cho dai hoc") }
     val phoneText = remember { mutableStateOf("0967075340") }
     val openEditSubjectDialog = remember { mutableStateOf(false) }
     val isTutor = true
@@ -443,7 +439,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                             })
                     Box( modifier = Modifier
                         .clip(CircleShape)
-                        .background(EDSColors.lightGray)
+                        .background(EDSColors.grayX2)
                         .border(1.dp, EDSColors.white, CircleShape)
                         .padding(2.dp)
                         .align(Alignment.BottomEnd)) {
@@ -523,7 +519,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
                         ),
-                        label = { Text("1235 anh co danh roi", fontWeight = FontWeight.W400) }
+                        label = { Text("Lap trinh cho nguoi mat goc", fontWeight = FontWeight.W400) }
                     )
 
                     FilterChip(
@@ -543,7 +539,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
                         ),
-                        label = { Text("Ly cui cap", fontWeight = FontWeight.W400 )}
+                        label = { Text("Ly dai cuong", fontWeight = FontWeight.W400 )}
                     )
 
                     FilterChip(
@@ -553,7 +549,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
                         ),
-                        label = { Text("Hoa hoc cho tre em", fontWeight = FontWeight.W400) }
+                        label = { Text("Hoa hoc dai cuong", fontWeight = FontWeight.W400) }
                     )
 
                     FilterChip(

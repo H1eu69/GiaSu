@@ -44,9 +44,7 @@ class HomeViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getClassDetailById(id: Int) = _courseDetailState.value.data.find {
+    fun getClassDetailById(id: String) = _courseDetailState.value.data.find {
         it.id == id
     }
-
-
 }

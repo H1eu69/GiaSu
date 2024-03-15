@@ -1,7 +1,8 @@
 package com.projectprovip.h1eu.giasu.domain.course.usecase
 
+import android.util.Log
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.course.dto.toNewClassDetail
+import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.toNewCourse
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import kotlinx.coroutines.flow.flow
@@ -15,9 +16,11 @@ class GetCourseUseCase @Inject constructor(
     operator fun invoke() = flow<EDSResult<List<CourseDetail>>> {
         try {
             emit(EDSResult.Loading())
-            val data = repository.getAllClasses().value.map {
-                it.toNewClassDetail()
+            val data = repository.getAllClasses().value.items.map {
+                it.toNewCourse()
             }
+
+            Log.d("TEst", data.toString())
             emit(EDSResult.Success(data))
         } catch (e: HttpException) {
             emit(EDSResult.Error(e.localizedMessage))

@@ -90,24 +90,12 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
         composable(Screens.Authentication.Signup.route) {
             val viewModel = hiltViewModel<SignUpViewModel>()
             SignUpScreen(
-                navigateInApp = {
-                    navController.navigate(Screens.InApp.route) {
-                        popUpTo(Screens.Splash.route) {
-                            inclusive = true
-                        }
-                    }
+                navController,
+                validate = { firstName, lastName, email, password, username, phone ->
+                    viewModel.validate(firstName, lastName, email, password, username, phone)
                 },
-                navigateForgotPassword = {
-                    navController.navigate(Screens.Authentication.ForgetPassword.route)
-                },
-                pop = { navController.popBackStack() },
-                buttonClick = { firstName, lastName, email, pwd ->
-                    viewModel.signUp(
-                        firstName,
-                        lastName,
-                        email,
-                        pwd
-                    )
+                onRegisterClicked = { input ->
+                    viewModel.signUp(input)
                 },
                 state = viewModel.signUpState.value
             )
@@ -161,15 +149,22 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable(
             "${Screens.InApp.Home.ClassDetail.route}/{courseId}",
             arguments = listOf(navArgument("courseId") {
-                type = NavType.IntType
+                type = NavType.StringType
             })
         ) { backStackEntry ->
             val courseDetailViewModel = hiltViewModel<CourseDetailViewModel>()
+
+            val courseId = backStackEntry.arguments?.getString("courseId")
+            val courseDetail =
+                if (courseId != null) homeViewModel.getClassDetailById(courseId) else null
+
             CourseDetailScreen(
                 navController,
-                homeViewModel,
-                courseDetailViewModel,
-                backStackEntry.arguments?.getInt("courseId")
+                courseDetail,
+                courseDetailViewModel.courseRegisterState.value,
+                onRegisterClicked = {
+                    courseDetailViewModel.registerCourse(courseId!!, token.value)
+                }
             )
         }
         composable(Screens.InApp.Tutor.route) {

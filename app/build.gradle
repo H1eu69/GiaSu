@@ -67,6 +67,7 @@ dependencies {
 
     //JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'androidx.tv:tv-material:1.0.0-alpha10'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
     runtimeOnly 'io.jsonwebtoken:jjwt-gson:0.12.3'
 
