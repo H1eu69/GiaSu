@@ -91,6 +91,9 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
             val viewModel = hiltViewModel<SignUpViewModel>()
             SignUpScreen(
                 navController,
+                validate = { firstName, lastName, email, password, username, phone ->
+                    viewModel.validate(firstName, lastName, email, password, username, phone)
+                },
                 onRegisterClicked = { input ->
                     viewModel.signUp(input)
                 },
@@ -152,7 +155,8 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             val courseDetailViewModel = hiltViewModel<CourseDetailViewModel>()
 
             val courseId = backStackEntry.arguments?.getString("courseId")
-            val courseDetail = if (courseId != null) homeViewModel.getClassDetailById(courseId) else null
+            val courseDetail =
+                if (courseId != null) homeViewModel.getClassDetailById(courseId) else null
 
             CourseDetailScreen(
                 navController,

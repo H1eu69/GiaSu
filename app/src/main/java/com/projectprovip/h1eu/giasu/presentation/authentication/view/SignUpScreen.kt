@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
@@ -35,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -57,6 +57,7 @@ import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.SignUpState
+import com.projectprovip.h1eu.giasu.presentation.authentication.model.Validate
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.launch
@@ -66,7 +67,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PreviewSignUp() {
     SignUpScreen(
-        rememberNavController(), { bundle -> }, SignUpState()
+        rememberNavController(), { s1, s2, s3, s4, s5, s6 -> false }, { bundle -> }, SignUpState()
     )
 }
 
@@ -74,6 +75,7 @@ fun PreviewSignUp() {
 @Composable
 fun SignUpScreen(
     navController: NavController,
+    validate: (String?, String?, String?, String?, String?, String?) -> Boolean,
     onRegisterClicked: (
         UserSignUpInput
     ) -> Unit,
@@ -185,6 +187,7 @@ fun SignUpScreen(
                         value3 = emailText,
                         value4 = passText,
                         state = state,
+                        validate = validate,
                         onDone = {
                             coroutine.launch {
                                 pagerState.animateScrollToPage(
@@ -203,6 +206,7 @@ fun SignUpScreen(
                         value2 = phoneNumberText,
                         value3 = birthYearText,
                         value4 = cityText,
+                        validate = validate,
                         onDone = {
                             onRegisterClicked(
                                 UserSignUpInput(
@@ -250,10 +254,15 @@ fun Phase1(
     value4: MutableState<String>,
     navController: NavController,
     state: SignUpState,
+    validate: (String?, String?, String?, String?, String?, String?) -> Boolean,
     onDone: () -> Unit
 ) {
 
     val interactionSource = remember { MutableInteractionSource() }
+    val isFirstNameError = state.validate.name == Validate.FIRST_NAME_LENGTH.name
+    val isLastNameError = state.validate.name == Validate.LAST_NAME_LENGTH.name
+    val isEmailError = state.validate.name == Validate.EMAIL_FORMAT.name
+    val isPasswordError = state.validate.name == Validate.PASSWORD.name
 
     Column(
         Modifier
@@ -270,6 +279,16 @@ fun Phase1(
             },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
+            isError = isFirstNameError,
+            supportingText = {
+                if (isFirstNameError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = state.validate.error!!,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = EDSColors.primaryColor,
                 focusedLabelColor = EDSColors.primaryColor,
@@ -284,7 +303,6 @@ fun Phase1(
 
         OutlinedTextField(
             value = value2.value,
-            visualTransformation = PasswordVisualTransformation(),
             onValueChange = {
                 value2.value = it
             },
@@ -293,6 +311,16 @@ fun Phase1(
             },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
+            isError = isLastNameError,
+            supportingText = {
+                if (isLastNameError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = state.validate.error!!,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = EDSColors.primaryColor,
                 focusedLabelColor = EDSColors.primaryColor, cursorColor = EDSColors.primaryColor
@@ -315,6 +343,16 @@ fun Phase1(
             },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
+            isError = isEmailError,
+            supportingText = {
+                if (isEmailError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = state.validate.error!!,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = EDSColors.primaryColor,
                 focusedLabelColor = EDSColors.primaryColor, cursorColor = EDSColors.primaryColor
@@ -338,6 +376,16 @@ fun Phase1(
             },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
+            isError = isPasswordError,
+            supportingText = {
+                if (isPasswordError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = state.validate.error!!,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = EDSColors.primaryColor,
                 focusedLabelColor = EDSColors.primaryColor, cursorColor = EDSColors.primaryColor
@@ -369,7 +417,17 @@ fun Phase1(
 
         Button(
             onClick = {
-                onDone()
+                if (validate(
+                        value1.value,
+                        value2.value,
+                        value3.value,
+                        value4.value,
+                        null,
+                        null
+                    )
+                ) {
+                    onDone()
+                }
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
@@ -392,6 +450,7 @@ fun Phase2(
     value4: MutableState<String>,
     navController: NavController,
     state: SignUpState,
+    validate: (String?, String?, String?, String?, String?, String?) -> Boolean,
     onDone: () -> Unit
 ) {
     val fontFamily = FontFamily(
@@ -401,6 +460,8 @@ fun Phase2(
     val focusRequester = remember { FocusRequester() }
 
     val interactionSource = remember { MutableInteractionSource() }
+    val isUsernameError = state.validate.name == Validate.USERNAME.name
+    val isPhoneError = state.validate.name == Validate.PHONE.name
 
     Column(
         Modifier
@@ -417,12 +478,24 @@ fun Phase2(
             },
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
+            isError = isUsernameError,
+            supportingText = {
+                if (isUsernameError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = state.validate.error!!,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = EDSColors.primaryColor,
                 focusedLabelColor = EDSColors.primaryColor, cursorColor = EDSColors.primaryColor
 
             ),
-            modifier = Modifier.fillMaxWidth().focusRequester(focusRequester)
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
         )
 
         Spacer(
@@ -431,7 +504,6 @@ fun Phase2(
 
         OutlinedTextField(
             value = value2.value,
-            visualTransformation = PasswordVisualTransformation(),
             onValueChange = {
                 value2.value = it
             },
@@ -441,6 +513,16 @@ fun Phase2(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
+            isError = isPhoneError,
+            supportingText = {
+                if (isPhoneError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = state.validate.error!!,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = EDSColors.primaryColor,
                 focusedLabelColor = EDSColors.primaryColor, cursorColor = EDSColors.primaryColor
@@ -478,7 +560,6 @@ fun Phase2(
 
         OutlinedTextField(
             value = value4.value,
-            visualTransformation = PasswordVisualTransformation(),
             onValueChange = {
                 value4.value = it
             },
@@ -518,7 +599,16 @@ fun Phase2(
 
         Button(
             onClick = {
-                onDone()
+                if (validate(
+                        null,
+                        null,
+                        null,
+                        null,
+                        value1.value,
+                        value2.value
+                    )
+                )
+                    onDone()
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
