@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.domain.authentication.usecase
 
+import android.util.Log
 import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.data.user.dto.loginDto.UserToken
 import com.projectprovip.h1eu.giasu.data.user.model.UserLoginInput
@@ -17,6 +18,7 @@ class LoginUseCase @Inject constructor(
         try {
             emit(EDSResult.Loading())
             val user = userRepository.login(userLoginInput)
+            Log.d("TEst", user.toString())
             if (user.value != null)
                 emit(EDSResult.Success(user.value))
             else

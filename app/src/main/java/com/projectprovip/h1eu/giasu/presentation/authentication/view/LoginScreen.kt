@@ -114,13 +114,14 @@ fun LoginScreen(
 
     Surface {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(horizontal = 40.dp),
             horizontalAlignment = CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             Column(
-                Modifier.fillMaxSize()
+                Modifier.fillMaxWidth()
 
                 ) {
                 Spacer(
@@ -243,9 +244,7 @@ fun LoginScreen(
                     modifier = Modifier.height(16.dp)
                 )
             }
-            Spacer(
-                modifier = Modifier.weight(1f)
-            )
+            Spacer(modifier = Modifier.weight(1f))
             Text(
                 modifier = Modifier
                     .padding(bottom = 30.dp)
@@ -261,7 +260,6 @@ fun LoginScreen(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                textAlign = TextAlign.Center,
             )
         }
     }

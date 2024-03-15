@@ -90,24 +90,9 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
         composable(Screens.Authentication.Signup.route) {
             val viewModel = hiltViewModel<SignUpViewModel>()
             SignUpScreen(
-                navigateInApp = {
-                    navController.navigate(Screens.InApp.route) {
-                        popUpTo(Screens.Splash.route) {
-                            inclusive = true
-                        }
-                    }
-                },
-                navigateForgotPassword = {
-                    navController.navigate(Screens.Authentication.ForgetPassword.route)
-                },
-                pop = { navController.popBackStack() },
-                buttonClick = { firstName, lastName, email, pwd ->
-                    viewModel.signUp(
-                        firstName,
-                        lastName,
-                        email,
-                        pwd
-                    )
+                navController,
+                onRegisterClicked = { input ->
+                    viewModel.signUp(input)
                 },
                 state = viewModel.signUpState.value
             )

@@ -22,18 +22,8 @@ class SignUpViewModel @Inject constructor(
     private var _signUpState = mutableStateOf(SignUpState())
     val signUpState: State<SignUpState> = _signUpState
 
-    fun signUp(firstName:String,
-               lastName:String,
-               email: String,
-               pwd: String ) {
-        signUpUseCase(
-            UserSignUpInput(
-                email = email,
-                firstName = firstName,
-                lastName = lastName,
-                password = pwd,
-            )
-        ).onEach { result ->
+    fun signUp(input: UserSignUpInput) {
+        signUpUseCase(input).onEach { result ->
             when(result) {
                 is EDSResult.Loading -> {
                     _signUpState.value = SignUpState(isLoading = true)
@@ -48,5 +38,9 @@ class SignUpViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun validate(firstName: String?,lastName: String? ,email: String?, password: String?) {
+
     }
 }
