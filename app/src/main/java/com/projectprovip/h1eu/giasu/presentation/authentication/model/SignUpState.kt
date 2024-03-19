@@ -20,5 +20,7 @@ enum class Validate(val error: String?) {
     EMAIL_FORMAT("Wrong email format"),
     PASSWORD("Password must be at least 8 characters long and contain at least one lowercase letter (a-z), one uppercase letter (A-Z), one digit (0-9), and one special character (!,@,#,$,%,^,&,*)"),
     PHONE("Phone must be at least 10 characters and only contains digits"),
-    USERNAME("Username must be between 3 and 50 characters long, and can only contain letters, numbers, and underscores.")
+    USERNAME("Username must be between 3 and 50 characters long, and can only contain letters, numbers, and underscores."),
+    BIRTH_YEAR("Please pick a birth year"),
+    CITY("Please pick a city")
 }

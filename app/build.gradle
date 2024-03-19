@@ -103,6 +103,9 @@ dependencies {
     //Lottie flies
     implementation "com.airbnb.android:lottie-compose:6.3.0"
 
+    //Number picker
+    implementation "com.chargemap.compose:numberpicker:1.0.3"
+
     //Default
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')

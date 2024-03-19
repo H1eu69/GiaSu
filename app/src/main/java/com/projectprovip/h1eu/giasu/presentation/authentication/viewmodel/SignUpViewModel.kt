@@ -32,7 +32,7 @@ class SignUpViewModel @Inject constructor(
     private var _provinceState = mutableStateOf(ProvinceState())
     val provinceState: State<ProvinceState> = _provinceState
 
-     fun getProvince() {
+    fun getProvince() {
         getProvinceUseCase().onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {
@@ -41,7 +41,8 @@ class SignUpViewModel @Inject constructor(
 
                 is EDSResult.Error -> {
                     Log.e("SignUpViewModel", result.message ?: "Unexpected error")
-                    _provinceState.value = ProvinceState(error = result.message ?: "Unexpected error")
+                    _provinceState.value =
+                        ProvinceState(error = result.message ?: "Unexpected error")
                 }
 
                 is EDSResult.Success -> {
@@ -71,7 +72,7 @@ class SignUpViewModel @Inject constructor(
                 }
 
                 is EDSResult.Success -> {
-                    _signUpState.value =SignUpState(
+                    _signUpState.value = SignUpState(
                         user = result.data!!.user,
                         token = result.data.token
                     )
@@ -89,8 +90,9 @@ class SignUpViewModel @Inject constructor(
         password: String? = null,
         username: String? = null,
         phone: String? = null,
-
-        ): Boolean {
+        birthYear: String? = null,
+        city: String? = null
+    ): Boolean {
         var flag = true
         Log.d("Before validate:", firstName.toString())
         Log.d("Before validate:", lastName.toString())
@@ -134,6 +136,18 @@ class SignUpViewModel @Inject constructor(
             //To do
             _signUpState.value = SignUpState(
                 validate = Validate.PHONE
+            )
+            flag = false
+        } else if (birthYear != null  && birthYear.isEmpty()) {
+            //To do
+            _signUpState.value = SignUpState(
+                validate = Validate.BIRTH_YEAR
+            )
+            flag = false
+        } else if (city != null && city.isEmpty()) {
+            //To do
+            _signUpState.value = SignUpState(
+                validate = Validate.CITY
             )
             flag = false
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -62,6 +63,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.auth0.android.jwt.JWT
+import com.chargemap.compose.numberpicker.NumberPicker
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
@@ -80,7 +82,7 @@ import kotlinx.coroutines.launch
 fun PreviewSignUp() {
     SignUpScreen(
         rememberNavController(),
-        { s1, s2, s3, s4, s5, s6 -> false },
+        { s1, s2, s3, s4, s5, s6, s7, s8 -> false },
         { bundle -> },
         SignUpState(),
         ProvinceState()
@@ -91,7 +93,7 @@ fun PreviewSignUp() {
 @Composable
 fun SignUpScreen(
     navController: NavController,
-    validate: (String?, String?, String?, String?, String?, String?) -> Boolean,
+    validate: (String?, String?, String?, String?, String?, String?, String?, String?) -> Boolean,
     onRegisterClicked: (
         UserSignUpInput
     ) -> Unit,
@@ -223,7 +225,7 @@ fun SignUpScreen(
                         provinceState = provinceState,
                         userNameText = usernameText,
                         phoneText = phoneNumberText,
-                        value3 = birthYearText,
+                        birthYearText = birthYearText,
                         cityText = cityText,
                         validate = validate,
                         onDone = {
@@ -273,7 +275,7 @@ fun Phase1(
     value4: MutableState<String>,
     navController: NavController,
     state: SignUpState,
-    validate: (String?, String?, String?, String?, String?, String?) -> Boolean,
+    validate: (String?, String?, String?, String?, String?, String?, String?, String?) -> Boolean,
     onDone: () -> Unit
 ) {
 
@@ -442,6 +444,8 @@ fun Phase1(
                         value3.value,
                         value4.value,
                         null,
+                        null,
+                        null,
                         null
                     )
                 ) {
@@ -461,16 +465,17 @@ fun Phase1(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Phase2(
     userNameText: MutableState<String>,
     phoneText: MutableState<String>,
-    value3: MutableState<String>,
+    birthYearText: MutableState<String>,
     cityText: MutableState<String>,
     navController: NavController,
     state: SignUpState,
     provinceState: ProvinceState,
-    validate: (String?, String?, String?, String?, String?, String?) -> Boolean,
+    validate: (String?, String?, String?, String?, String?, String?, String?, String?) -> Boolean,
     onDone: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -478,7 +483,14 @@ fun Phase2(
     val interactionSource = remember { MutableInteractionSource() }
     val isUsernameError = state.validate.name == Validate.USERNAME.name
     val isPhoneError = state.validate.name == Validate.PHONE.name
+    val isBirthYearError = state.validate.name == Validate.BIRTH_YEAR.name
+    val isCityError = state.validate.name == Validate.CITY.name
+
     val openProvinceDialog = remember { mutableStateOf(false) }
+    val openDatePicker = remember { mutableStateOf(false) }
+    val initValue = remember {
+        mutableStateOf(2024)
+    }
 
     if (openProvinceDialog.value) {
         val list = remember {
@@ -497,6 +509,20 @@ fun Phase2(
                 openProvinceDialog.value = false
             })
     }
+    if (openDatePicker.value) {
+        NumberPickerDialog(
+            initValue = initValue,
+            onDisMiss = {
+                openDatePicker.value = false
+            },
+            onConfirm = {
+                birthYearText.value = it
+                initValue.value = it.toInt()
+                openDatePicker.value = false
+            }
+        )
+    }
+
     Column(
         Modifier
             .fillMaxWidth()
@@ -570,10 +596,10 @@ fun Phase2(
         )
 
         OutlinedTextField(
-            value = value3.value,
+            value = birthYearText.value,
             onValueChange = {
                 if (it.length <= 4)
-                    value3.value = it
+                    birthYearText.value = it
             },
             placeholder = {
                 Text("Birth year", color = EDSColors.grayX2)
@@ -581,11 +607,27 @@ fun Phase2(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
+            enabled = false,
+            isError = isBirthYearError,
+            supportingText = {
+                if (isBirthYearError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = state.validate.error!!,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = EDSColors.primaryColor,
-                focusedLabelColor = EDSColors.primaryColor, cursorColor = EDSColors.primaryColor
+                disabledBorderColor = EDSColors.gray,
+                disabledContainerColor = EDSColors.transparent,
+                disabledTextColor = EDSColors.blackColor
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    openDatePicker.value = true
+                }
         )
 
         Spacer(
@@ -601,6 +643,16 @@ fun Phase2(
                 Text("City", color = EDSColors.grayX2)
             },
             shape = RoundedCornerShape(8.dp),
+            isError = isCityError,
+            supportingText = {
+                if (isCityError) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = state.validate.error!!,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
             singleLine = true,
             enabled = false,
             colors = OutlinedTextFieldDefaults.colors(
@@ -612,7 +664,6 @@ fun Phase2(
                 .fillMaxWidth()
                 .clickable {
                     openProvinceDialog.value = true
-                    Log.d("test sign up", openProvinceDialog.value.toString())
                 }
         )
 
@@ -645,7 +696,9 @@ fun Phase2(
                         null,
                         null,
                         userNameText.value,
-                        phoneText.value
+                        phoneText.value,
+                        birthYearText.value,
+                        cityText.value
                     )
                 )
                     onDone()
@@ -766,7 +819,7 @@ fun ProvinceDialog(
                     selectedProvince.value.provinceName
                 )
             }) {
-                Text("Accept", color = EDSColors.primaryColor)
+                Text("Accept")
             }
         },
         dismissButton = {
@@ -775,7 +828,56 @@ fun ProvinceDialog(
                     onDisMiss()
                 }
             ) {
-                Text("Dismiss", color = EDSColors.notScheduleTextColor)
+                Text("Dismiss")
+            }
+        }
+    )
+}
+
+@Composable
+fun NumberPickerDialog(
+    modifier: Modifier = Modifier,
+    initValue: MutableState<Int>,
+    onDisMiss: () -> Unit = {},
+    onConfirm: (String) -> Unit = {}
+) {
+
+    AlertDialog(
+        modifier = Modifier.padding(16.dp),
+        onDismissRequest = {
+            onDisMiss()
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onConfirm(initValue.value.toString())
+            }) {
+                Text("Accept")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDisMiss()
+                }
+            ) {
+                Text("Cancel")
+            }
+        },
+        title = {
+            Text("Your birth year")
+        },
+        text = {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                NumberPicker(
+                    value = initValue.value,
+                    range = 1960..2024,
+                    onValueChange = {
+                        initValue.value = it
+                    }
+                )
             }
         }
     )

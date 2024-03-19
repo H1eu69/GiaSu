@@ -94,8 +94,8 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
             }
             SignUpScreen(
                 navController,
-                validate = { firstName, lastName, email, password, username, phone ->
-                    viewModel.validate(firstName, lastName, email, password, username, phone)
+                validate = { firstName, lastName, email, password, username, phone, birthYear, city ->
+                    viewModel.validate(firstName, lastName, email, password, username, phone, birthYear, city)
                 },
                 onRegisterClicked = { input ->
                     viewModel.signUp(input)
