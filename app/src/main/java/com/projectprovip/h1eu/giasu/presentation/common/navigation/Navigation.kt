@@ -95,7 +95,16 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
             SignUpScreen(
                 navController,
                 validate = { firstName, lastName, email, password, username, phone, birthYear, city ->
-                    viewModel.validate(firstName, lastName, email, password, username, phone, birthYear, city)
+                    viewModel.validate(
+                        firstName,
+                        lastName,
+                        email,
+                        password,
+                        username,
+                        phone,
+                        birthYear,
+                        city
+                    )
                 },
                 onRegisterClicked = { input ->
                     viewModel.signUp(input)
@@ -144,11 +153,33 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable(Screens.InApp.Home.route) {
             HomeScreen(navController, homeViewModel.courseDetailState.value)
         }
-        composable(Screens.InApp.Home.SearchSuggest.route) {
-            SearchSuggestHomeScreen(navController, SearchSuggestState())
+        composable(
+            Screens.InApp.Home.SearchSuggest.route,
+
+        ) {
+            SearchSuggestHomeScreen(
+                navController, SearchSuggestState(),
+
+            )
         }
-        composable(Screens.InApp.Home.SearchResult.route) {
-            SearchResultHomeScreen(navController, homeViewModel.courseDetailState.value)
+        composable("${Screens.InApp.Home.SearchSuggest.route}/{searchText}",
+            arguments = listOf(navArgument("searchText") { type = NavType.StringType })
+        ) {
+            val searchText = it.arguments?.getString("searchText")
+            SearchSuggestHomeScreen(
+                navController, SearchSuggestState(),
+                searchText
+            )
+        }
+        composable(
+            "${Screens.InApp.Home.SearchResult.route}/{searchText}",
+            arguments = listOf(navArgument("searchText") { type = NavType.StringType })
+        ) {
+            val searchText = it.arguments?.getString("searchText")
+            SearchResultHomeScreen(
+                navController, homeViewModel.courseDetailState.value,
+                searchText
+            )
         }
         composable(
             "${Screens.InApp.Home.ClassDetail.route}/{courseId}",

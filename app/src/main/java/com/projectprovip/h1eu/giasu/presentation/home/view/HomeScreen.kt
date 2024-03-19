@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -121,32 +122,6 @@ fun HomeScreen(navController: NavController, state: CourseDetailState) {
         )
     }
 }
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun AppBar(text: String) {
-//    TopAppBar(
-//        modifier = Modifier
-//            .background(
-//                brush = Brush.horizontalGradient(
-//                    colors = listOf(
-//                        Color(0xFF00FFA6),
-//                        Color(0xFFB2FFB2),
-//                    ),
-//                )
-//            ),
-//        colors = TopAppBarDefaults.largeTopAppBarColors(
-//            containerColor = Color.Transparent
-//        ),
-//        title = {
-//            Column() {
-//
-//            }
-//        },
-//    )
-//}
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BodyContent(
@@ -220,19 +195,25 @@ fun BodyContent(
                 state.apply {
                     when {
                         this.isLoading -> {
-                            CircularProgressIndicator(
-                                color = EDSColors.primaryColor
-                            )
-                        }
-
-                        this.data.isNotEmpty() -> {
-                            data.forEach {
-                                CourseItem(
-                                    navController = navController,
-                                    data = it
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ){
+                                CircularProgressIndicator(
+                                    color = EDSColors.primaryColor
                                 )
                             }
+
                         }
+
+//                        this.data.isNotEmpty() -> {
+//                            data.forEach {
+//                                CourseItem(
+//                                    navController = navController,
+//                                    data = it
+//                                )
+//                            }
+//                        }
                     }
                 }
             }
