@@ -10,13 +10,12 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 
 object Constant {
     const val API_BASE_URL = "http://escenter.somee.com/api/"
+    const val LOCATION_API_BASE_URL = "https://vapi.vnappmob.com"
     const val TOKEN_STRING = "token"
     const val USERNAME_STRING = "username"
     const val USERID_STRING = "userid"

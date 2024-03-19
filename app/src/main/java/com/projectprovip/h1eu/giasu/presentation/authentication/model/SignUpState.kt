@@ -1,11 +1,13 @@
 package com.projectprovip.h1eu.giasu.presentation.authentication.model
 
 import com.projectprovip.h1eu.giasu.data.user.dto.signupDto.User
+import com.projectprovip.h1eu.giasu.domain.location.model.Province
 
 
 data class SignUpState (
     var isLoading: Boolean = false,
     var user: User? = null,
+    var province: List<Province> = emptyList(),
     var error: String = "",
     var token: String? = null,
     var validate: Validate = Validate.IDLE

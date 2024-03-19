@@ -89,6 +89,9 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
         }
         composable(Screens.Authentication.Signup.route) {
             val viewModel = hiltViewModel<SignUpViewModel>()
+            LaunchedEffect(Unit) {
+                viewModel.getProvince()
+            }
             SignUpScreen(
                 navController,
                 validate = { firstName, lastName, email, password, username, phone ->
@@ -97,7 +100,8 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
                 onRegisterClicked = { input ->
                     viewModel.signUp(input)
                 },
-                state = viewModel.signUpState.value
+                signUpState = viewModel.signUpState.value,
+                provinceState = viewModel.provinceState.value
             )
         }
         composable(Screens.Authentication.ForgetPassword.route) {
