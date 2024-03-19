@@ -1,16 +1,16 @@
 package com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.common.isEmailFormatted
+import com.projectprovip.h1eu.giasu.common.isPasswordFormatted
 import com.projectprovip.h1eu.giasu.data.user.model.UserLoginInput
 import com.projectprovip.h1eu.giasu.domain.authentication.usecase.LoginUseCase
-import com.projectprovip.h1eu.giasu.presentation.authentication.model.AuthState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.LoginState
+import com.projectprovip.h1eu.giasu.presentation.authentication.model.Validation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -25,10 +25,8 @@ class LoginViewModel @Inject constructor(
     val loginState: State<LoginState> = _loginState
 
     fun loginByEmail(email: String, password: String) {
-        if (!validate(email)) {
-            _loginState.value = LoginState(
-                auth = AuthState.WRONG_EMAIL_FORMAT
-            )
+        if (!validate(email, password)) {
+            return
         } else
             loginUseCase(UserLoginInput(email, password)).onEach { result ->
                 when (result) {
@@ -52,8 +50,19 @@ class LoginViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-    private fun validate(email: String): Boolean {
-        Log.d("email", email)
-        return email.isEmailFormatted()
+    private fun validate(email: String, password: String): Boolean {
+        var flag = true
+        if (!email.isEmailFormatted()) {
+            _loginState.value = LoginState(
+                validation = Validation.WRONG_EMAIL_FORMAT
+            )
+            flag = false
+        } else if (!password.isPasswordFormatted()) {
+            _loginState.value = LoginState(
+                validation = Validation.PASSWORD
+            )
+            flag = false
+        }
+        return flag
     }
 }

@@ -176,9 +176,8 @@ fun SignUpScreen(
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(200.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
             Text(
                 modifier = Modifier.fillMaxWidth(),
@@ -196,6 +195,7 @@ fun SignUpScreen(
             HorizontalPager(
                 state = pagerState,
                 verticalAlignment = Alignment.CenterVertically,
+
                 modifier = Modifier.fillMaxWidth()
             ) { page ->
                 // Our page content
