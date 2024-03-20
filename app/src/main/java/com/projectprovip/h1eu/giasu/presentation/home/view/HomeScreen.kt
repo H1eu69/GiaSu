@@ -206,14 +206,14 @@ fun BodyContent(
 
                         }
 
-//                        this.data.isNotEmpty() -> {
-//                            data.forEach {
-//                                CourseItem(
-//                                    navController = navController,
-//                                    data = it
-//                                )
-//                            }
-//                        }
+                        this.data.isNotEmpty() -> {
+                            data.forEach {
+                                CourseItem(
+                                    navController = navController,
+                                    data = it
+                                )
+                            }
+                        }
                     }
                 }
             }

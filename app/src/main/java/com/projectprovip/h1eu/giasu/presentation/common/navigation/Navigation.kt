@@ -2,6 +2,7 @@
 
 package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -53,6 +54,7 @@ import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CreateClassVi
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCoursesViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorReviewViewModel
+import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.UpdateProfileViewModel
 import com.projectprovip.h1eu.giasu.presentation.splash.SplashScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.SearchResultTutorScreen
 import com.projectprovip.h1eu.giasu.presentation.tutor.view.SearchSuggestTutorScreen
@@ -156,13 +158,13 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable(
             Screens.InApp.Home.SearchSuggest.route,
 
-        ) {
+            ) {
             SearchSuggestHomeScreen(
                 navController, SearchSuggestState(),
-
             )
         }
-        composable("${Screens.InApp.Home.SearchSuggest.route}/{searchText}",
+        composable(
+            "${Screens.InApp.Home.SearchSuggest.route}/{searchText}",
             arguments = listOf(navArgument("searchText") { type = NavType.StringType })
         ) {
             val searchText = it.arguments?.getString("searchText")
@@ -283,7 +285,14 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         }
 
         composable(Screens.InApp.Profile.UpdateProfile.route) {
-            UpdateProfile(navController)
+            val vm = hiltViewModel<UpdateProfileViewModel>()
+            LaunchedEffect(Unit) {
+                vm.getProfile(token.value)
+            }
+            UpdateProfile(
+                navController,
+                vm.state.value
+            )
         }
 
         composable(Screens.InApp.Profile.RequestClass.route) {

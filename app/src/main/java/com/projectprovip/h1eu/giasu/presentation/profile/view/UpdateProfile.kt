@@ -3,6 +3,9 @@
 package com.projectprovip.h1eu.giasu.presentation.profile.view
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -66,6 +69,8 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.projectprovip.h1eu.giasu.domain.profile.model.Profile
+import com.projectprovip.h1eu.giasu.presentation.authentication.view.NumberPickerDialog
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
@@ -73,20 +78,25 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
+import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
 
 
 @Composable
 @Preview
 fun UpdateProfilePreview() {
-    UpdateProfile(navController = rememberNavController())
+    UpdateProfile(
+        navController = rememberNavController(),
+        UpdateProfileState()
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UpdateProfile(navController: NavController) {
+fun UpdateProfile(navController: NavController, state: UpdateProfileState) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
+    val isTutor = state.data.role == "Tutor"
 
     Scaffold(
         topBar = {
@@ -107,48 +117,92 @@ fun UpdateProfile(navController: NavController) {
         },
         containerColor = EDSColors.white,
     ) {
-        Box(
-            Modifier
-                .padding(it)
-                .fillMaxSize()
-                .background(EDSColors.white)
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null    // this gets rid of the ripple effect
-                ) {
-                    keyboardController?.hide()
-                    focusManager.clearFocus(true)
-                }
-        ) {
-            TutorRole(navController = navController, modifier = Modifier.fillMaxHeight(.9f))
-            EduSmartButton(
-                text = "Update", onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .align(Alignment.BottomCenter)
-            )
-        }
+        if (state.isLoading)
+            CircularLoading()
+        else
+            Box(
+                Modifier
+                    .padding(it)
+                    .fillMaxSize()
+                    .background(EDSColors.white)
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null    // this gets rid of the ripple effect
+                    ) {
+                        keyboardController?.hide()
+                        focusManager.clearFocus(true)
+                    }
+            ) {
+                if (isTutor)
+                    TutorRole(
+                        navController = navController,
+                        modifier = Modifier.fillMaxHeight(.9f),
+                        profile = state.data
+                    ) else
+                    LearnerRole(
+                        navController = navController,
+                        modifier = Modifier.fillMaxHeight(.9f),
+                        profile = state.data
+                    )
+                EduSmartButton(
+                    text = "Update", onClick = {},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .align(Alignment.BottomCenter)
+                )
+            }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
+fun LearnerRole(
+    navController: NavController, modifier: Modifier = Modifier,
+    profile: Profile
+) {
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
     val genderOptions = listOf("Male", "Female", "Other")
 
     val (userSelectedOptions, userOnOptionSelected) = remember {
-        mutableStateOf(genderOptions[0])
+        mutableStateOf(genderOptions[genderOptions.indexOf(profile.gender)])
     }
 
-    val nameText = remember { mutableStateOf("Hieu") }
+    val firstName = remember { mutableStateOf(profile.firstName) }
+    val lastName = remember { mutableStateOf(profile.lastName) }
 
-    val emailText = remember { mutableStateOf("anrayno200@gmail.com") }
+    val emailText = remember { mutableStateOf(profile.email) }
 
-    val addressText = remember { mutableStateOf("So 35 duong B KP 1 phuong 3") }
-    val birthYearText = remember { mutableStateOf("2002") }
-    val descriptionText = remember { mutableStateOf("Tao la 1 thang gia su ngu hoc") }
-    val phoneText = remember { mutableStateOf("0967075340") }
+    val addressText = remember { mutableStateOf(profile.city) }
+    val birthYearText = remember { mutableStateOf(profile.birthYear.toString()) }
+    val descriptionText = remember { mutableStateOf(profile.description) }
+    val phoneText = remember { mutableStateOf(profile.phoneNumber.toString()) }
+
+    val openDatePicker = remember { mutableStateOf(false) }
+    val initValue = remember {
+        mutableStateOf(profile.birthYear)
+    }
+    if (openDatePicker.value) {
+        NumberPickerDialog(
+            initValue = initValue,
+            onDisMiss = {
+                openDatePicker.value = false
+            },
+            onConfirm = {
+                birthYearText.value = it
+                initValue.value = it.toInt()
+                openDatePicker.value = false
+            }
+        )
+    }
+    val avatarLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
+            if (it != null) {
+
+            }
+        }
 
     LazyColumn(modifier = modifier.background(EDSColors.white)) {
         item {
@@ -159,9 +213,10 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp)
+
                 ) {
                     AsyncImage(
-                        "https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=",
+                        profile.avatar,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -169,8 +224,9 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                             .clip(CircleShape)
                             .align(Alignment.Center)
                             .clickable {
-
+                                avatarLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                             })
+
                     Icon(
                         imageVector = Icons.Default.AddAPhoto, contentDescription = null,
                         tint = EDSColors.blackColor,
@@ -179,6 +235,9 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                             .background(Color.White)
                             .padding(2.dp)
                             .align(Alignment.BottomCenter)
+                            .clickable {
+                                avatarLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                            }
                     )
                 }
                 MultiColorText(
@@ -210,14 +269,37 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                     .padding(horizontal = 20.dp),
                 label = {
                     Text(
-                        text = "Name",
+                        text = "First name",
                     )
                 },
                 shape = RoundedCornerShape(12.dp),
                 onValueChange = { value ->
-                    nameText.value = value
+                    firstName.value = value
                 },
-                singleLine = true, value = nameText.value,
+                singleLine = true, value = firstName.value,
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
+                    focusedBorderColor = EDSColors.primaryColor,
+                    focusedLabelColor = EDSColors.primaryColor,
+                ),
+            )
+        }
+        item {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .padding(horizontal = 20.dp),
+                label = {
+                    Text(
+                        text = "Last name",
+                    )
+                },
+                shape = RoundedCornerShape(12.dp),
+                onValueChange = { value ->
+                    lastName.value = value
+                },
+                singleLine = true, value = lastName.value,
                 colors = OutlinedTextFieldDefaults.colors(
                     cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
@@ -326,25 +408,31 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.dp)
+                    .clickable(
+                        interactionSource, null
+                    ) {
+                        openDatePicker.value = true
+                    },
                 label = {
                     Text(
                         text = "Birth Year",
                     )
                 },
+                enabled = false,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 shape = RoundedCornerShape(12.dp),
                 onValueChange = { value ->
-                    if (value.length <= 4){
+                    if (value.length <= 4) {
                         birthYearText.value = value
                     }
                 },
                 value = birthYearText.value,
                 colors = OutlinedTextFieldDefaults.colors(
-                    cursorColor = EDSColors.primaryColor,
-                    focusedBorderColor = EDSColors.primaryColor,
-                    focusedLabelColor = EDSColors.primaryColor,
+                    disabledBorderColor = EDSColors.gray,
+                    disabledContainerColor = EDSColors.transparent,
+                    disabledTextColor = EDSColors.blackColor
                 ),
             )
         }
@@ -365,7 +453,10 @@ fun LearnerRole(navController: NavController, modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
+fun TutorRole(
+    navController: NavController, modifier: Modifier = Modifier,
+    profile: Profile
+) {
     val genderOptions = listOf("Male", "Female", "Other")
 
     val (userSelectedOptions, userOnOptionSelected) = remember {
@@ -374,14 +465,21 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
 
     val nameText = remember { mutableStateOf("Hieu") }
 
-    val emailText = remember { mutableStateOf("anrayno200@gmail.com") }
+    val emailText = remember { mutableStateOf(profile.email) }
 
-    val addressText = remember { mutableStateOf("So 35 duong B KP 1 phuong 3") }
-    val birthYearText = remember { mutableStateOf("2002") }
-    val descriptionText = remember { mutableStateOf("Chuyen day lap trinh, toan cao cap cho dai hoc") }
-    val phoneText = remember { mutableStateOf("0967075340") }
+    val addressText = remember { mutableStateOf(profile.city) }
+    val birthYearText = remember { mutableStateOf(profile.birthYear.toString()) }
+    val descriptionText =
+        remember { mutableStateOf(profile.description) }
+    val phoneText = remember { mutableStateOf(profile.phoneNumber.toString()) }
     val openEditSubjectDialog = remember { mutableStateOf(false) }
-    val isTutor = true
+
+    val avatarLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
+            if (it != null) {
+
+            }
+        }
 
     if (openEditSubjectDialog.value) {
         val dummySubjects = remember {
@@ -435,18 +533,28 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                             .clip(CircleShape)
                             .align(Alignment.Center)
                             .clickable {
-
+                                avatarLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                             })
-                    Box( modifier = Modifier
-                        .clip(CircleShape)
-                        .background(EDSColors.grayX2)
-                        .border(1.dp, EDSColors.white, CircleShape)
-                        .padding(2.dp)
-                        .align(Alignment.BottomEnd)) {
+                    Box(
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(EDSColors.grayX2)
+                            .border(1.dp, EDSColors.white, CircleShape)
+                            .padding(2.dp)
+                            .align(Alignment.BottomEnd)
+                    ) {
                         Icon(
                             imageVector = Icons.Default.AddAPhoto, contentDescription = null,
                             tint = EDSColors.blackColor,
-                            modifier = Modifier.padding(4.dp)
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .clickable {
+                                    avatarLauncher.launch(
+                                        PickVisualMediaRequest(
+                                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                                        )
+                                    )
+                                }
                         )
                     }
 
@@ -494,7 +602,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
 
                     FilterChip(
                         selected = true,
-                        onClick = { /*TODO*/ },                        colors = FilterChipDefaults.filterChipColors(
+                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = EDSColors.greenCheck,
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
@@ -504,7 +612,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
 
                     FilterChip(
                         selected = true,
-                        onClick = { /*TODO*/ },                        colors = FilterChipDefaults.filterChipColors(
+                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = EDSColors.greenCheck,
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
@@ -514,17 +622,22 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
 
                     FilterChip(
                         selected = true,
-                        onClick = { /*TODO*/ },                        colors = FilterChipDefaults.filterChipColors(
+                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = EDSColors.greenCheck,
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
                         ),
-                        label = { Text("Lap trinh cho nguoi mat goc", fontWeight = FontWeight.W400) }
+                        label = {
+                            Text(
+                                "Lap trinh cho nguoi mat goc",
+                                fontWeight = FontWeight.W400
+                            )
+                        }
                     )
 
                     FilterChip(
                         selected = true,
-                        onClick = { /*TODO*/ },                        colors = FilterChipDefaults.filterChipColors(
+                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = EDSColors.greenCheck,
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
@@ -534,17 +647,17 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
 
                     FilterChip(
                         selected = true,
-                        onClick = { /*TODO*/ },                        colors = FilterChipDefaults.filterChipColors(
+                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = EDSColors.greenCheck,
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
                         ),
-                        label = { Text("Ly dai cuong", fontWeight = FontWeight.W400 )}
+                        label = { Text("Ly dai cuong", fontWeight = FontWeight.W400) }
                     )
 
                     FilterChip(
                         selected = true,
-                        onClick = { /*TODO*/ },                        colors = FilterChipDefaults.filterChipColors(
+                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = EDSColors.greenCheck,
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
@@ -554,7 +667,7 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
 
                     FilterChip(
                         selected = true,
-                        onClick = { /*TODO*/ },                        colors = FilterChipDefaults.filterChipColors(
+                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = EDSColors.greenCheck,
                             selectedLabelColor = EDSColors.white,
                             selectedTrailingIconColor = EDSColors.white
@@ -701,8 +814,8 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 shape = RoundedCornerShape(12.dp),
                 onValueChange = { value ->
-                    if(value.length <= 4)
-                    birthYearText.value = value
+                    if (value.length <= 4)
+                        birthYearText.value = value
                 },
                 value = birthYearText.value,
                 colors = OutlinedTextFieldDefaults.colors(
@@ -724,67 +837,66 @@ fun TutorRole(navController: NavController, modifier: Modifier = Modifier) {
                     .background(Color.White)
             )
         }
-        if(isTutor) {
-            item {
-                val images = remember {
-                    mutableStateOf(
-                        listOf(
-                            "".toUri(),
-                        )
+        item {
+            val images = remember {
+                mutableStateOf(
+                    listOf(
+                        "".toUri(),
                     )
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Row(
+
                 ) {
-                    Row(
-
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Image,
-                            contentDescription = "",
-                            tint = EDSColors.primaryColor
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        androidx.compose.material.Text(text = "Verification", fontSize = 16.sp)
-                        androidx.compose.material.Text(
-                            text = "(*)", fontSize = 16.sp,
-                            color = EDSColors.notScheduleTextColor
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        androidx.compose.material.Text(
-                            text = "Add more", fontSize = 16.sp,
-                            color = EDSColors.primaryColor,
-                            modifier = Modifier.clickable {
-                                val newList = images.value.toMutableList()
-                                newList.add(Uri.EMPTY)
-                                images.value = newList
-                            }
-                        )
-
-                    }
-                    ImagePicker(
-                        images.value,
-                        onImageUriChanged = { uri, index ->
-                            val newList = images.value.toMutableList()
-                            newList.removeAt(index)
-                            newList.add(index, uri)
-                            images.value = newList
-                            //uploadImage(uri)
-                        },
-                        onDeleteUri = { index ->
-                            val newList = images.value.toMutableList()
-                            val emptyUri = Uri.EMPTY
-
-                            newList.removeAt(index)
-                            newList.add(index, emptyUri)
-                            images.value = newList
-                        },
+                    Icon(
+                        imageVector = Icons.Outlined.Image,
+                        contentDescription = "",
+                        tint = EDSColors.primaryColor
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    androidx.compose.material3.Text(text = "Verification", fontSize = 16.sp)
+                    androidx.compose.material3.Text(
+                        text = "(*)", fontSize = 16.sp,
+                        color = EDSColors.notScheduleTextColor
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    androidx.compose.material3.Text(
+                        text = "Add more", fontSize = 16.sp,
+                        color = EDSColors.primaryColor,
+                        modifier = Modifier.clickable {
+                            val newList = images.value.toMutableList()
+                            newList.add(Uri.EMPTY)
+                            images.value = newList
+                        }
+                    )
+
                 }
+                ImagePicker(
+                    images.value,
+                    onImageUriChanged = { uri, index ->
+                        val newList = images.value.toMutableList()
+                        newList.removeAt(index)
+                        newList.add(index, uri)
+                        images.value = newList
+                        //uploadImage(uri)
+                    },
+                    onDeleteUri = { index ->
+                        val newList = images.value.toMutableList()
+                        val emptyUri = Uri.EMPTY
+
+                        newList.removeAt(index)
+                        newList.add(index, emptyUri)
+                        images.value = newList
+                    },
+                )
             }
         }
+
     }
 }
 

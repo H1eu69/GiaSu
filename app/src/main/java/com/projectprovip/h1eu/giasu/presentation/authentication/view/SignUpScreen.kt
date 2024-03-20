@@ -107,6 +107,7 @@ fun SignUpScreen(
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
     val useridKey = stringPreferencesKey(Constant.USERID_STRING)
     val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
+    val userEmailKey = stringPreferencesKey(Constant.USER_EMAIL_STRING)
 
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
@@ -159,6 +160,7 @@ fun SignUpScreen(
                     preferences[usernameKey] = signUpState.user!!.fullName
                     preferences[useridKey] = signUpState.user!!.id.toString()
                     preferences[userImageKey] = signUpState.user!!.avatar
+                    preferences[userEmailKey] = signUpState.user!!.email
 
                     Log.d("Token in Sign up", signUpState.token.toString())
                 }

@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 
 object DateFormat {
     fun DD_MM_YYYY(date: String): String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSXXX")
+        val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
         val dateTime = LocalDateTime.parse(date, formatter)
         val formattedDateTime = dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
         return formattedDateTime

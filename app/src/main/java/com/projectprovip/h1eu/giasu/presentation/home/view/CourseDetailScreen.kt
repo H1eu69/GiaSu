@@ -1,6 +1,5 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -56,9 +55,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
+import com.projectprovip.h1eu.giasu.common.CodeGenerator
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
@@ -111,44 +114,48 @@ fun CourseDetailScreen(
                 },
                 onButtonClick = {
                     onRegisterClicked()
-                }
+                },
+                fee = course?.fee ?: -1,
+                tax = course?.chargeFee?.toInt() ?: -1
             )
-        } else
-            Box(
+        }
+        Box(
+            modifier = Modifier
+                .padding(it)
+                .padding(20.dp)
+        ) {
+            CourseDetailBody(navController = navController, course = course!!)
+            Button(
+                onClick = {
+                    showBottomSheet.value = true
+                },
                 modifier = Modifier
-                    .padding(it)
-                    .padding(20.dp)
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
             ) {
-                CourseDetailBody(navController = navController, course = course!!)
-                Button(
-                    onClick = {
-                        showBottomSheet.value = true
-                        onRegisterClicked()
+                if (courseRegisterState.isLoading) {
+                    CircularProgressIndicator()
+                } else {
+                    Text(
+                        text = "Tax: $${course.chargeFee} Register now",
+                        color = EDSColors.white
+                    )
+                }
+                LaunchedEffect(key1 = courseRegisterState) {
 
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter),
-                    colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
-                ) {
-                    if (courseRegisterState.isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        Text(
-                            text = "Tax: $${course.chargeFee} Register now",
-                            color = EDSColors.white
-                        )
+                    if (courseRegisterState.error) {
+                        Toast.makeText(context, courseRegisterState.message, Toast.LENGTH_SHORT)
+                            .show()
+                    } else if (courseRegisterState.isSuccess) {
+                        Toast.makeText(context, courseRegisterState.message, Toast.LENGTH_SHORT)
+                            .show()
+                        navController.popBackStack()
                     }
-                    LaunchedEffect(key1 = courseRegisterState) {
-                        if (courseRegisterState.error) {
-                            showToast(context, courseRegisterState.message)
-                        } else if (courseRegisterState.isSuccess) {
-                            showToast(context, courseRegisterState.message)
-                            navController.popBackStack()
-                        }
-                    }
+
                 }
             }
+        }
     }
 }
 
@@ -354,10 +361,6 @@ fun DetailIconAndText(
     }
 }
 
-private fun showToast(context: Context, message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-}
-
 @Preview
 @Composable
 fun SessionSectionPreview() {
@@ -424,14 +427,18 @@ fun CourseRegisterPaymentBottomSheet(
         skipPartiallyExpanded = true
     ),
     onButtonClick: () -> Unit = {},
-    fee: Int = -10,
-    tax: Int = -9
+    fee: Int = 100000,
+    tax: Int = 20000
 ) {
     val context = LocalContext.current
     val otpValue = remember { mutableStateOf("") }
     val isOtpFilled = remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+
+    val code = CodeGenerator.generate()
 
     ModalBottomSheet(sheetState = sheetState, onDismissRequest = { onDismissRequest() }) {
         Column(
@@ -454,7 +461,12 @@ fun CourseRegisterPaymentBottomSheet(
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.clickable {
+                        clipboardManager.setText(AnnotatedString(("107867236970")))
+                        Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+
+                    }
                 ) {
                     Image(
                         imageVector = Icons.Default.ContentCopy, contentDescription = null,
@@ -511,7 +523,7 @@ fun CourseRegisterPaymentBottomSheet(
                         )
                     )
                     Text(
-                        text = "Register ES 123456",
+                        text = "Register ES $code",
                         style = EDSTextStyle.H2Reg(
                             EDSColors.primaryColor
                         )
@@ -531,7 +543,7 @@ fun CourseRegisterPaymentBottomSheet(
                     )
                 )
                 Text(
-                    text = "200.000 đ",
+                    text = "$fee đ",
                     style = EDSTextStyle.H1MedBold(
                     )
                 )
@@ -548,7 +560,7 @@ fun CourseRegisterPaymentBottomSheet(
                     )
                 )
                 Text(
-                    text = "30.000 đ",
+                    text = "$tax đ",
                     style = EDSTextStyle.H1MedBold(
                     )
                 )
@@ -566,7 +578,7 @@ fun CourseRegisterPaymentBottomSheet(
                     )
                 )
                 Text(
-                    text = "500.000 đ",
+                    text = "${fee + tax} đ",
                     style = EDSTextStyle.H1MedBold(
                     )
                 )
@@ -579,12 +591,19 @@ fun CourseRegisterPaymentBottomSheet(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "1 2 3 4 5 6",
-                    style = EDSTextStyle.H1Large(
-                        EDSColors.primaryColor
-                    )
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    code.forEach {digit ->
+                        Text(
+                            text = digit.toString(),
+                            style = EDSTextStyle.H1Large(
+                                EDSColors.primaryColor
+                            )
+                        )
+                    }
+                }
+
             }
             Box(
                 contentAlignment = Alignment.Center,
