@@ -12,6 +12,8 @@ import com.projectprovip.h1eu.giasu.common.isPhoneNumber
 import com.projectprovip.h1eu.giasu.common.isUsername
 import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
 import com.projectprovip.h1eu.giasu.domain.authentication.usecase.SignUpUseCase
+import com.projectprovip.h1eu.giasu.domain.location.usecase.GetProvinceUseCase
+import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.SignUpState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.Validate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,22 +23,52 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val signUpUseCase: SignUpUseCase
+    private val signUpUseCase: SignUpUseCase,
+    private val getProvinceUseCase: GetProvinceUseCase
 ) : ViewModel() {
 
     private var _signUpState = mutableStateOf(SignUpState())
     val signUpState: State<SignUpState> = _signUpState
+    private var _provinceState = mutableStateOf(ProvinceState())
+    val provinceState: State<ProvinceState> = _provinceState
+
+    fun getProvince() {
+        getProvinceUseCase().onEach { result ->
+            when (result) {
+                is EDSResult.Loading -> {
+                    _provinceState.value = ProvinceState(isLoading = true)
+                }
+
+                is EDSResult.Error -> {
+                    Log.e("SignUpViewModel", result.message ?: "Unexpected error")
+                    _provinceState.value =
+                        ProvinceState(error = result.message ?: "Unexpected error")
+                }
+
+                is EDSResult.Success -> {
+                    _provinceState.value = ProvinceState(
+                        province = result.data!!
+                    )
+                    Log.d("SignUpViewModel", _provinceState.value.toString())
+
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 
     fun signUp(input: UserSignUpInput) {
         signUpUseCase(input).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {
-                    _signUpState.value = SignUpState(isLoading = true)
+                    _signUpState.value = _signUpState.value.copy(isLoading = true)
                 }
 
                 is EDSResult.Error -> {
+                    _signUpState.value =
+                        SignUpState(error = result.message ?: "Unexpected error")
                     Log.e("SignUpViewModel", result.message ?: "Unexpected error")
-                    _signUpState.value = SignUpState(error = result.message ?: "Unexpected error")
+                    Log.d("SignUpViewModel", _signUpState.value.toString())
+
                 }
 
                 is EDSResult.Success -> {
@@ -44,6 +76,8 @@ class SignUpViewModel @Inject constructor(
                         user = result.data!!.user,
                         token = result.data.token
                     )
+                    Log.d("SignUpViewModel", _signUpState.value.toString())
+
                 }
             }
         }.launchIn(viewModelScope)
@@ -56,8 +90,9 @@ class SignUpViewModel @Inject constructor(
         password: String? = null,
         username: String? = null,
         phone: String? = null,
-
-        ): Boolean {
+        birthYear: String? = null,
+        city: String? = null
+    ): Boolean {
         var flag = true
         Log.d("Before validate:", firstName.toString())
         Log.d("Before validate:", lastName.toString())
@@ -101,6 +136,18 @@ class SignUpViewModel @Inject constructor(
             //To do
             _signUpState.value = SignUpState(
                 validate = Validate.PHONE
+            )
+            flag = false
+        } else if (birthYear != null  && birthYear.isEmpty()) {
+            //To do
+            _signUpState.value = SignUpState(
+                validate = Validate.BIRTH_YEAR
+            )
+            flag = false
+        } else if (city != null && city.isEmpty()) {
+            //To do
+            _signUpState.value = SignUpState(
+                validate = Validate.CITY
             )
             flag = false
         }

@@ -76,13 +76,16 @@ fun ProfileScreen(navController: NavController) {
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
     val useridKey = stringPreferencesKey(Constant.USERID_STRING)
     val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
+    val userEmailKey = stringPreferencesKey(Constant.USER_EMAIL_STRING)
+
     val userName = remember {
         mutableStateOf("")
     }
-    val userId = remember {
+
+    val userImage = remember {
         mutableStateOf("")
     }
-    val userImage = remember {
+    val userEmail = remember {
         mutableStateOf("")
     }
     val onShowDialog: (Boolean) -> Unit = {
@@ -93,8 +96,8 @@ fun ProfileScreen(navController: NavController) {
         coroutine.launch {
             context.dataStore.data.collect {
                 userName.value = it[usernameKey].toString()
-                userId.value = it[useridKey].toString()
                 userImage.value = it[userImageKey].toString()
+                userEmail.value = it[userEmailKey].toString()
             }
         }
     }
@@ -119,7 +122,7 @@ fun ProfileScreen(navController: NavController) {
             })
         }
         LazyColumn(modifier = Modifier.padding(it)) {
-            item { Profile(navController, userImage.value, userName.value, id = userId.value) }
+            item { Profile(navController, userImage.value, userName.value, email = userEmail.value) }
             item { Spacer(modifier = Modifier.height(30.dp)) }
             item {
                 Column(
@@ -190,7 +193,6 @@ fun Profile(
     email: String = "DummyEmfdsfsdsail@gmail.com",
     phone: String = "097845612",
     role: String = "Dummy Role",
-    id: String
 ) {
     Column(
         modifier = Modifier

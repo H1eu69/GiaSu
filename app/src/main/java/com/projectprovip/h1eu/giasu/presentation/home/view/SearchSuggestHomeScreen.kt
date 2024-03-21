@@ -2,6 +2,7 @@ package com.projectprovip.h1eu.giasu.presentation.home.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,26 +54,17 @@ fun SearchSuggestHomeScreenPreview() {
         rememberNavController(),
         state = SearchSuggestState(
             data = listOf(
-                "Note 13 Pro",
-                "Lop hoc python",
-                "Hoc guitar",
+                "java programming",
+                "python programming",
+                "basic guitar",
                 "Nguyen Bao Chau",
-                "Goi om sieu mem",
-                "Note 13 Pro",
-                "Lop hoc python",
-                "Hoc guitar",
-                "Nguyen Bao Chau",
-                "Goi om sieu mem",
-                "Note 13 Pro",
-                "Lop hoc python",
-                "Hoc guitar",
-                "Nguyen Bao Chau",
-                "Goi om sieu mem",
-                "Note 13 Pro",
-                "Lop hoc python",
-                "Hoc guitar",
-                "Nguyen Bao Chau",
-                "Goi om sieu mem"
+                "swimming",
+                "karate",
+                "communicate english",
+                "piano",
+                "history",
+                "physics",
+                "advanced physics",
             )
         )
     )
@@ -82,11 +74,12 @@ fun SearchSuggestHomeScreenPreview() {
 @Composable
 fun SearchSuggestHomeScreen(
     navController: NavController,
-    state: SearchSuggestState
+    state: SearchSuggestState,
+    searchText: String? = null,
 ) {
     val focusManager = LocalFocusManager.current
     val searchTextField = remember {
-        mutableStateOf("")
+        mutableStateOf(searchText ?: "")
     }
 
     Scaffold(
@@ -161,11 +154,20 @@ fun SearchSuggestHomeScreen(
                                         bottomEndPercent = 50
                                     )
                                 )
+                                .clickable {
+                                    val _searchText =
+                                        if (searchTextField.value.isNotEmpty()) searchTextField.value else state.data[0]
+                                    navController.navigate(
+                                        Screens.InApp.Home.SearchResult.route +
+                                                "/${_searchText}",
+                                    )
+                                }
                         ) {
                             Icon(
                                 Icons.Default.Search, contentDescription = null,
                                 tint = EDSColors.white,
                                 modifier = Modifier.align(Alignment.Center)
+
                             )
                         }
                     }
@@ -197,6 +199,11 @@ fun SearchSuggestHomeScreen(
                             item {
                                 Box(modifier = Modifier) {
                                     SearchSuggestItem(
+                                        modifier = Modifier.clickable {
+                                            navController.navigate(
+                                                Screens.InApp.Home.SearchResult.route + "/${it}"
+                                            )
+                                        },
                                         data = it
                                     )
                                 }
@@ -231,7 +238,10 @@ fun SuggestChipRow(navController: NavController) {
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {
-                            navController.navigate(Screens.InApp.Home.SearchResult.route)
+                            navController.navigate(
+                                Screens.InApp.Home.SearchResult.route
+                                        + "/${title}"
+                            )
                         }
                     )
                 }
@@ -251,7 +261,10 @@ fun SuggestChipRow(navController: NavController) {
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {
-
+                            navController.navigate(
+                                Screens.InApp.Home.SearchResult.route
+                                        + "/${title}"
+                            )
                         }
                     )
                 }
@@ -270,7 +283,10 @@ fun SuggestChipRow(navController: NavController) {
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {
-
+                            navController.navigate(
+                                Screens.InApp.Home.SearchResult.route
+                                        + "/${title}"
+                            )
                         }
                     )
                 }
@@ -292,8 +308,11 @@ fun SearchSuggestItemPreview() {
 }
 
 @Composable
-fun SearchSuggestItem(data: String) {
+fun SearchSuggestItem(
+    modifier: Modifier = Modifier, data: String,
+) {
     Column(
+        modifier = modifier
     ) {
         Text(
             text = data, fontSize = 12.sp, fontWeight = FontWeight.W300,

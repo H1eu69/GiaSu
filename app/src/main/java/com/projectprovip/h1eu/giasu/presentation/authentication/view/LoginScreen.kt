@@ -13,10 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -36,6 +40,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,11 +49,13 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.IconButton
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.presentation.authentication.model.AuthState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.LoginState
+import com.projectprovip.h1eu.giasu.presentation.authentication.model.Validation
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import kotlinx.coroutines.launch
@@ -64,7 +71,7 @@ fun Preview() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTvMaterial3Api::class)
 @Composable
 fun LoginScreen(
     navController: NavController,
@@ -87,6 +94,8 @@ fun LoginScreen(
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
     val useridKey = stringPreferencesKey(Constant.USERID_STRING)
     val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
+    val userEmailKey = stringPreferencesKey(Constant.USER_EMAIL_STRING)
+    var passwordVisibility = remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
@@ -99,6 +108,7 @@ fun LoginScreen(
                     preferences[usernameKey] = state.user.fullName
                     preferences[useridKey] = state.user.id
                     preferences[userImageKey] = state.user.avatar
+                    preferences[userEmailKey] = state.user.email
                 }
                 navController.navigate(Screens.InApp.route) {
                     popUpTo(Screens.Authentication.route) {
@@ -109,8 +119,9 @@ fun LoginScreen(
         }
     }
 
-    val isError = state.error.isNotEmpty()
-
+    val isEmailError = state.validation.name == Validation.WRONG_EMAIL_FORMAT.name
+    val isPasswordError = state.validation.name == Validation.PASSWORD.name
+    val isErrorLogin = state.error.isNotEmpty()
 
     Surface {
         Column(
@@ -123,7 +134,7 @@ fun LoginScreen(
             Column(
                 Modifier.fillMaxWidth()
 
-                ) {
+            ) {
                 Spacer(
                     modifier = Modifier.fillMaxHeight(.2f)
                 )
@@ -155,9 +166,16 @@ fun LoginScreen(
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,
-                    isError = isError,
+                    isError = isEmailError || isErrorLogin,
                     supportingText = {
-                        if (isError) {
+                        if (isEmailError) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = state.validation.text!!,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        if (isErrorLogin) {
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
                                 text = state.error,
@@ -179,12 +197,35 @@ fun LoginScreen(
 
                 OutlinedTextField(
                     value = passTextField.value,
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        Icon(
+                            imageVector = if (passwordVisibility.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                            contentDescription = null,
+                            modifier = Modifier.clickable(
+                                interactionSource,
+                                null
+                            ) {
+                                passwordVisibility.value = !passwordVisibility.value
+                            }
+                        )
+
+                    },
                     onValueChange = {
                         passTextField.value = it
                     },
                     placeholder = {
                         Text("Password", color = EDSColors.grayX2)
+                    },
+                    isError = isPasswordError,
+                    supportingText = {
+                        if (isPasswordError) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = state.validation.text!!,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
                     },
                     shape = RoundedCornerShape(8.dp),
                     singleLine = true,

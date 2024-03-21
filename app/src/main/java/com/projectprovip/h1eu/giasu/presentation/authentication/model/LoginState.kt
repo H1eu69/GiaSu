@@ -7,9 +7,11 @@ data class LoginState(
     val user: User? = null,
     val error: String = "",
     val token: String? = null,
-    val auth: AuthState = AuthState.IDLE
+    val validation: Validation = Validation.IDLE
 )
 
-enum class AuthState(val text: String?) {
-    IDLE(text = null), ACCOUNT_NOT_FOUND(text = "Wrong email or password"), WRONG_EMAIL_FORMAT("Wrong email format")
+enum class Validation(val text: String?) {
+    IDLE(text = null),
+    WRONG_EMAIL_FORMAT("Wrong email format"),
+    PASSWORD("Password must be at least 8 characters long and contain at least one lowercase letter (a-z), one uppercase letter (A-Z), one digit (0-9), and one special character (!,@,#,$,%,^,&,*)"),
 }

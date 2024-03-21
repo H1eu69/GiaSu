@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,6 +51,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -77,10 +80,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.VerticalGrid
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.home.model.FilterSelect
@@ -110,7 +118,8 @@ fun SearchResultHomeScreenPreview() {
 @Composable
 fun SearchResultHomeScreen(
     navController: NavController,
-    state: CourseDetailState = CourseDetailState()
+    state: CourseDetailState = CourseDetailState(),
+    searchText: String? = null,
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -270,6 +279,7 @@ fun SearchResultHomeScreen(
                 Scaffold(
                     topBar = {
                         SearchResultAppBar(
+                            searchText ?: "",
                             navController,
                             onFilterClick = {
                                 scope.launch {
@@ -281,7 +291,7 @@ fun SearchResultHomeScreen(
                         )
                     },
                     containerColor = EDSColors.white
-                ) {
+                ) { it ->
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         contentPadding = PaddingValues(bottom = 30.dp),
@@ -289,9 +299,12 @@ fun SearchResultHomeScreen(
                             .padding(it)
                     ) {
                         item {
-                            ResultChip(navController, "Note 13 pro")
+                            ResultChip(navController, searchText!!)
                         }
                         state.apply {
+                            val filteredList = this.data.filter { courseDetail ->
+                                courseDetail.subjectName.contains(searchText!!)
+                            }
                             when {
                                 this.isLoading -> {
                                     item {
@@ -301,8 +314,34 @@ fun SearchResultHomeScreen(
                                     }
                                 }
 
-                                this.data.isNotEmpty() -> {
-                                    data.forEach {
+                                filteredList.isEmpty() -> {
+                                    item {
+                                        Box(modifier = Modifier.fillMaxSize()) {
+                                            val composition by rememberLottieComposition(
+                                                LottieCompositionSpec.RawRes(R.raw.empty_box),
+                                                onRetry = { failCount, exception ->
+                                                    Log.d("LottieAnimation", failCount.toString())
+                                                    Log.d("LottieAnimation", exception.toString())
+                                                    // Continue retrying. Return false to stop trying.
+                                                    false
+                                                })
+                                            Column(
+                                                horizontalAlignment = Alignment.CenterHorizontally
+                                            ) {
+                                                LottieAnimation(
+                                                    composition = composition,
+                                                    iterations = LottieConstants.IterateForever,
+                                                )
+                                                Text("No courses found")
+                                            }
+
+
+                                        }
+                                    }
+                                }
+
+                                else -> {
+                                    filteredList.forEach {
                                         item {
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                                                 CourseItem(
@@ -313,6 +352,7 @@ fun SearchResultHomeScreen(
                                         }
                                     }
                                 }
+
                             }
                         }
                     }
@@ -366,11 +406,15 @@ fun ResultChip(navController: NavController, result: String) {
 
 @Composable
 fun SearchResultAppBar(
+    searchText: String,
     navController: NavController,
-    onFilterClick: () -> Unit
+    onFilterClick: () -> Unit,
 ) {
     val searchTextField = remember {
-        mutableStateOf("Note 13 Pro")
+        mutableStateOf(searchText)
+    }
+    val interactionSource = remember {
+        MutableInteractionSource()
     }
     Row(
         horizontalArrangement = Arrangement.Start,
@@ -392,10 +436,20 @@ fun SearchResultAppBar(
                 searchTextField.value = it
             },
             singleLine = true,
+            enabled = false,
             textStyle = TextStyle(fontSize = 14.sp),
             modifier = Modifier
                 .fillMaxWidth(.9f)
-                .padding(end = 16.dp),
+                .padding(end = 16.dp)
+                .clickable(
+                    interactionSource, null
+                ) {
+                    navController.navigate(
+                        Screens.InApp.Home.SearchSuggest.route +
+                                "/${searchTextField.value}",
+
+                        )
+                },
             cursorBrush = SolidColor(EDSColors.darkCyan)
         ) { innerTextField ->
 
@@ -443,6 +497,7 @@ fun SearchResultAppBar(
                                 bottomEndPercent = 50
                             )
                         )
+
                 ) {
                     Icon(
                         Icons.Default.Search, contentDescription = null,
@@ -686,7 +741,7 @@ fun UnselectItem(title: String, onClick: () -> Unit) {
         modifier = Modifier
             .padding(horizontal = 2.dp, vertical = 2.dp)
             .fillMaxWidth()
-            .background(EDSColors.grayX3)
+            .background(EDSColors.grayX4)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null
@@ -807,7 +862,7 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
             Box(
                 modifier = Modifier
                     .padding(horizontal = 2.dp, vertical = 2.dp)
-                    .background(EDSColors.grayX3)
+                    .background(EDSColors.grayX4)
                     .weight(1f)
                     .clickable(
                         interactionSource = interactionSource, indication = null
@@ -827,7 +882,7 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
             Box(
                 modifier = Modifier
                     .padding(horizontal = 2.dp, vertical = 2.dp)
-                    .background(EDSColors.grayX3)
+                    .background(EDSColors.grayX4)
                     .weight(1f)
                     .clickable(
                         interactionSource = interactionSource, indication = null
@@ -848,7 +903,7 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
             Box(
                 modifier = Modifier
                     .padding(horizontal = 2.dp, vertical = 2.dp)
-                    .background(EDSColors.grayX3)
+                    .background(EDSColors.grayX4)
                     .weight(1f)
 
                     .clickable(

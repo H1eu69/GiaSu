@@ -2,6 +2,8 @@ package com.projectprovip.h1eu.giasu.common
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -10,17 +12,18 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import kotlin.random.Random
 
 object Constant {
     const val API_BASE_URL = "http://escenter.somee.com/api/"
+    const val LOCATION_API_BASE_URL = "https://vapi.vnappmob.com"
     const val TOKEN_STRING = "token"
     const val USERNAME_STRING = "username"
     const val USERID_STRING = "userid"
     const val USER_IMAGE_STRING = "user_image"
+    const val USER_EMAIL_STRING = "email"
 }
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "share data")
@@ -158,5 +161,18 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
+    }
+}
+
+object CodeGenerator {
+    fun generate(codeLength: Int = 6) : String{
+        val stringBuilder = StringBuilder()
+
+        repeat(codeLength) {
+            val digit = Random.nextInt(0, 10)
+            stringBuilder.append(digit)
+        }
+
+        return stringBuilder.toString()
     }
 }
