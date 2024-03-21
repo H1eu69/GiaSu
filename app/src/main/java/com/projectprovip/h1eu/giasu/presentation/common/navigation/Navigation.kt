@@ -2,7 +2,6 @@
 
 package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
-import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -153,7 +152,10 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         modifier = modifier,
     ) {
         composable(Screens.InApp.Home.route) {
-            HomeScreen(navController, homeViewModel.courseDetailState.value)
+            HomeScreen(navController, homeViewModel.courseDetailState.value,
+                onLoadMore = {
+                    homeViewModel.getCourses()
+                })
         }
         composable(
             Screens.InApp.Home.SearchSuggest.route,
@@ -348,18 +350,3 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         authenticationGraph(navController)
     }
 }
-/*BottomNavigationItem(
-icon = {
-    if (screen.route == Screens.InApp.HomeBottomBar.route)
-        Icon(Icons.Filled.Home, contentDescription = null)
-    if (screen.route == Screens.InApp.ClassBottomBar.route)
-        Icon(Icons.Filled.Clear, contentDescription = null)
-},
-label = { Text(stringResource(screen.resId)) },
-selected = ,
-selectedContentColor = primaryColor,
-unselectedContentColor = Color.LightGray,
-onClick = {
-
-}
-)*/

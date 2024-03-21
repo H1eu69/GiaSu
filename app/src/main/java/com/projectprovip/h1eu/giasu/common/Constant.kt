@@ -35,7 +35,8 @@ class EDSTextStyle {
             providerPackage = "com.google.android.gms",
             certificates = R.array.com_google_android_gms_fonts_certs
         )
-        fun Header(color : Color = Color.Black) : TextStyle {
+
+        fun Header(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
@@ -50,7 +51,7 @@ class EDSTextStyle {
             )
         }
 
-        fun Content(color : Color = Color.Black) : TextStyle {
+        fun Content(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
@@ -65,7 +66,7 @@ class EDSTextStyle {
             )
         }
 
-        fun H1Med(color : Color = Color.Black) : TextStyle {
+        fun H1Med(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
@@ -78,7 +79,8 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
-        fun H1Large(color : Color = Color.Black) : TextStyle {
+
+        fun H1Large(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
@@ -91,7 +93,8 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
-        fun H1MedBold(color : Color = Color.Black) : TextStyle {
+
+        fun H1MedBold(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
@@ -105,7 +108,8 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
-        fun H2Reg(color : Color = Color.Black) : TextStyle {
+
+        fun H2Reg(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
@@ -118,7 +122,8 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
-        fun H3Reg(color : Color = Color.Black) : TextStyle {
+
+        fun H3Reg(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
@@ -132,7 +137,7 @@ class EDSTextStyle {
             )
         }
 
-        fun H2Thin(color : Color = Color.Black) : TextStyle {
+        fun H2Thin(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
@@ -147,7 +152,7 @@ class EDSTextStyle {
             )
         }
 
-        fun H2Bold(color : Color = Color.Black) : TextStyle {
+        fun H2Bold(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
             val font = FontFamily(
@@ -161,9 +166,21 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
+
+        fun Logo(color: Color = Color.Black): TextStyle {
+            val fontFamily = FontFamily(
+                androidx.compose.ui.text.font.Font(R.font.mont_bold, FontWeight.Bold),
+                androidx.compose.ui.text.font.Font(R.font.mont_regular, FontWeight.Normal)
+            )
+
+            return TextStyle(
+                fontSize = 30.sp,
+                color = color,
+                fontFamily = fontFamily
+            )
+        }
     }
 }
-
 object CodeGenerator {
     fun generate(codeLength: Int = 6) : String{
         val stringBuilder = StringBuilder()

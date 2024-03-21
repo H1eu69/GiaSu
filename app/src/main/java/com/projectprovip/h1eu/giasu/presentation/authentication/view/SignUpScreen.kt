@@ -664,7 +664,10 @@ fun Phase2(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
+                .clickable(
+                    interactionSource,
+                    null
+                ) {
                     openProvinceDialog.value = true
                 }
         )

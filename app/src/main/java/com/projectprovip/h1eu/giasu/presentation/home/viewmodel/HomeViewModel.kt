@@ -19,26 +19,33 @@ class HomeViewModel @Inject constructor(
     private val registerCourseUseCase: RegisterCourseUseCase
 ) : ViewModel() {
     private var _courseDetailState = mutableStateOf(CourseDetailState())
-    val courseDetailState : State<CourseDetailState> =  _courseDetailState
+    val courseDetailState: State<CourseDetailState> = _courseDetailState
+    var _currentPageIndex = 1
+    var _showLoading = true
 
     init {
-        getAllCourse()
+        getCourses()
     }
-    private fun getAllCourse() {
-        getCourseUseCase().onEach { result ->
-            when (result) {
-                is EDSResult.Loading -> {
-                    _courseDetailState.value = CourseDetailState(isLoading = true)
-                }
 
+    fun getCourses() {
+        val currentData = _courseDetailState.value.data.toMutableList()
+        getCourseUseCase(_currentPageIndex).onEach {
+            when (it) {
+                is EDSResult.Loading -> {
+                    if (_showLoading) {
+                        _courseDetailState.value = CourseDetailState(isLoading = true)
+                        _showLoading = false
+                    }
+                }
                 is EDSResult.Error -> {
-                    _courseDetailState.value = CourseDetailState(error = result.message)
+                    _courseDetailState.value = CourseDetailState(error = it.message)
+
                 }
 
                 is EDSResult.Success -> {
-                    val courses = result.data!!
-
-                    _courseDetailState.value = CourseDetailState(data = courses)
+                    currentData.addAll(it.data!!)
+                    _courseDetailState.value = CourseDetailState(data = currentData)
+                    _currentPageIndex++
                 }
             }
         }.launchIn(viewModelScope)

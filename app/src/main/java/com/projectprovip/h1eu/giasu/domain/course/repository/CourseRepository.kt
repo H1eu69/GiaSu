@@ -11,7 +11,7 @@ import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import retrofit2.Response
 
 interface CoursesRepository {
-    suspend fun getAllClasses(): NewCoursesDto
+    suspend fun getAllClasses(page: Int): NewCoursesDto
     suspend fun createCourse(token:String, input: CreateCourseInput): Response<Unit>
     suspend fun registerCourse(id: String, token: String?): Response<RequestCourseDto>
     suspend fun getRequestedCourse(token: String?): Response<RequestedCourseDto>

@@ -15,10 +15,13 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface CourseApi {
     @GET("Course")
-    suspend fun getAllClasses() : NewCoursesDto
+    suspend fun getAllClasses(
+        @Query("PageIndex") page: Int
+    ) : NewCoursesDto
 
     @POST("Course/Create")
     suspend fun createCourse(

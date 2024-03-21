@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
@@ -26,6 +29,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -39,7 +43,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -57,6 +60,7 @@ import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.DateFormat
+import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
@@ -88,7 +92,8 @@ fun PreviewHomeScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController, state: CourseDetailState) {
+fun HomeScreen(navController: NavController, state: CourseDetailState,
+               onLoadMore: () -> Unit = {}) {
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
@@ -104,121 +109,237 @@ fun HomeScreen(navController: NavController, state: CourseDetailState) {
     }
 
     Scaffold(
-    ) {
-        BodyContent(
-            modifier = Modifier
-                .padding(it)
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            Color(0xFF00FFA6),
-                            Color(0xFFB2FFB2),
-                        ),
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        EDSColors.white
+                    ),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(top = 8.dp, start = 8.dp),
+                    horizontalAlignment = Alignment.Start,
+                ) {
+                    Text(
+                        text = "EDUSMART",
+                        style = EDSTextStyle.Logo(
+                            EDSColors.primaryColor
+                        )
                     )
-                ),
-            navController = navController,
-            state = state,
-            name = userName.value
-        )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "Hello",
+                            style = EDSTextStyle.H2Reg(
+                                EDSColors.primaryColor
+                            )
+                        )
+                        Text(
+                            text = userName.value,
+                            style = EDSTextStyle.H2Bold(
+                                EDSColors.primaryColor
+                            )
+                        )
+                    }
+                }
+                Row {
+                    IconButton(onClick = {
+                        navController.navigate(Screens.InApp.Profile.RequestClass.route)
+                    }) {
+
+                        Icon(
+                            Icons.Filled.Add, null,
+                            tint = EDSColors.blackColor,
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .background(EDSColors.grayX4, CircleShape)
+                                .padding(4.dp)
+                        )
+                    }
+                    IconButton(onClick = {
+                        navController.navigate(Screens.InApp.Home.SearchSuggest.route)
+                    }) {
+
+                        Icon(
+                            Icons.Filled.Search, null,
+                            tint = EDSColors.blackColor,
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .background(EDSColors.grayX4, CircleShape)
+                                .padding(4.dp)
+                        )
+                    }
+                }
+
+            }
+        }
+    ) {
+        state.apply {
+            when {
+                this.isLoading -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        CircularProgressIndicator(
+                            color = EDSColors.primaryColor
+                        )
+                    }
+                }
+
+                this.data.isNotEmpty() -> {
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(it)
+                            .background(
+                                EDSColors.grayX3
+                            )
+                            .padding(top = 8.dp)
+                            .fillMaxSize()
+                            .background(
+                                EDSColors.white,
+                            )
+                            .padding(horizontal = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        items(state.data.count()) { index ->
+                            CourseItem(
+                                navController = navController,
+                                data = state.data[index],
+                                modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
+                            )
+                            if (index == state.data.count() - 2) {
+                                onLoadMore()
+                            }
+                        }
+
+
+                    }
+
+                }
+            }
+        }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BodyContent(
     modifier: Modifier,
     navController: NavController,
     state: CourseDetailState,
-    name: String
 ) {
-    LazyColumn(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, start = 8.dp),
-                horizontalAlignment = Alignment.Start,
-            ) {
-                Text(
-                    text = "Hello",
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        color = Color.White,
-                        fontFamily = FontFamily.SansSerif
+    state.apply {
+        when {
+            this.isLoading -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    CircularProgressIndicator(
+                        color = EDSColors.primaryColor
                     )
-                )
-                Text(
-                    text = name,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily.SansSerif
-                    )
-                )
-
-            }
-        }
-
-        item {
-            SearchTextField(onTap = {
-                navController.navigate(Screens.InApp.Home.SearchSuggest.route)
-            })
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Color.White,
-                        RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-                    )
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-
-            ) {
-                RowTitle(
-                    modifier = Modifier.padding(
-                        start = 10.dp,
-                        top = 8.dp,
-                        bottom = 15.dp,
-                        end = 10.dp
-                    ),
-                    title1 = "Newest Classes",
-                    title2 = "View all"
-                )
-                state.apply {
-                    when {
-                        this.isLoading -> {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.fillMaxSize()
-                            ){
-                                CircularProgressIndicator(
-                                    color = EDSColors.primaryColor
-                                )
-                            }
-
-                        }
-
-                        this.data.isNotEmpty() -> {
-                            data.forEach {
-                                CourseItem(
-                                    navController = navController,
-                                    data = it
-                                )
-                            }
-                        }
-                    }
                 }
+            }
+
+            this.data.isNotEmpty() -> {
+                LazyColumn(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .background(
+                            EDSColors.white,
+                        )
+                        .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(state.data.count()) { index ->
+                        CourseItem(
+                            navController = navController,
+                            data = state.data[index],
+                            modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
+                        )
+                    }
+//        item {
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//                Column(
+//                    modifier = Modifier
+//                        .padding(top = 8.dp, start = 8.dp),
+//                    horizontalAlignment = Alignment.Start,
+//                ) {
+//                    Text(
+//                        text = "Hello",
+//                        style = TextStyle(
+//                            fontSize = 18.sp,
+//                            color = Color.White,
+//                            fontFamily = FontFamily.SansSerif
+//                        )
+//                    )
+//                    Text(
+//                        text = name,
+//                        style = TextStyle(
+//                            fontWeight = FontWeight.Bold,
+//                            color = Color.White,
+//                            fontSize = 20.sp,
+//                            fontFamily = FontFamily.SansSerif
+//                        )
+//                    )
+//                }
+//
+//                IconButton(onClick = { /*TODO*/ }) {
+//                    Icon(Icons.Default.Search, null,
+//                        tint = EDSColors.white)
+//                }
+//            }
+//
+//        }
+//        item {
+//            SearchTextField(onTap = {
+//                navController.navigate(Screens.InApp.Home.SearchSuggest.route)
+//            })
+//        }
+
+//        item {
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .background(
+//                        Color.White,
+//                        RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
+//                    )
+//                    .padding(16.dp),
+//                horizontalAlignment = Alignment.CenterHorizontally,
+//                verticalArrangement = Arrangement.spacedBy(16.dp)
+//
+//            ) {
+////                RowTitle(
+////                    modifier = Modifier.padding(
+////                        start = 10.dp,
+////                        top = 8.dp,
+////                        bottom = 15.dp,
+////                        end = 10.dp
+////                    ),
+////                    title1 = "Newest Courses",
+////                    title2 = "View all"
+////                )
+//
+//            }
+//        }
+
+                }
+
             }
         }
     }
+
 }
 
 @Composable
@@ -329,7 +450,7 @@ fun PreviewCourseItem() {
 }
 
 @Composable
-fun CourseItem(navController: NavController, data: CourseDetail) {
+fun CourseItem(navController: NavController, data: CourseDetail, modifier: Modifier = Modifier) {
     Card(
         shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
@@ -337,7 +458,7 @@ fun CourseItem(navController: NavController, data: CourseDetail) {
         ),
         border = BorderStroke(2.dp, Color.LightGray),
         elevation = CardDefaults.outlinedCardElevation(3.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(
                 RoundedCornerShape(10)

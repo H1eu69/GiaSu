@@ -13,10 +13,10 @@ import javax.inject.Inject
 class GetCourseUseCase @Inject constructor(
     private val repository: CoursesRepository
 ){
-    operator fun invoke() = flow<EDSResult<List<CourseDetail>>> {
+    operator fun invoke(page: Int) = flow<EDSResult<List<CourseDetail>>> {
         try {
             emit(EDSResult.Loading())
-            val data = repository.getAllClasses().value.items.map {
+            val data = repository.getAllClasses(page).value.items.map {
                 it.toNewCourse()
             }
 

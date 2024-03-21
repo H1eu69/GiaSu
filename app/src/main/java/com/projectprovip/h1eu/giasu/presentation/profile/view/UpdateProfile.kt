@@ -900,6 +900,13 @@ fun TutorRole(
     }
 }
 
+@Composable
+@Preview
+fun TutorPreview() {
+    TutorRole(navController = rememberNavController(),
+        profile = Profile())
+}
+
 @Preview
 @Composable
 fun SubjectDialogPreview() {
