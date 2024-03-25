@@ -25,7 +25,7 @@ class UpdateProfileUseCase @Inject constructor(
     }
 }
 data class UpdateProfileParams(
-    val avatar: String,
+    var avatar: String,
     val birthYear: Int,
     val city: String,
     val country: String,

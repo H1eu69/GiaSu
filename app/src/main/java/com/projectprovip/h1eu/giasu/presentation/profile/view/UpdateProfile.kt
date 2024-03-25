@@ -80,6 +80,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 
@@ -114,7 +115,7 @@ fun UpdateProfile(
     val birthYearText = remember { mutableStateOf(profile.birthYear.toString()) }
     val descriptionText = remember { mutableStateOf(profile.description) }
     val phoneText = remember { mutableStateOf(profile.phoneNumber.toString()) }
-    val avatar = remember { mutableStateOf(profile.avatar) }
+    val avatar = remember { mutableStateOf(Uri.parse(profile.avatar)) }
 
     val openDialog = remember { mutableStateOf(false) }
     val initValue = remember {
@@ -126,7 +127,7 @@ fun UpdateProfile(
         mutableStateOf(genderOptions[genderOptions.indexOf(profile.gender)])
     }
 
-    val currentDateTime = LocalDateTime.now()
+    val currentDateTime = OffsetDateTime.now()
     val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
     val formattedDateTime = currentDateTime.format(formatter)
 
@@ -138,7 +139,7 @@ fun UpdateProfile(
         birthYearText.value = profile.birthYear.toString()
         descriptionText.value = profile.description
         phoneText.value = profile.phoneNumber
-        avatar.value = profile.avatar
+        avatar.value = Uri.parse(profile.avatar)
     }
 
     Scaffold(
@@ -214,7 +215,7 @@ fun UpdateProfile(
                 EduSmartButton(
                     text = "Update", onClick = {
                         onUpdateBtnClick(
-                            avatar.value, //will change
+                            avatar.value.toString(),
                             emailText.value,
                             birthYearText.value.toInt(),
                             addressText.value,
@@ -250,7 +251,7 @@ fun LearnerRole(
     descriptionText: MutableState<String>,
     phoneText: MutableState<String>,
     openDatePicker: MutableState<Boolean>,
-    avatar: MutableState<String>,
+    avatar: MutableState<Uri>,
     initValue: MutableState<Int>,
     genderOptions: List<String>,
     genderSelectedOption: String,
@@ -276,20 +277,21 @@ fun LearnerRole(
     val avatarLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
             if (it != null) {
-
+                avatar.value = it
             }
         }
 
     LazyColumn(modifier = modifier.background(EDSColors.white)) {
         item {
             Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(20.dp)
-
                 ) {
                     AsyncImage(
                         avatar.value,
@@ -302,19 +304,29 @@ fun LearnerRole(
                             .clickable {
                                 avatarLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                             })
-
-                    Icon(
-                        imageVector = Icons.Default.AddAPhoto, contentDescription = null,
-                        tint = EDSColors.blackColor,
+                    Box(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(Color.White)
+                            .background(EDSColors.grayX2)
+                            .border(1.dp, EDSColors.white, CircleShape)
                             .padding(2.dp)
-                            .align(Alignment.BottomCenter)
-                            .clickable {
-                                avatarLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                            }
-                    )
+                            .align(Alignment.BottomEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AddAPhoto, contentDescription = null,
+                            tint = EDSColors.blackColor,
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .clickable {
+                                    avatarLauncher.launch(
+                                        PickVisualMediaRequest(
+                                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                                        )
+                                    )
+                                }
+                        )
+                    }
+
                 }
                 MultiColorText(
                     text1 = "Role: ", color1 = EDSColors.primaryColor,
@@ -539,7 +551,7 @@ fun TutorRole(
     descriptionText: MutableState<String>,
     phoneText: MutableState<String>,
     openEditSubjectDialog: MutableState<Boolean>,
-    avatar: MutableState<String>,
+    avatar: MutableState<Uri>,
     initValue: MutableState<Int>,
     genderOptions: List<String>,
     genderSelectedOption: String,
@@ -1000,10 +1012,87 @@ fun TutorRole(
 @Composable
 @Preview
 fun TutorPreview() {
-//    TutorRole(
-//        navController = rememberNavController(),
-//        profile = Profile()
-//    )
+    val firstName = remember { mutableStateOf("profile.firstName") }
+    val lastName = remember { mutableStateOf("profile.lastName") }
+
+    val emailText = remember { mutableStateOf("profile.email") }
+
+    val addressText = remember { mutableStateOf("profile.city") }
+    val birthYearText = remember { mutableStateOf("profile.birthYear.toString()") }
+    val descriptionText = remember { mutableStateOf("profile.description") }
+    val phoneText = remember { mutableStateOf("profile.phoneNumber.toString()") }
+    val avatar = remember { mutableStateOf(Uri.parse("")) }
+
+    val openDialog = remember { mutableStateOf(false) }
+    val initValue = remember {
+        mutableStateOf(20)
+    }
+    val genderOptions = listOf("Male", "Female", "Other")
+
+    val (genderSelectedOption, onGenderSelect) = remember {
+        mutableStateOf(genderOptions[1])
+    }
+
+    TutorRole(
+        navController = rememberNavController(),
+        modifier = Modifier,
+        firstName,
+        lastName,
+        emailText,
+        addressText,
+        birthYearText,
+        descriptionText,
+        phoneText,
+        openDialog,
+        avatar,
+        initValue,
+        genderOptions,
+        genderSelectedOption,
+        onGenderSelect
+    )
+}
+
+@Composable
+@Preview
+fun LearnerPreview() {
+    val firstName = remember { mutableStateOf("profile.firstName") }
+    val lastName = remember { mutableStateOf("profile.lastName") }
+
+    val emailText = remember { mutableStateOf("profile.email") }
+
+    val addressText = remember { mutableStateOf("profile.city") }
+    val birthYearText = remember { mutableStateOf("profile.birthYear.toString()") }
+    val descriptionText = remember { mutableStateOf("profile.description") }
+    val phoneText = remember { mutableStateOf("profile.phoneNumber.toString()") }
+    val avatar = remember { mutableStateOf(Uri.parse("")) }
+
+    val openDialog = remember { mutableStateOf(false) }
+    val initValue = remember {
+        mutableStateOf(20)
+    }
+    val genderOptions = listOf("Male", "Female", "Other")
+
+    val (genderSelectedOption, onGenderSelect) = remember {
+        mutableStateOf(genderOptions[1])
+    }
+
+    LearnerRole(
+        navController = rememberNavController(),
+        modifier = Modifier,
+        firstName,
+        lastName,
+        emailText,
+        addressText,
+        birthYearText,
+        descriptionText,
+        phoneText,
+        openDialog,
+        avatar,
+        initValue,
+        genderOptions,
+        genderSelectedOption,
+        onGenderSelect
+    )
 }
 
 @Preview
@@ -1034,6 +1123,7 @@ fun SubjectDialogPreview() {
         })
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubjectDialog(
     subjects: MutableState<List<SubjectChip>>,

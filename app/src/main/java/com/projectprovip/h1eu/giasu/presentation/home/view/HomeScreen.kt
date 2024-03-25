@@ -129,22 +129,22 @@ fun HomeScreen(navController: NavController, state: CourseDetailState,
                             EDSColors.primaryColor
                         )
                     )
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Text(
-                            text = "Hello",
-                            style = EDSTextStyle.H2Reg(
-                                EDSColors.primaryColor
-                            )
-                        )
-                        Text(
-                            text = userName.value,
-                            style = EDSTextStyle.H2Bold(
-                                EDSColors.primaryColor
-                            )
-                        )
-                    }
+//                    Row(
+//                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+//                    ) {
+//                        Text(
+//                            text = "Hello",
+//                            style = EDSTextStyle.H2Reg(
+//                                EDSColors.primaryColor
+//                            )
+//                        )
+//                        Text(
+//                            text = userName.value,
+//                            style = EDSTextStyle.H2Bold(
+//                                EDSColors.primaryColor
+//                            )
+//                        )
+//                    }
                 }
                 Row {
                     IconButton(onClick = {

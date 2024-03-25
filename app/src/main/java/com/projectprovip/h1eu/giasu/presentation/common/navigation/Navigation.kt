@@ -297,23 +297,26 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             UpdateProfile(
                 navController,
                 vm.state.value,
-                onUpdateBtnClick = {
-                    avatar, email, birthYear, address, country, description, firstName, gender, lastName, phoneNumber, creationTime, lastModificationTime ->
-                    UpdateProfileParams(
-                        avatar = avatar, //will change
-                        email = email,
-                        birthYear = birthYear,
-                        city = address,
-                        country = country,
-                        description = description,
-                        firstName = firstName,
-                        gender = gender,
-                        lastName = lastName,
-                        phoneNumber = phoneNumber,
-                        creationTime = creationTime,
-                        lastModificationTime = lastModificationTime,
-                        id = ""
+                onUpdateBtnClick = { avatar, email, birthYear, address, country, description, firstName, gender, lastName, phoneNumber, creationTime, lastModificationTime ->
+                    vm.updateProfile(
+                        token.value,
+                        UpdateProfileParams(
+                            avatar = avatar, //will change
+                            email = email,
+                            birthYear = birthYear,
+                            city = address,
+                            country = country,
+                            description = description,
+                            firstName = firstName,
+                            gender = gender,
+                            lastName = lastName,
+                            phoneNumber = phoneNumber,
+                            creationTime = creationTime,
+                            lastModificationTime = lastModificationTime,
+                            id = ""
+                        )
                     )
+
                 }
             )
         }
