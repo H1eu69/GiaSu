@@ -49,6 +49,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,7 +70,6 @@ import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.projectprovip.h1eu.giasu.domain.profile.model.Profile
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.NumberPickerDialog
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
@@ -79,6 +79,8 @@ import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -86,17 +88,58 @@ import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileStat
 fun UpdateProfilePreview() {
     UpdateProfile(
         navController = rememberNavController(),
-        UpdateProfileState()
+        UpdateProfileState(),
+        { a,b,c,d,e,f,g,h,i,k,l,m ->}
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UpdateProfile(navController: NavController, state: UpdateProfileState) {
+fun UpdateProfile(
+    navController: NavController, state: UpdateProfileState,
+    onUpdateBtnClick: (String, String, Int, String, String, String, String, String, String, String, String, String) -> Unit
+) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
     val isTutor = state.data.role == "Tutor"
+
+    val profile = state.data
+    val firstName = remember { mutableStateOf(profile.firstName) }
+    val lastName = remember { mutableStateOf(profile.lastName) }
+
+    val emailText = remember { mutableStateOf(profile.email) }
+
+    val addressText = remember { mutableStateOf(profile.city) }
+    val birthYearText = remember { mutableStateOf(profile.birthYear.toString()) }
+    val descriptionText = remember { mutableStateOf(profile.description) }
+    val phoneText = remember { mutableStateOf(profile.phoneNumber.toString()) }
+    val avatar = remember { mutableStateOf(profile.avatar) }
+
+    val openDialog = remember { mutableStateOf(false) }
+    val initValue = remember {
+        mutableStateOf(profile.birthYear)
+    }
+    val genderOptions = listOf("Male", "Female", "Other")
+
+    val (genderSelectedOption, onGenderSelect) = remember {
+        mutableStateOf(genderOptions[genderOptions.indexOf(profile.gender)])
+    }
+
+    val currentDateTime = LocalDateTime.now()
+    val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+    val formattedDateTime = currentDateTime.format(formatter)
+
+    LaunchedEffect(profile) {
+        firstName.value = profile.firstName
+        lastName.value = profile.lastName
+        emailText.value = profile.email
+        addressText.value = profile.city
+        birthYearText.value = profile.birthYear.toString()
+        descriptionText.value = profile.description
+        phoneText.value = profile.phoneNumber
+        avatar.value = profile.avatar
+    }
 
     Scaffold(
         topBar = {
@@ -137,15 +180,54 @@ fun UpdateProfile(navController: NavController, state: UpdateProfileState) {
                     TutorRole(
                         navController = navController,
                         modifier = Modifier.fillMaxHeight(.9f),
-                        profile = state.data
+                        firstName,
+                        lastName,
+                        emailText,
+                        addressText,
+                        birthYearText,
+                        descriptionText,
+                        phoneText,
+                        openDialog,
+                        avatar,
+                        initValue,
+                        genderOptions,
+                        genderSelectedOption,
+                        onGenderSelect
                     ) else
                     LearnerRole(
                         navController = navController,
                         modifier = Modifier.fillMaxHeight(.9f),
-                        profile = state.data
+                        firstName,
+                        lastName,
+                        emailText,
+                        addressText,
+                        birthYearText,
+                        descriptionText,
+                        phoneText,
+                        openDialog,
+                        avatar,
+                        initValue,
+                        genderOptions,
+                        genderSelectedOption,
+                        onGenderSelect
                     )
                 EduSmartButton(
-                    text = "Update", onClick = {},
+                    text = "Update", onClick = {
+                        onUpdateBtnClick(
+                            avatar.value, //will change
+                            emailText.value,
+                            birthYearText.value.toInt(),
+                            addressText.value,
+                            "Vietnam",
+                            descriptionText.value,
+                            firstName.value,
+                            genderSelectedOption,
+                            lastName.value,
+                            phoneText.value,
+                            formattedDateTime,
+                            formattedDateTime,
+                        )
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -158,32 +240,26 @@ fun UpdateProfile(navController: NavController, state: UpdateProfileState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LearnerRole(
-    navController: NavController, modifier: Modifier = Modifier,
-    profile: Profile
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    firstName: MutableState<String>,
+    lastName: MutableState<String>,
+    emailText: MutableState<String>,
+    addressText: MutableState<String>,
+    birthYearText: MutableState<String>,
+    descriptionText: MutableState<String>,
+    phoneText: MutableState<String>,
+    openDatePicker: MutableState<Boolean>,
+    avatar: MutableState<String>,
+    initValue: MutableState<Int>,
+    genderOptions: List<String>,
+    genderSelectedOption: String,
+    onGenderSelect: (String) -> Unit
 ) {
     val interactionSource = remember {
         MutableInteractionSource()
     }
-    val genderOptions = listOf("Male", "Female", "Other")
 
-    val (userSelectedOptions, userOnOptionSelected) = remember {
-        mutableStateOf(genderOptions[genderOptions.indexOf(profile.gender)])
-    }
-
-    val firstName = remember { mutableStateOf(profile.firstName) }
-    val lastName = remember { mutableStateOf(profile.lastName) }
-
-    val emailText = remember { mutableStateOf(profile.email) }
-
-    val addressText = remember { mutableStateOf(profile.city) }
-    val birthYearText = remember { mutableStateOf(profile.birthYear.toString()) }
-    val descriptionText = remember { mutableStateOf(profile.description) }
-    val phoneText = remember { mutableStateOf(profile.phoneNumber.toString()) }
-
-    val openDatePicker = remember { mutableStateOf(false) }
-    val initValue = remember {
-        mutableStateOf(profile.birthYear)
-    }
     if (openDatePicker.value) {
         NumberPickerDialog(
             initValue = initValue,
@@ -216,7 +292,7 @@ fun LearnerRole(
 
                 ) {
                     AsyncImage(
-                        profile.avatar,
+                        avatar.value,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -440,8 +516,8 @@ fun LearnerRole(
             CommonRadioButton(
                 title = "Gender",
                 radioOptions = genderOptions,
-                selectedOption = userSelectedOptions,
-                onOptionSelected = userOnOptionSelected,
+                selectedOption = genderSelectedOption,
+                onOptionSelected = onGenderSelect,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
@@ -455,24 +531,20 @@ fun LearnerRole(
 @Composable
 fun TutorRole(
     navController: NavController, modifier: Modifier = Modifier,
-    profile: Profile
+    firstName: MutableState<String>,
+    lastName: MutableState<String>,
+    emailText: MutableState<String>,
+    addressText: MutableState<String>,
+    birthYearText: MutableState<String>,
+    descriptionText: MutableState<String>,
+    phoneText: MutableState<String>,
+    openEditSubjectDialog: MutableState<Boolean>,
+    avatar: MutableState<String>,
+    initValue: MutableState<Int>,
+    genderOptions: List<String>,
+    genderSelectedOption: String,
+    onGenderSelect: (String) -> Unit
 ) {
-    val genderOptions = listOf("Male", "Female", "Other")
-
-    val (userSelectedOptions, userOnOptionSelected) = remember {
-        mutableStateOf(genderOptions[0])
-    }
-
-    val nameText = remember { mutableStateOf("Hieu") }
-
-    val emailText = remember { mutableStateOf(profile.email) }
-
-    val addressText = remember { mutableStateOf(profile.city) }
-    val birthYearText = remember { mutableStateOf(profile.birthYear.toString()) }
-    val descriptionText =
-        remember { mutableStateOf(profile.description) }
-    val phoneText = remember { mutableStateOf(profile.phoneNumber.toString()) }
-    val openEditSubjectDialog = remember { mutableStateOf(false) }
 
     val avatarLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
@@ -688,14 +760,39 @@ fun TutorRole(
                     .padding(horizontal = 20.dp),
                 label = {
                     Text(
-                        text = "Name",
+                        text = "First name",
                     )
                 },
                 shape = RoundedCornerShape(12.dp),
                 onValueChange = { value ->
-                    nameText.value = value
+                    firstName.value = value
                 },
-                singleLine = true, value = nameText.value,
+                singleLine = true,
+                value = firstName.value,
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
+                    focusedBorderColor = EDSColors.primaryColor,
+                    focusedLabelColor = EDSColors.primaryColor,
+                ),
+            )
+        }
+        item {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .padding(horizontal = 20.dp),
+                label = {
+                    Text(
+                        text = "Last name",
+                    )
+                },
+                shape = RoundedCornerShape(12.dp),
+                onValueChange = { value ->
+                    lastName.value = value
+                },
+                singleLine = true,
+                value = lastName.value,
                 colors = OutlinedTextFieldDefaults.colors(
                     cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
@@ -829,8 +926,8 @@ fun TutorRole(
             CommonRadioButton(
                 title = "Gender",
                 radioOptions = genderOptions,
-                selectedOption = userSelectedOptions,
-                onOptionSelected = userOnOptionSelected,
+                selectedOption = genderSelectedOption,
+                onOptionSelected = onGenderSelect,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
@@ -903,8 +1000,10 @@ fun TutorRole(
 @Composable
 @Preview
 fun TutorPreview() {
-    TutorRole(navController = rememberNavController(),
-        profile = Profile())
+//    TutorRole(
+//        navController = rememberNavController(),
+//        profile = Profile()
+//    )
 }
 
 @Preview

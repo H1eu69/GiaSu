@@ -1,6 +1,4 @@
-package com.projectprovip.h1eu.giasu.data.profile.dto
-
-import com.projectprovip.h1eu.giasu.domain.profile.model.Profile
+package com.projectprovip.h1eu.giasu.data.profile.dto.updateProfileDto
 
 data class Value(
     val avatar: String,
@@ -17,8 +15,4 @@ data class Value(
     val lastName: String,
     val phoneNumber: String,
     val role: String
-)
-
-fun Value.toProfile() = Profile(
-    avatar, birthYear, city, country, description, email, firstName, gender, lastName, phoneNumber, role
 )

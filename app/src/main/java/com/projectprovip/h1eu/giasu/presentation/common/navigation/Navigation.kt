@@ -26,6 +26,7 @@ import androidx.navigation.navArgument
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
+import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScreen
@@ -295,7 +296,25 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             }
             UpdateProfile(
                 navController,
-                vm.state.value
+                vm.state.value,
+                onUpdateBtnClick = {
+                    avatar, email, birthYear, address, country, description, firstName, gender, lastName, phoneNumber, creationTime, lastModificationTime ->
+                    UpdateProfileParams(
+                        avatar = avatar, //will change
+                        email = email,
+                        birthYear = birthYear,
+                        city = address,
+                        country = country,
+                        description = description,
+                        firstName = firstName,
+                        gender = gender,
+                        lastName = lastName,
+                        phoneNumber = phoneNumber,
+                        creationTime = creationTime,
+                        lastModificationTime = lastModificationTime,
+                        id = ""
+                    )
+                }
             )
         }
 

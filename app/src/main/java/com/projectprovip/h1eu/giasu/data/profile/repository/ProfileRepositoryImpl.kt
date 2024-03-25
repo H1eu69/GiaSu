@@ -1,8 +1,10 @@
 package com.projectprovip.h1eu.giasu.data.profile.repository
 
 import com.projectprovip.h1eu.giasu.data.profile.api.ProfileApi
-import com.projectprovip.h1eu.giasu.data.profile.dto.ProfileDto
+import com.projectprovip.h1eu.giasu.data.profile.dto.profileDto.ProfileDto
+import com.projectprovip.h1eu.giasu.data.profile.dto.updateProfileDto.UpdateProfileDto
 import com.projectprovip.h1eu.giasu.domain.profile.repository.ProfileRepository
+import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
 import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(
@@ -10,5 +12,9 @@ class ProfileRepositoryImpl @Inject constructor(
 ) : ProfileRepository{
     override suspend fun getUserProfile(token: String): ProfileDto {
         return api.getUserProfile(token)
+    }
+
+    override suspend fun updateProfile(token: String, params: UpdateProfileParams): UpdateProfileDto {
+        return api.updateProfile(token, params)
     }
 }
