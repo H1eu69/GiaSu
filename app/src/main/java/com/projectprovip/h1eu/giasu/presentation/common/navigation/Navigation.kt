@@ -281,12 +281,10 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             val vm = hiltViewModel<TutorRegisterViewModel>()
             TutorRegisterScreen(navController,
                 vm.tutorRegisterState.value,
-                registerTutor = { s1, s2, s3 ->
-                    vm.registerTutor(token.value, s1, s2, s3)
+                registerTutor = { s1, s2, s3 , s4->
+                    vm.registerTutor(token.value, s1, s2, s3, s4)
                 },
-                uploadImage = { uri ->
-                    vm.uploadImage(uri)
-                })
+               )
         }
 
         composable(Screens.InApp.Profile.UpdateProfile.route) {

@@ -83,15 +83,14 @@ import kotlin.math.ceil
 @Preview
 @Composable
 fun PreviewTutorRegister() {
-    TutorRegisterScreen(rememberNavController(), TutorRegisterState(), { s1, s2, s3 -> }, { u -> })
+    TutorRegisterScreen(rememberNavController(), TutorRegisterState(), { s1, s2, s3 , s4-> },)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TutorRegisterScreen(
     navController: NavController, registerState: TutorRegisterState,
-    registerTutor: (String, String, String) -> Unit,
-    uploadImage: (Uri) -> Unit
+    registerTutor: (String, String, String, List<Uri>) -> Unit,
 ) {
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
@@ -138,6 +137,14 @@ fun TutorRegisterScreen(
             )
         }
     ) {
+        val images = remember {
+            mutableStateOf(
+                listOf(
+                    "".toUri(),
+                )
+            )
+        }
+
         val academicText = remember { mutableStateOf("") }
         val universityText = remember { mutableStateOf("") }
         val majorText = remember { mutableStateOf("") }
@@ -245,13 +252,6 @@ fun TutorRegisterScreen(
                     )
                 }
                 item {
-                    val images = remember {
-                        mutableStateOf(
-                            listOf(
-                                "".toUri(),
-                            )
-                        )
-                    }
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -290,7 +290,6 @@ fun TutorRegisterScreen(
                                 newList.removeAt(index)
                                 newList.add(index, uri)
                                 images.value = newList
-                                uploadImage(uri)
                             },
                             onDeleteUri = { index ->
                                 val newList = images.value.toMutableList()
@@ -309,7 +308,8 @@ fun TutorRegisterScreen(
                     registerTutor(
                         academicText.value,
                         universityText.value,
-                        majorText.value
+                        majorText.value,
+                        images.value
                     )
                 },
                 modifier = Modifier
