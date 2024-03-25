@@ -3,8 +3,8 @@ package com.projectprovip.h1eu.giasu.di
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.data.course.api.CourseApi
 import com.projectprovip.h1eu.giasu.data.course.repository.CourseRepositoryImpl
-import com.projectprovip.h1eu.giasu.data.location.api.province.ProvinceApi
-import com.projectprovip.h1eu.giasu.data.location.repository.ProvinceRepositoryImpl
+import com.projectprovip.h1eu.giasu.data.location.api.LocationApi
+import com.projectprovip.h1eu.giasu.data.location.repository.LocationRepositoryImpl
 import com.projectprovip.h1eu.giasu.data.profile.api.ProfileApi
 import com.projectprovip.h1eu.giasu.data.profile.repository.ProfileRepositoryImpl
 import com.projectprovip.h1eu.giasu.data.tutor.api.TutorApi
@@ -13,7 +13,7 @@ import com.projectprovip.h1eu.giasu.data.user.api.UserAuthApi
 import com.projectprovip.h1eu.giasu.data.user.repository.UserRepositoryImpl
 import com.projectprovip.h1eu.giasu.domain.authentication.repository.UserRepository
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
-import com.projectprovip.h1eu.giasu.domain.location.repository.ProvinceRepository
+import com.projectprovip.h1eu.giasu.domain.location.repository.LocationRepository
 import com.projectprovip.h1eu.giasu.domain.profile.repository.ProfileRepository
 import com.projectprovip.h1eu.giasu.domain.tutor.repository.TutorRepository
 import dagger.Module
@@ -59,12 +59,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLocationApi() : ProvinceApi {
+    fun provideLocationApi() : LocationApi {
         return Retrofit.Builder()
             .baseUrl(Constant.LOCATION_API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(ProvinceApi::class.java)
+            .create(LocationApi::class.java)
     }
 
     @Provides
@@ -98,8 +98,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideProvinceRepository(api : ProvinceApi) : ProvinceRepository {
-        return ProvinceRepositoryImpl(api)
+    fun provideProvinceRepository(api : LocationApi) : LocationRepository {
+        return LocationRepositoryImpl(api)
     }
 
     @Provides

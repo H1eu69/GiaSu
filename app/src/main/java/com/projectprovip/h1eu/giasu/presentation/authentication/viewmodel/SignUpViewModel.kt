@@ -16,6 +16,7 @@ import com.projectprovip.h1eu.giasu.domain.location.usecase.GetProvinceUseCase
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.SignUpState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.Validate
+import com.projectprovip.h1eu.giasu.presentation.authentication.model.toProvinceItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -46,8 +47,11 @@ class SignUpViewModel @Inject constructor(
                 }
 
                 is EDSResult.Success -> {
+                    val provinceItem = result.data!!.map {
+                        it.toProvinceItem()
+                    }
                     _provinceState.value = ProvinceState(
-                        province = result.data!!
+                        province = provinceItem
                     )
                     Log.d("SignUpViewModel", _provinceState.value.toString())
 

@@ -189,7 +189,7 @@ fun LearningCourseScreen(
 
 @Composable
 fun CircularLoading(modifier: Modifier = Modifier,
-                    color: Color = EDSColors.primaryColor) {
+                    color: Color = EDSColors.primaryColor,) {
     Box(
         modifier = modifier.fillMaxSize()
     ) {

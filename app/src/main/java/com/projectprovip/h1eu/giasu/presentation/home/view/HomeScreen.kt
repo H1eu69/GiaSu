@@ -196,7 +196,7 @@ fun HomeScreen(navController: NavController, state: CourseDetailState,
                         modifier = Modifier
                             .padding(it)
                             .background(
-                                EDSColors.grayX3
+                                EDSColors.white
                             )
                             .padding(top = 8.dp)
                             .fillMaxSize()

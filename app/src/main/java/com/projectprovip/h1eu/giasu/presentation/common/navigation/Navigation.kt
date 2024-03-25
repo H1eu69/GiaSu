@@ -45,12 +45,14 @@ import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailView
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CreateClassScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.LearningCourseScreen
+import com.projectprovip.h1eu.giasu.presentation.profile.view.LocationPickScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.ProfileScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorRegisterScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorReviewScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.UpdateProfile
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CreateClassViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCoursesViewModel
+import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LocationPickViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorRegisterViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.TutorReviewViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.UpdateProfileViewModel
@@ -303,6 +305,28 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                 vm.requestClass(token.value, it)
             }
             CreateClassScreen(navController, vm.state.value, createCourse)
+        }
+        composable(Screens.InApp.Profile.RequestClass.LocationPick.route) {
+            val vm = hiltViewModel<LocationPickViewModel>()
+            LaunchedEffect(Unit) {
+                vm.getProvince()
+            }
+            LocationPickScreen(navController, state = vm.state.value,
+                onSelectProvince = {
+                    vm.selectProvince(it)
+                },
+                onSelectDistrict = {
+                    vm.selectDistrict(it)
+                },
+                onSelectWard = {
+                    vm.selectWard(it)
+                },
+                onGetDistrict = {
+                    vm.getDistrict(it)
+                },
+                onGetWard = {
+                    vm.getWard(it)
+                })
         }
         composable(Screens.InApp.Profile.LearningCourses.route) {
             val vm = hiltViewModel<LearningCoursesViewModel>()

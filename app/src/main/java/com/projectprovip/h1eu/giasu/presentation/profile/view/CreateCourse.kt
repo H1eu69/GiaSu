@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.profile.view
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,9 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Search
@@ -29,13 +27,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,6 +60,7 @@ import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CreateCourseState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
@@ -129,7 +132,7 @@ fun CreateClassScreen(
                 .fillMaxSize()
         ) {
             ClassRequestBody(
-
+                navController = navController,
                 onButtonClick = onButtonClick
             )
         }
@@ -140,8 +143,30 @@ fun CreateClassScreen(
 @Composable
 fun ClassRequestBody(
     modifier: Modifier = Modifier,
+    navController: NavController,
     onButtonClick: (CreateCourseInput) -> Unit
 ) {
+    val provinceResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("province")?.observeAsState()
+
+    val districtResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("district")?.observeAsState()
+
+    val wardResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("ward")?.observeAsState()
+
+    provinceResult?.value?.let {
+        Log.d("Read result", it)
+    }
+    districtResult?.value?.let {
+        Log.d("Read result", it)
+    }
+    wardResult?.value?.let {
+        Log.d("Read result", it)
+    }
     val title = remember {
         mutableStateOf("")
     }
@@ -411,7 +436,10 @@ fun ClassRequestBody(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp)
-                        .padding(horizontal = 20.dp),
+                        .padding(horizontal = 20.dp)
+                        .clickable {
+                            navController.navigate(Screens.InApp.Profile.RequestClass.LocationPick.route)
+                        },
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Location",
@@ -423,6 +451,7 @@ fun ClassRequestBody(
                     onValueChange = { value ->
                         address.value = value
                     },
+                    enabled = false,
                     value = address.value,
                     colors = OutlinedTextFieldDefaults.colors(
                         cursorColor = EDSColors.primaryColor,
