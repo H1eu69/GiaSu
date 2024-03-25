@@ -7,6 +7,8 @@ import com.projectprovip.h1eu.giasu.data.location.api.LocationApi
 import com.projectprovip.h1eu.giasu.data.location.repository.LocationRepositoryImpl
 import com.projectprovip.h1eu.giasu.data.profile.api.ProfileApi
 import com.projectprovip.h1eu.giasu.data.profile.repository.ProfileRepositoryImpl
+import com.projectprovip.h1eu.giasu.data.subject.api.SubjectApi
+import com.projectprovip.h1eu.giasu.data.subject.repository.SubjectRepositoryImpl
 import com.projectprovip.h1eu.giasu.data.tutor.api.TutorApi
 import com.projectprovip.h1eu.giasu.data.tutor.repository.TutorRepositoryImpl
 import com.projectprovip.h1eu.giasu.data.user.api.UserAuthApi
@@ -15,6 +17,7 @@ import com.projectprovip.h1eu.giasu.domain.authentication.repository.UserReposit
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import com.projectprovip.h1eu.giasu.domain.location.repository.LocationRepository
 import com.projectprovip.h1eu.giasu.domain.profile.repository.ProfileRepository
+import com.projectprovip.h1eu.giasu.domain.subject.repository.SubjectRepository
 import com.projectprovip.h1eu.giasu.domain.tutor.repository.TutorRepository
 import dagger.Module
 import dagger.Provides
@@ -79,6 +82,16 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideSubjectApi() : SubjectApi {
+        return Retrofit.Builder()
+            .baseUrl(Constant.API_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(SubjectApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideUserRepository(api : UserAuthApi) : UserRepository{
         return UserRepositoryImpl(api)
     }
@@ -106,5 +119,11 @@ object AppModule {
     @Singleton
     fun provideProfileRepository(api : ProfileApi) : ProfileRepository {
         return ProfileRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSubjectRepository(api : SubjectApi) : SubjectRepository {
+        return SubjectRepositoryImpl(api)
     }
 }

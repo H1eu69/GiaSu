@@ -77,9 +77,9 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
+import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectItem
+import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -90,7 +90,8 @@ fun UpdateProfilePreview() {
     UpdateProfile(
         navController = rememberNavController(),
         UpdateProfileState(),
-        { a,b,c,d,e,f,g,h,i,k,l,m ->}
+        SubjectState(),
+        { a, b, c, d, e, f, g, h, i, k, l, m -> }
     )
 }
 
@@ -98,12 +99,13 @@ fun UpdateProfilePreview() {
 @Composable
 fun UpdateProfile(
     navController: NavController, state: UpdateProfileState,
+    subjectState: SubjectState,
     onUpdateBtnClick: (String, String, Int, String, String, String, String, String, String, String, String, String) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
-    val isTutor = state.data.role == "Tutor"
+    val isTutor = state.data.role != "Tutor"
 
     val profile = state.data
     val firstName = remember { mutableStateOf(profile.firstName) }
@@ -193,7 +195,8 @@ fun UpdateProfile(
                         initValue,
                         genderOptions,
                         genderSelectedOption,
-                        onGenderSelect
+                        onGenderSelect,
+                        subjectState
                     ) else
                     LearnerRole(
                         navController = navController,
@@ -555,7 +558,8 @@ fun TutorRole(
     initValue: MutableState<Int>,
     genderOptions: List<String>,
     genderSelectedOption: String,
-    onGenderSelect: (String) -> Unit
+    onGenderSelect: (String) -> Unit,
+    subjectState: SubjectState,
 ) {
 
     val avatarLauncher =
@@ -566,29 +570,11 @@ fun TutorRole(
         }
 
     if (openEditSubjectDialog.value) {
-        val dummySubjects = remember {
-            mutableStateOf(
-                listOf(
-                    SubjectChip("Java"),
-                    SubjectChip("C++"),
-                    SubjectChip("Python"),
-                    SubjectChip("Piano"),
-                    SubjectChip("Thu dao"),
-                    SubjectChip("English Advanced"),
-                    SubjectChip("Toan cao cap"),
-                    SubjectChip("1235 anh danh roi so 4"),
-                    SubjectChip("You just want attention"),
-                    SubjectChip("You dont want my heart"),
-                    SubjectChip("Ngay co ay di theo chan me cha"),
-                    SubjectChip("1 2 3 zo"),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                )
-
-            )
+        val subject = remember {
+            mutableStateOf(subjectState.data)
         }
-        SubjectDialog(dummySubjects, onDisMiss = {
+
+        SubjectDialog(subject, onDisMiss = {
             openEditSubjectDialog.value = false
         },
             onConfirm = {
@@ -1048,7 +1034,8 @@ fun TutorPreview() {
         initValue,
         genderOptions,
         genderSelectedOption,
-        onGenderSelect
+        onGenderSelect,
+        subjectState = SubjectState()
     )
 }
 
@@ -1102,21 +1089,20 @@ fun SubjectDialogPreview() {
         remember {
             mutableStateOf(
                 listOf(
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
-                    SubjectChip(),
+//                    SubjectItem(),
+//                    SubjectItem(),
+//                    SubjectItem(),
+//                    SubjectItem(),
+//                    SubjectItem(),
+//                    SubjectItem(),
+//                    SubjectItem(),
+//                    SubjectItem(),
+//                    SubjectItem(),
+//                    SubjectItem(),
+//                    SubjectChip(),
+//                    SubjectChip(),
+//                    SubjectChip(),
+//                    SubjectChip(),
                 )
             )
 
@@ -1126,7 +1112,7 @@ fun SubjectDialogPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubjectDialog(
-    subjects: MutableState<List<SubjectChip>>,
+    subjects: MutableState<List<SubjectItem>>,
     onDisMiss: () -> Unit = {},
     onConfirm: () -> Unit = {}
 ) {
@@ -1166,19 +1152,19 @@ fun SubjectDialog(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
 
-                    subjects.value.forEachIndexed { index, chip ->
+                    subjects.value.forEachIndexed { index, subject ->
                         item {
                             FilterChip(
                                 modifier = Modifier.fillMaxWidth(),
-                                selected = chip.selected,
+                                selected = subject.isSelected,
                                 onClick = {
                                     val newList = subjects.value.toMutableList()
-                                    newList[index] = chip.copy(selected = !chip.selected)
+                                    newList[index] = subject.copy(isSelected = !subject.isSelected)
                                     subjects.value = newList
                                 },
                                 label = {
                                     Text(
-                                        chip.name, fontWeight = FontWeight.W300,
+                                        subject.name, fontWeight = FontWeight.W300,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier
@@ -1186,7 +1172,7 @@ fun SubjectDialog(
                                     )
                                 },
                                 trailingIcon = {
-                                    if (chip.selected)
+                                    if (subject.isSelected)
                                         Icon(
                                             imageVector = Icons.Default.CheckCircle,
                                             contentDescription = null

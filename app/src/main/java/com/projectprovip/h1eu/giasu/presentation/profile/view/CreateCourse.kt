@@ -63,7 +63,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CreateCourseState
-import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
+import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectItem
 
 @Preview
 @Composable
@@ -222,21 +222,7 @@ fun ClassRequestBody(
             val dummySubjects = remember {
                 mutableStateOf(
                     listOf(
-                        SubjectChip("Java"),
-                        SubjectChip("C++"),
-                        SubjectChip("Python"),
-                        SubjectChip("Piano"),
-                        SubjectChip("Thu dao"),
-                        SubjectChip("English Advanced"),
-                        SubjectChip("Toan cao cap"),
-                        SubjectChip("1235 anh danh roi so 4"),
-                        SubjectChip("You just want attention"),
-                        SubjectChip("You dont want my heart"),
-                        SubjectChip("Ngay co ay di theo chan me cha"),
-                        SubjectChip("1 2 3 zo"),
-                        SubjectChip(),
-                        SubjectChip(),
-                        SubjectChip(),
+                        SubjectItem()
                     )
 
                 )
@@ -652,7 +638,7 @@ fun ClassRequestBody(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PickSubjectDialog(
-    subjects: MutableState<List<SubjectChip>>,
+    subjects: MutableState<List<SubjectItem>>,
     onDisMiss: () -> Unit = {},
     onConfirm: (String) -> Unit = {}
 ) {
@@ -697,13 +683,13 @@ fun PickSubjectDialog(
                         item {
                             FilterChip(
                                 modifier = Modifier.fillMaxWidth(),
-                                selected = chip.selected,
+                                selected = chip.isSelected,
                                 onClick = {
                                     val newList = subjects.value.toMutableList()
                                     newList.forEach {
-                                        it.selected = false
+                                        it.isSelected = false
                                     }
-                                    newList[index] = chip.copy(selected = !chip.selected)
+                                    newList[index] = chip.copy(isSelected = !chip.isSelected)
 
                                     subjects.value = newList
                                     selectedText.value = newList[index].name
@@ -718,7 +704,7 @@ fun PickSubjectDialog(
                                     )
                                 },
                                 trailingIcon = {
-                                    if (chip.selected)
+                                    if (chip.isSelected)
                                         Icon(
                                             imageVector = Icons.Default.CheckCircle,
                                             contentDescription = null

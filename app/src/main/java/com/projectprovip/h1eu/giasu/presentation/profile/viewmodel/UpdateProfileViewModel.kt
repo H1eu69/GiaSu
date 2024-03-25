@@ -11,6 +11,9 @@ import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.GetUserProfileUseCase
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileUseCase
+import com.projectprovip.h1eu.giasu.domain.subject.model.toSubjectItem
+import com.projectprovip.h1eu.giasu.domain.subject.usecase.GetSubjectUseCase
+import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -22,10 +25,15 @@ import javax.inject.Inject
 @HiltViewModel
 class UpdateProfileViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
-    private val updateProfileUseCase: UpdateProfileUseCase
+    private val updateProfileUseCase: UpdateProfileUseCase,
+    private val getSubjectUseCase: GetSubjectUseCase
 ) : ViewModel() {
     private var _state = mutableStateOf(UpdateProfileState())
     val state: State<UpdateProfileState> = _state
+
+    private var _subjectState = mutableStateOf(SubjectState())
+    val subjectState: State<SubjectState> = _subjectState
+
 
     private var _storagePath = ""
     private var downloadPath = Uri.parse("")
@@ -97,4 +105,29 @@ class UpdateProfileViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
+
+    fun getSubject() {
+        getSubjectUseCase().onEach { result ->
+            when (result) {
+                is EDSResult.Loading -> {
+                    _subjectState.value = SubjectState(isLoading = true)
+                }
+
+                is EDSResult.Error -> {
+                    _subjectState.value = SubjectState(error = result.message!!)
+                    Log.d("Test get subject error", result.message)
+                }
+
+                is EDSResult.Success -> {
+                    _subjectState.value = SubjectState(data = result.data!!.map {
+                        it.toSubjectItem()
+                    })
+                    Log.d("Test get subject", result.data.toString())
+
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }
+
 }

@@ -291,10 +291,12 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             val vm = hiltViewModel<UpdateProfileViewModel>()
             LaunchedEffect(Unit) {
                 vm.getProfile(token.value)
+                vm.getSubject()
             }
             UpdateProfile(
                 navController,
                 vm.state.value,
+                subjectState = vm.subjectState.value,
                 onUpdateBtnClick = { avatar, email, birthYear, address, country, description, firstName, gender, lastName, phoneNumber, creationTime, lastModificationTime ->
                     vm.updateProfile(
                         token.value,
