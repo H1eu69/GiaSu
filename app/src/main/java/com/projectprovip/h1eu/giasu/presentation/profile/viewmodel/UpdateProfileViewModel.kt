@@ -11,6 +11,8 @@ import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.GetUserProfileUseCase
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileUseCase
+import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateTutorInfoParams
+import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateTutorInformationUseCase
 import com.projectprovip.h1eu.giasu.domain.subject.model.toSubjectItem
 import com.projectprovip.h1eu.giasu.domain.subject.usecase.GetSubjectUseCase
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
@@ -26,6 +28,7 @@ import javax.inject.Inject
 class UpdateProfileViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val updateProfileUseCase: UpdateProfileUseCase,
+    private val updateTutorInfoUseCase: UpdateTutorInformationUseCase,
     private val getSubjectUseCase: GetSubjectUseCase
 ) : ViewModel() {
     private var _state = mutableStateOf(UpdateProfileState())
@@ -98,7 +101,7 @@ class UpdateProfileViewModel @Inject constructor(
                     }
 
                     is EDSResult.Success -> {
-                        _state.value = UpdateProfileState(isUpdateDone = true)
+                        _state.value = UpdateProfileState(isUpdateProfileDone = true)
                         Log.d("Test update profile", result.data.toString())
                     }
                 }
@@ -130,4 +133,24 @@ class UpdateProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-}
+    fun updateTutorInfo(token: String, updateTutorInfoParams: UpdateTutorInfoParams) {
+        updateTutorInfoUseCase(token, updateTutorInfoParams).onEach { result ->
+            when (result) {
+                is EDSResult.Loading -> {
+                    _state.value = UpdateProfileState(isLoading = true)
+                }
+
+                is EDSResult.Error -> {
+                    _state.value = UpdateProfileState(error = result.message!!)
+                    Log.d("Test update tutor error", result.message)
+                }
+
+                is EDSResult.Success -> {
+                    _state.value = UpdateProfileState(isUpdateTutorDone = true)
+                    Log.d("Test update tutor", result.data.toString())
+
+                }
+            }
+
+        }.launchIn(viewModelScope)
+    }}

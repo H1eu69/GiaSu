@@ -2,7 +2,9 @@ package com.projectprovip.h1eu.giasu.data.profile.api
 
 import com.projectprovip.h1eu.giasu.data.profile.dto.profileDto.ProfileDto
 import com.projectprovip.h1eu.giasu.data.profile.dto.updateProfileDto.UpdateProfileDto
+import com.projectprovip.h1eu.giasu.data.profile.dto.updateTutorInfoDto.UpdateTutorInfoDto
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
+import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateTutorInfoParams
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -19,4 +21,10 @@ interface ProfileApi {
         @Header("Authorization") token: String,
         @Body params: UpdateProfileParams
     ): UpdateProfileDto
+
+    @PUT("Profile/tutor-information/edit")
+    suspend fun updateTutorInformation(
+        @Header("Authorization") token: String,
+        @Body params: UpdateTutorInfoParams
+    ): UpdateTutorInfoDto
 }
