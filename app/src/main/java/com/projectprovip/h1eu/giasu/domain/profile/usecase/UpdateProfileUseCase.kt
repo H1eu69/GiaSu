@@ -29,13 +29,10 @@ data class UpdateProfileParams(
     val birthYear: Int,
     val city: String,
     val country: String,
-    val creationTime: String,
     val description: String,
     val email: String,
     val firstName: String,
-    val gender: String,
-    val id: String,
-    val lastModificationTime: String,
+    val gender: Int,
     val lastName: String,
     val phoneNumber: String
 )

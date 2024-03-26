@@ -133,7 +133,8 @@ fun CreateClassScreen(
         ) {
             ClassRequestBody(
                 navController = navController,
-                onButtonClick = onButtonClick
+                onButtonClick = onButtonClick,
+                state = state
             )
         }
     }
@@ -144,29 +145,10 @@ fun CreateClassScreen(
 fun ClassRequestBody(
     modifier: Modifier = Modifier,
     navController: NavController,
+    state: CreateCourseState,
     onButtonClick: (CreateCourseInput) -> Unit
 ) {
-    val provinceResult = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.getLiveData<String>("province")?.observeAsState()
 
-    val districtResult = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.getLiveData<String>("district")?.observeAsState()
-
-    val wardResult = navController.currentBackStackEntry
-        ?.savedStateHandle
-        ?.getLiveData<String>("ward")?.observeAsState()
-
-    provinceResult?.value?.let {
-        Log.d("Read result", it)
-    }
-    districtResult?.value?.let {
-        Log.d("Read result", it)
-    }
-    wardResult?.value?.let {
-        Log.d("Read result", it)
-    }
     val title = remember {
         mutableStateOf("")
     }
@@ -177,6 +159,9 @@ fun ClassRequestBody(
         mutableStateOf("")
     }
     val address = remember {
+        mutableStateOf("")
+    }
+    val houseNumber = remember {
         mutableStateOf("")
     }
     val numOfStudent = remember {
@@ -215,18 +200,43 @@ fun ClassRequestBody(
     }
     val openEditSubjectDialog = remember { mutableStateOf(false) }
 
-
     val localFocus = LocalFocusManager.current
+
+    val provinceResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("province")?.observeAsState()
+
+    val districtResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("district")?.observeAsState()
+
+    val wardResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("ward")?.observeAsState()
+
+    provinceResult?.value?.let { province ->
+        districtResult?.value?.let { district ->
+            wardResult?.value?.let { ward ->
+                address.value = "${ward}, ${district}, ${province}"
+            }
+        }
+    }
+
+    provinceResult?.value?.let {
+        Log.d("Read result", it)
+    }
+    districtResult?.value?.let {
+        Log.d("Read result", it)
+    }
+    wardResult?.value?.let {
+        Log.d("Read result", it)
+    }
     Box(modifier = modifier) {
         if (openEditSubjectDialog.value) {
             val dummySubjects = remember {
-                mutableStateOf(
-                    listOf(
-                        SubjectItem()
-                    )
-
-                )
+                mutableStateOf(state.subjects)
             }
+
             PickSubjectDialog(dummySubjects, onDisMiss = {
                 openEditSubjectDialog.value = false
             },
@@ -439,6 +449,33 @@ fun ClassRequestBody(
                     },
                     enabled = false,
                     value = address.value,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = EDSColors.blackColor,
+                        disabledBorderColor = EDSColors.gray
+                    ),
+                )
+            }
+            item {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                        .padding(horizontal = 20.dp)
+                        .clickable {
+                            navController.navigate(Screens.InApp.Profile.RequestClass.LocationPick.route)
+                        },
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "House number, street",
+                            color = EDSColors.grayX2
+                        )
+                    },
+                    keyboardActions = KeyboardActions(),
+                    shape = RoundedCornerShape(12.dp),
+                    onValueChange = { value ->
+                        houseNumber.value = value
+                    },
+                    value = houseNumber.value,
                     colors = OutlinedTextFieldDefaults.colors(
                         cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,

@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
+import com.projectprovip.h1eu.giasu.common.toEDSIntGender
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
@@ -308,12 +309,9 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                             country = country,
                             description = description,
                             firstName = firstName,
-                            gender = gender,
+                            gender = gender.toEDSIntGender(),
                             lastName = lastName,
                             phoneNumber = phoneNumber,
-                            creationTime = creationTime,
-                            lastModificationTime = lastModificationTime,
-                            id = ""
                         )
                     )
 

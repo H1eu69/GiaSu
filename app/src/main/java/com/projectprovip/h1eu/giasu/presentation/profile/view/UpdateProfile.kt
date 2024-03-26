@@ -105,7 +105,7 @@ fun UpdateProfile(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
-    val isTutor = state.data.role != "Tutor"
+    val isTutor = state.data.role == "Tutor"
 
     val profile = state.data
     val firstName = remember { mutableStateOf(profile.firstName) }
@@ -565,7 +565,7 @@ fun TutorRole(
     val avatarLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
             if (it != null) {
-
+                avatar.value = it
             }
         }
 
@@ -595,7 +595,7 @@ fun TutorRole(
                         .padding(20.dp)
                 ) {
                     AsyncImage(
-                        "https://media.istockphoto.com/id/1322220448/photo/abstract-digital-futuristic-eye.jpg?s=612x612&w=0&k=20&c=oAMmGJxyTTNW0XcttULhkp5IxfW9ZTaoVdVwI2KwK5s=",
+                        avatar.value,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

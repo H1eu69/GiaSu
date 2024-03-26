@@ -1,6 +1,5 @@
 package com.projectprovip.h1eu.giasu.common
 
-import android.content.Context
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -14,24 +13,27 @@ object DateFormat {
     }
 }
 
-fun String.alphaNumericOnly() : String {
+fun String.alphaNumericOnly(): String {
     val regex = Regex("[^A-Za-z0-9 ]")
     return regex.replace(this, "")
 }
 
-fun String.isEmailFormatted() : Boolean {
+fun String.isEmailFormatted(): Boolean {
     val emailRegex = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$")
     return emailRegex.matches(this)
 }
-fun String.isPhoneNumber() : Boolean {
+
+fun String.isPhoneNumber(): Boolean {
     val digitRegex = Regex("\\d+")
     return this.length <= 10 && digitRegex.matches(this)
 }
-fun String.isUsername() : Boolean {
+
+fun String.isUsername(): Boolean {
     val usernameRegex = Regex("^[a-zA-Z0-9_]{3,50}$")
     return usernameRegex.matches(this)
 }
-fun String.isPasswordFormatted() : Boolean {
+
+fun String.isPasswordFormatted(): Boolean {
     val lowercaseRegex = Regex("[a-z]")
     val uppercaseRegex = Regex("[A-Z]")
     val digitRegex = Regex("[0-9]")
@@ -42,4 +44,12 @@ fun String.isPasswordFormatted() : Boolean {
             uppercaseRegex.containsMatchIn(this) &&
             digitRegex.containsMatchIn(this) &&
             specialCharRegex.containsMatchIn(this)
+}
+
+fun String.toEDSIntGender(): Int {
+    return when (this) {
+        "Female" -> 0
+        "Male" -> 1
+        else -> 2
+    }
 }

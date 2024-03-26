@@ -12,7 +12,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TutorApi {
-    @GET("TutorInformation")
+    @GET("tutor")
     suspend fun getAllTutor(@Query("PageIndex") index: Int) : TutorDto
     @GET("TutorInformation/{id}")
     suspend fun getTutorDetail(@Path("id") tutorId: Int) : Response<TutorDetailDto>
