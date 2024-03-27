@@ -140,11 +140,13 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val token = remember { mutableStateOf("") }
+    val avatar = remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = "") {
         coroutine.launch {
             context.dataStore.data.collect { preference ->
                 token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
+                avatar.value = "${preference[stringPreferencesKey(Constant.USER_IMAGE_STRING)]}"
             }
         }
     }
@@ -296,13 +298,16 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             }
             UpdateProfile(
                 navController,
-                vm.state.value,
+                getProfileState = vm.getProfileState.value,
+                updateProfileState = vm.updateProfileState.value,
                 subjectState = vm.subjectState.value,
-                onUpdateBtnClick = { avatar, email, birthYear, address, country, description, firstName, gender, lastName, phoneNumber, creationTime, lastModificationTime ->
+                onUpdateBtnClick = { image, email, birthYear, address, country, description, firstName, gender, lastName, phoneNumber, ->
+                    val realAvatar = if(avatar.value == image) "" else image
+
                     vm.updateProfile(
                         token.value,
                         UpdateProfileParams(
-                            avatar = avatar, //will change
+                            avatar = realAvatar, //will change
                             email = email,
                             birthYear = birthYear,
                             city = address,

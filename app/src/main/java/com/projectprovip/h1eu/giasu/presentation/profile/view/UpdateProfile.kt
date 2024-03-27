@@ -3,6 +3,7 @@
 package com.projectprovip.h1eu.giasu.presentation.profile.view
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -53,11 +54,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -67,9 +70,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.dataStore
+import com.projectprovip.h1eu.giasu.domain.profile.model.Profile
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.NumberPickerDialog
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
@@ -77,9 +85,11 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.profile.model.GetProfileState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectItem
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
+import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -89,25 +99,30 @@ import java.time.format.DateTimeFormatter
 fun UpdateProfilePreview() {
     UpdateProfile(
         navController = rememberNavController(),
+        GetProfileState(),
         UpdateProfileState(),
         SubjectState(),
-        { a, b, c, d, e, f, g, h, i, k, l, m -> }
+        { a, b, c, d, e, f, g, h, i, k, -> }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateProfile(
-    navController: NavController, state: UpdateProfileState,
+    navController: NavController,
+    getProfileState: GetProfileState,
+    updateProfileState: UpdateProfileState,
     subjectState: SubjectState,
-    onUpdateBtnClick: (String, String, Int, String, String, String, String, String, String, String, String, String) -> Unit
+    onUpdateBtnClick: (String, String, Int, String, String, String, String, String, String, String,) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
-    val isTutor = state.data.role == "Tutor"
+    val context = LocalContext.current
 
-    val profile = state.data
+    val isTutor = getProfileState.data.role == "Tutor"
+
+    val profile = getProfileState.data
     val firstName = remember { mutableStateOf(profile.firstName) }
     val lastName = remember { mutableStateOf(profile.lastName) }
 
@@ -128,10 +143,6 @@ fun UpdateProfile(
     val (genderSelectedOption, onGenderSelect) = remember {
         mutableStateOf(genderOptions[genderOptions.indexOf(profile.gender)])
     }
-
-    val currentDateTime = OffsetDateTime.now()
-    val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-    val formattedDateTime = currentDateTime.format(formatter)
 
     LaunchedEffect(profile) {
         firstName.value = profile.firstName
@@ -163,81 +174,103 @@ fun UpdateProfile(
         },
         containerColor = EDSColors.white,
     ) {
-        if (state.isLoading)
-            CircularLoading()
-        else
-            Box(
-                Modifier
-                    .padding(it)
-                    .fillMaxSize()
-                    .background(EDSColors.white)
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null    // this gets rid of the ripple effect
+        getProfileState.apply {
+            when {
+                this.isLoading -> {
+                    CircularLoading()
+                }
+                else -> {
+                    Box(
+                        Modifier
+                            .padding(it)
+                            .fillMaxSize()
+                            .background(EDSColors.white)
+                            .clickable(
+                                interactionSource = interactionSource,
+                                indication = null    // this gets rid of the ripple effect
+                            ) {
+                                keyboardController?.hide()
+                                focusManager.clearFocus(true)
+                            }
                     ) {
-                        keyboardController?.hide()
-                        focusManager.clearFocus(true)
-                    }
-            ) {
-                if (isTutor)
-                    TutorRole(
-                        navController = navController,
-                        modifier = Modifier.fillMaxHeight(.9f),
-                        firstName,
-                        lastName,
-                        emailText,
-                        addressText,
-                        birthYearText,
-                        descriptionText,
-                        phoneText,
-                        openDialog,
-                        avatar,
-                        initValue,
-                        genderOptions,
-                        genderSelectedOption,
-                        onGenderSelect,
-                        subjectState
-                    ) else
-                    LearnerRole(
-                        navController = navController,
-                        modifier = Modifier.fillMaxHeight(.9f),
-                        firstName,
-                        lastName,
-                        emailText,
-                        addressText,
-                        birthYearText,
-                        descriptionText,
-                        phoneText,
-                        openDialog,
-                        avatar,
-                        initValue,
-                        genderOptions,
-                        genderSelectedOption,
-                        onGenderSelect
-                    )
-                EduSmartButton(
-                    text = "Update", onClick = {
-                        onUpdateBtnClick(
-                            avatar.value.toString(),
-                            emailText.value,
-                            birthYearText.value.toInt(),
-                            addressText.value,
-                            "Vietnam",
-                            descriptionText.value,
-                            firstName.value,
-                            genderSelectedOption,
-                            lastName.value,
-                            phoneText.value,
-                            formattedDateTime,
-                            formattedDateTime,
+                        if (isTutor)
+                            TutorRole(
+                                navController = navController,
+                                modifier = Modifier.fillMaxHeight(.9f),
+                                firstName,
+                                lastName,
+                                emailText,
+                                addressText,
+                                birthYearText,
+                                descriptionText,
+                                phoneText,
+                                openDialog,
+                                avatar,
+                                initValue,
+                                genderOptions,
+                                genderSelectedOption,
+                                onGenderSelect,
+                                subjectState
+                            ) else
+                            LearnerRole(
+                                navController = navController,
+                                modifier = Modifier.fillMaxHeight(.9f),
+                                firstName,
+                                lastName,
+                                emailText,
+                                addressText,
+                                birthYearText,
+                                descriptionText,
+                                phoneText,
+                                openDialog,
+                                avatar,
+                                initValue,
+                                genderOptions,
+                                genderSelectedOption,
+                                onGenderSelect
+                            )
+                        EduSmartButton(
+                            text = "Update", onClick = {
+                                onUpdateBtnClick(
+                                    avatar.value.toString(),
+                                    emailText.value,
+                                    birthYearText.value.toInt(),
+                                    addressText.value,
+                                    "Vietnam",
+                                    descriptionText.value,
+                                    firstName.value,
+                                    genderSelectedOption,
+                                    lastName.value,
+                                    phoneText.value,
+                                )
+                            },
+                            isLoading = updateProfileState.isLoading,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                                .align(Alignment.BottomCenter)
                         )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .align(Alignment.BottomCenter)
-                )
+                    }
+                }
             }
+        }
+        updateProfileState.apply {
+            when {
+                this.data != Profile() -> {
+                    val coroutine = rememberCoroutineScope()
+                    LaunchedEffect(key1 = "") {
+                        coroutine.launch {
+                            Log.d("test preference", updateProfileState.data.avatar)
+                            context.dataStore.edit { preference ->
+                                preference[stringPreferencesKey(Constant.USER_IMAGE_STRING)] =
+                                    updateProfileState.data.avatar
+                            }
+                        }
+                    }
+                    navController.popBackStack()
+                }
+            }
+        }
     }
 }
 

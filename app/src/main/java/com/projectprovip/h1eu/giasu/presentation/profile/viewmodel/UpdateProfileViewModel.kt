@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.projectprovip.h1eu.giasu.common.EDSResult
+import com.projectprovip.h1eu.giasu.domain.profile.model.Profile
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.GetUserProfileUseCase
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileUseCase
@@ -15,9 +16,11 @@ import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateTutorInfoParams
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateTutorInformationUseCase
 import com.projectprovip.h1eu.giasu.domain.subject.model.toSubjectItem
 import com.projectprovip.h1eu.giasu.domain.subject.usecase.GetSubjectUseCase
+import com.projectprovip.h1eu.giasu.presentation.profile.model.GetProfileState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,30 +34,31 @@ class UpdateProfileViewModel @Inject constructor(
     private val updateTutorInfoUseCase: UpdateTutorInformationUseCase,
     private val getSubjectUseCase: GetSubjectUseCase
 ) : ViewModel() {
-    private var _state = mutableStateOf(UpdateProfileState())
-    val state: State<UpdateProfileState> = _state
+    private var _updateProfileState = mutableStateOf(UpdateProfileState())
+    val updateProfileState: State<UpdateProfileState> = _updateProfileState
+
+    private var _getProfileState = mutableStateOf(GetProfileState())
+    val getProfileState: State<GetProfileState> = _getProfileState
 
     private var _subjectState = mutableStateOf(SubjectState())
     val subjectState: State<SubjectState> = _subjectState
-
-
-    private var _storagePath = ""
-    private var downloadPath = Uri.parse("")
+    private var _profile = Profile()
 
     fun getProfile(token: String) {
         getUserProfileUseCase(token).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {
-                    _state.value = UpdateProfileState(isLoading = true)
+                    _getProfileState.value = GetProfileState(isLoading = true)
                 }
 
                 is EDSResult.Error -> {
-                    _state.value = UpdateProfileState(error = result.message!!)
+                    _getProfileState.value = GetProfileState(error = result.message!!)
                     Log.d("Test get profile error", result.message)
                 }
 
                 is EDSResult.Success -> {
-                    _state.value = UpdateProfileState(data = result.data!!)
+                    _getProfileState.value = GetProfileState(data = result.data!!)
+                    _profile = result.data
                     Log.d("Test get profile", result.data.toString())
 
                 }
@@ -67,41 +71,50 @@ class UpdateProfileViewModel @Inject constructor(
         viewModelScope.launch {
             val uri = Uri.parse(updateProfileParams.avatar)
             val timeStamp = System.currentTimeMillis()
-            _storagePath = "images/${uri.lastPathSegment}_$timeStamp"
 
-            val storageRef = FirebaseStorage.getInstance().reference
-            val mountainsRef = storageRef.child(_storagePath)
+            if (uri.toString().isNotEmpty()) {
+                val deferredResults = async {
+                    val storagePath = "images/${uri.lastPathSegment}_$timeStamp"
+                    val storageRef = FirebaseStorage.getInstance().reference
+                    val mountainsRef = storageRef.child(storagePath)
 
-            mountainsRef.putFile(uri).continueWithTask { task ->
-                if (!task.isSuccessful) {
-                    task.exception?.let {
-                        throw it
-                    }
+                    // Put file to Firebase Storage
+                    val uploadTask = mountainsRef.putFile(uri)
+                        .continueWithTask { task ->
+                            if (!task.isSuccessful) {
+                                task.exception?.let { ex ->
+                                    throw ex
+                                }
+                            }
+                            mountainsRef.downloadUrl
+                        }.await()
+                    uploadTask
                 }
-                mountainsRef.downloadUrl
-            }.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    downloadPath = task.result
-                    updateProfileParams.avatar = downloadPath.toString()
-                    Log.d("Test updateProfileParams in callback", downloadPath.toString())
-                }
-            }.await()
+
+                updateProfileParams.avatar = deferredResults.await().toString()
+                _profile = _profile.copy(
+                    avatar = updateProfileParams.avatar
+                )
+                Log.d("Test register tutor before", updateProfileParams.avatar)
+            }
 
             Log.d("Test updateProfileParams", updateProfileParams.toString())
 
             updateProfileUseCase(token, updateProfileParams).onEach { result ->
                 when (result) {
                     is EDSResult.Loading -> {
-                        _state.value = UpdateProfileState(isLoading = true)
+                        _updateProfileState.value = UpdateProfileState(isLoading = true)
                     }
 
                     is EDSResult.Error -> {
-                        _state.value = UpdateProfileState(error = result.message!!)
+                        _updateProfileState.value = UpdateProfileState(error = result.message!!)
                         Log.d("Test update profile error", result.message)
                     }
 
                     is EDSResult.Success -> {
-                        _state.value = UpdateProfileState(isUpdateProfileDone = true)
+                        _updateProfileState.value = UpdateProfileState(
+                            data = _profile
+                        )
                         Log.d("Test update profile", result.data.toString())
                     }
                 }
@@ -137,20 +150,21 @@ class UpdateProfileViewModel @Inject constructor(
         updateTutorInfoUseCase(token, updateTutorInfoParams).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {
-                    _state.value = UpdateProfileState(isLoading = true)
+                    _updateProfileState.value = UpdateProfileState(isLoading = true)
                 }
 
                 is EDSResult.Error -> {
-                    _state.value = UpdateProfileState(error = result.message!!)
+                    _updateProfileState.value = UpdateProfileState(error = result.message!!)
                     Log.d("Test update tutor error", result.message)
                 }
 
                 is EDSResult.Success -> {
-                    _state.value = UpdateProfileState(isUpdateTutorDone = true)
+                    _updateProfileState.value = UpdateProfileState()
                     Log.d("Test update tutor", result.data.toString())
 
                 }
             }
 
         }.launchIn(viewModelScope)
-    }}
+    }
+}

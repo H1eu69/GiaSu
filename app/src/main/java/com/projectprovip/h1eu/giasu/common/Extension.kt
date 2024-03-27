@@ -48,8 +48,8 @@ fun String.isPasswordFormatted(): Boolean {
 
 fun String.toEDSIntGender(): Int {
     return when (this) {
-        "Female" -> 0
-        "Male" -> 1
+        "Male" -> 0
+        "Female" -> 1
         else -> 2
     }
 }
