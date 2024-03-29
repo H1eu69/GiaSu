@@ -47,6 +47,7 @@ import com.projectprovip.h1eu.giasu.presentation.home.view.SearchResultHomeScree
 import com.projectprovip.h1eu.giasu.presentation.home.view.SearchSuggestHomeScreen
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
+import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.SearchResultViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CreateClassScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.LearningCourseScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.LocationPickScreen
@@ -187,9 +188,13 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             "${Screens.InApp.Home.SearchResult.route}/{searchText}",
             arguments = listOf(navArgument("searchText") { type = NavType.StringType })
         ) {
+            val vm = hiltViewModel<SearchResultViewModel>()
             val searchText = it.arguments?.getString("searchText")
+            LaunchedEffect(Unit) {
+                vm.getCourses(searchText!!)
+            }
             SearchResultHomeScreen(
-                navController, homeViewModel.courseDetailState.value,
+                navController, vm.courseDetailState.value,
                 searchText
             )
         }

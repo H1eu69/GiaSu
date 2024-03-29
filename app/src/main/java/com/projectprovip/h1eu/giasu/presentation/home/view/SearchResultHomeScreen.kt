@@ -34,7 +34,6 @@ import androidx.compose.material.icons.sharp.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -92,6 +91,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.home.model.FilterSelect
+import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
 import kotlinx.coroutines.launch
 
 @Preview
@@ -203,19 +203,14 @@ fun SearchResultHomeScreen(
                             item {
                                 FilterItem(
                                     modifier = Modifier.padding(8.dp),
-                                    title = "location",
+                                    title = "Learning mode",
+                                    hasViewMore = false,
                                     filterItemsState = remember {
                                         mutableStateOf(
                                             listOf(
-                                                FilterSelect("Tay ninh 1"),
-                                                FilterSelect("Tay ninh2"),
-                                                FilterSelect("Tay ninh3"),
-                                                FilterSelect("Tay ninh4"),
-                                                FilterSelect("Tay ninh5"),
-                                                FilterSelect("Tay ninh6"),
-                                                FilterSelect("Tay ninh7"),
-                                                FilterSelect("Tay ninh8"),
-                                                FilterSelect("Tay ninh9"),
+                                                FilterSelect("Online"),
+                                                FilterSelect("Offline"),
+                                                FilterSelect("Hybrid"),
                                             )
                                         )
                                     }
@@ -225,47 +220,19 @@ fun SearchResultHomeScreen(
                             item {
                                 FilterItem(
                                     modifier = Modifier.padding(8.dp),
-                                    title = "location",
+                                    title = "Academic level requirement",
+                                    hasViewMore = false,
                                     filterItemsState = remember {
                                         mutableStateOf(
                                             listOf(
-                                                FilterSelect("Tay ninh 1"),
-                                                FilterSelect("Tay ninh2"),
-                                                FilterSelect("Tay ninh3"),
-                                                FilterSelect("Tay ninh4"),
-                                                FilterSelect("Tay ninh5"),
-                                                FilterSelect("Tay ninh6"),
-                                                FilterSelect("Tay ninh7"),
-                                                FilterSelect("Tay ninh8"),
-                                                FilterSelect("Tay ninh9"),
+                                                FilterSelect("Ungraduated"),
+                                                FilterSelect("Graduated"),
+                                                FilterSelect("Lecturer"),
                                             )
                                         )
                                     }
                                 )
                             }
-
-                            item {
-                                FilterItem(
-                                    modifier = Modifier.padding(8.dp),
-                                    title = "location",
-                                    filterItemsState = remember {
-                                        mutableStateOf(
-                                            listOf(
-                                                FilterSelect("Tay ninh 1"),
-                                                FilterSelect("Tay ninh2"),
-                                                FilterSelect("Tay ninh3"),
-                                                FilterSelect("Tay ninh4"),
-                                                FilterSelect("Tay ninh5"),
-                                                FilterSelect("Tay ninh6"),
-                                                FilterSelect("Tay ninh7"),
-                                                FilterSelect("Tay ninh8"),
-                                                FilterSelect("Tay ninh9"),
-                                            )
-                                        )
-                                    }
-                                )
-                            }
-
                         }
                         ApplyFilterButtons(Modifier.padding(8.dp))
                     }
@@ -292,55 +259,46 @@ fun SearchResultHomeScreen(
                     },
                     containerColor = EDSColors.white
                 ) { it ->
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(bottom = 30.dp),
-                        modifier = Modifier
-                            .padding(it)
-                    ) {
-                        item {
-                            ResultChip(navController, searchText!!)
-                        }
-                        state.apply {
-                            val filteredList = this.data.filter { courseDetail ->
-                                courseDetail.subjectName.contains(searchText!!)
+                    state.apply {
+                        val filteredList = this.data
+                        when {
+                            this.isLoading -> {
+                                CircularLoading(
+                                    modifier = Modifier.fillMaxSize(),
+                                    color = EDSColors.primaryColor
+                                )
                             }
-                            when {
-                                this.isLoading -> {
-                                    item {
-                                        CircularProgressIndicator(
-                                            color = EDSColors.primaryColor
+                            filteredList.isEmpty() -> {
+                                Box(modifier = Modifier.fillMaxSize()) {
+                                    val composition by rememberLottieComposition(
+                                        LottieCompositionSpec.RawRes(R.raw.empty_box),
+                                        onRetry = { failCount, exception ->
+                                            Log.d("LottieAnimation", failCount.toString())
+                                            Log.d("LottieAnimation", exception.toString())
+                                            // Continue retrying. Return false to stop trying.
+                                            false
+                                        })
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        LottieAnimation(
+                                            composition = composition,
+                                            iterations = LottieConstants.IterateForever,
                                         )
+                                        Text("No courses found")
                                     }
                                 }
-
-                                filteredList.isEmpty() -> {
+                            }
+                            else -> {
+                                LazyColumn(
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    contentPadding = PaddingValues(bottom = 30.dp),
+                                    modifier = Modifier
+                                        .padding(it)
+                                ) {
                                     item {
-                                        Box(modifier = Modifier.fillMaxSize()) {
-                                            val composition by rememberLottieComposition(
-                                                LottieCompositionSpec.RawRes(R.raw.empty_box),
-                                                onRetry = { failCount, exception ->
-                                                    Log.d("LottieAnimation", failCount.toString())
-                                                    Log.d("LottieAnimation", exception.toString())
-                                                    // Continue retrying. Return false to stop trying.
-                                                    false
-                                                })
-                                            Column(
-                                                horizontalAlignment = Alignment.CenterHorizontally
-                                            ) {
-                                                LottieAnimation(
-                                                    composition = composition,
-                                                    iterations = LottieConstants.IterateForever,
-                                                )
-                                                Text("No courses found")
-                                            }
-
-
-                                        }
+                                        ResultChip(navController, searchText!!)
                                     }
-                                }
-
-                                else -> {
                                     filteredList.forEach {
                                         item {
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -354,8 +312,10 @@ fun SearchResultHomeScreen(
                                 }
 
                             }
+
                         }
                     }
+
                 }
 
             }

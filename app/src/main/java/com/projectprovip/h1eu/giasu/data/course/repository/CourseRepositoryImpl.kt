@@ -16,8 +16,8 @@ import javax.inject.Inject
 class CourseRepositoryImpl @Inject constructor(
     private val api: CourseApi
 ) : CoursesRepository{
-    override suspend fun getAllClasses(page: Int): NewCoursesDto {
-        return api.getAllClasses(page)
+    override suspend fun getAllClasses(page: Int, subjectName: String?): NewCoursesDto {
+        return api.getAllClasses(page, subjectName)
     }
 
     override suspend fun createCourse(token: String, input: CreateCourseInput): Response<Unit> {

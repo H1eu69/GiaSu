@@ -20,7 +20,8 @@ import retrofit2.http.Query
 interface CourseApi {
     @GET("Course")
     suspend fun getAllClasses(
-        @Query("PageIndex") page: Int
+        @Query("PageIndex") page: Int,
+        @Query("SubjectName") subjectName: String?
     ) : NewCoursesDto
 
     @POST("Course/Create")

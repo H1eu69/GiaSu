@@ -11,12 +11,24 @@ import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import retrofit2.Response
 
 interface CoursesRepository {
-    suspend fun getAllClasses(page: Int): NewCoursesDto
-    suspend fun createCourse(token:String, input: CreateCourseInput): Response<Unit>
+    suspend fun getAllClasses(page: Int, subjectName: String?): NewCoursesDto
+    suspend fun createCourse(token: String, input: CreateCourseInput): Response<Unit>
     suspend fun registerCourse(id: String, token: String?): Response<RequestCourseDto>
     suspend fun getRequestedCourse(token: String?): Response<RequestedCourseDto>
-    suspend fun getRequestedCourseDetail(id: Int, token: String?): Response<RequestedCourseDetailDto>
+    suspend fun getRequestedCourseDetail(
+        id: Int,
+        token: String?
+    ): Response<RequestedCourseDetailDto>
+
     suspend fun getLearningCourses(token: String): Response<LearningCourseDto>
-    suspend fun getLearningCourseDetail(token: String, courseId: Int): Response<LearningCourseDetailDto>
-    suspend fun reviewTutorByCourseId(token: String, courseId: Int, input: ReviewTutorInput): Response<Unit>
+    suspend fun getLearningCourseDetail(
+        token: String,
+        courseId: Int
+    ): Response<LearningCourseDetailDto>
+
+    suspend fun reviewTutorByCourseId(
+        token: String,
+        courseId: Int,
+        input: ReviewTutorInput
+    ): Response<Unit>
 }
