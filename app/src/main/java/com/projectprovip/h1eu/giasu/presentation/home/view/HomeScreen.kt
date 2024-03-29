@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
@@ -66,14 +65,14 @@ import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
+import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 fun PreviewHomeScreen() {
     HomeScreen(
-        rememberNavController(), CourseDetailState(
+        rememberNavController(), HomeState(
             data = listOf(
                 CourseDetail(),
                 CourseDetail(),
@@ -92,8 +91,10 @@ fun PreviewHomeScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController, state: CourseDetailState,
-               onLoadMore: () -> Unit = {}) {
+fun HomeScreen(
+    navController: NavController, state: HomeState,
+    onLoadMore: () -> Unit = {}
+) {
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
@@ -209,7 +210,9 @@ fun HomeScreen(navController: NavController, state: CourseDetailState,
                     ) {
                         items(state.data.count()) { index ->
                             CourseItem(
-                                navController = navController,
+                                onClick = {
+                                    navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${state.data[index].id}")
+                                },
                                 data = state.data[index],
                                 modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
                             )
@@ -232,7 +235,7 @@ fun HomeScreen(navController: NavController, state: CourseDetailState,
 fun BodyContent(
     modifier: Modifier,
     navController: NavController,
-    state: CourseDetailState,
+    state: HomeState,
 ) {
     state.apply {
         when {
@@ -260,7 +263,9 @@ fun BodyContent(
                 ) {
                     items(state.data.count()) { index ->
                         CourseItem(
-                            navController = navController,
+                            onClick = {
+                                navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${state.data[index].id}")
+                            },
                             data = state.data[index],
                             modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
                         )
@@ -430,27 +435,29 @@ fun PreviewCourseItem() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             CourseItem(
-                rememberNavController(),
-                CourseDetail()
-            )
+                CourseDetail(), onClick = {},
+
+                )
             CourseItem(
-                rememberNavController(),
-                CourseDetail()
-            )
+                CourseDetail(), onClick = {},
+
+                )
             CourseItem(
-                rememberNavController(),
-                CourseDetail()
-            )
+                CourseDetail(), onClick = {},
+
+                )
             CourseItem(
-                rememberNavController(),
-                CourseDetail()
-            )
+                CourseDetail(), onClick = {},
+                )
         }
     }
 }
 
 @Composable
-fun CourseItem(navController: NavController, data: CourseDetail, modifier: Modifier = Modifier) {
+fun CourseItem(
+    data: CourseDetail, modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Card(
         shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
@@ -464,7 +471,7 @@ fun CourseItem(navController: NavController, data: CourseDetail, modifier: Modif
                 RoundedCornerShape(10)
             )
             .clickable {
-                navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${data.id}")
+                onClick()
             }
     ) {
         Column(

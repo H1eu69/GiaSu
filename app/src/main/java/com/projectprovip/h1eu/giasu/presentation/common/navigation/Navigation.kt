@@ -161,7 +161,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         modifier = modifier,
     ) {
         composable(Screens.InApp.Home.route) {
-            HomeScreen(navController, homeViewModel.courseDetailState.value,
+            HomeScreen(navController, homeViewModel.homeState.value,
                 onLoadMore = {
                     homeViewModel.getCourses()
                 })
@@ -194,7 +194,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                 vm.getCourses(searchText!!)
             }
             SearchResultHomeScreen(
-                navController, vm.courseDetailState.value,
+                navController, vm.searchResultState.value,
                 searchText
             )
         }
@@ -207,13 +207,14 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             val courseDetailViewModel = hiltViewModel<CourseDetailViewModel>()
 
             val courseId = backStackEntry.arguments?.getString("courseId")
-            val courseDetail =
-                if (courseId != null) homeViewModel.getClassDetailById(courseId) else null
+            LaunchedEffect(Unit) {
+                courseDetailViewModel.getCourseById(courseId!!)
+            }
 
             CourseDetailScreen(
                 navController,
-                courseDetail,
-                courseDetailViewModel.courseRegisterState.value,
+                courseDetailState = courseDetailViewModel.courseDetailState.value,
+                courseRegisterState = courseDetailViewModel.courseRegisterState.value,
                 onRegisterClicked = {
                     courseDetailViewModel.registerCourse(courseId!!, token.value)
                 }

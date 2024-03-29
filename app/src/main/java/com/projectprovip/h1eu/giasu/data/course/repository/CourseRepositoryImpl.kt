@@ -7,6 +7,7 @@ import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
@@ -18,6 +19,10 @@ class CourseRepositoryImpl @Inject constructor(
 ) : CoursesRepository{
     override suspend fun getAllClasses(page: Int, subjectName: String?): NewCoursesDto {
         return api.getAllClasses(page, subjectName)
+    }
+
+    override suspend fun getCourseById(id: String): CourseByIdDto {
+        return api.getCourseById(id)
     }
 
     override suspend fun createCourse(token: String, input: CreateCourseInput): Response<Unit> {

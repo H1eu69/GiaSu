@@ -89,8 +89,9 @@ import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.VerticalGrid
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
+import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
 import com.projectprovip.h1eu.giasu.presentation.home.model.FilterSelect
+import com.projectprovip.h1eu.giasu.presentation.home.model.SearchResultState
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
 import kotlinx.coroutines.launch
 
@@ -99,7 +100,7 @@ import kotlinx.coroutines.launch
 fun SearchResultHomeScreenPreview() {
     SearchResultHomeScreen(
         rememberNavController(),
-        state = CourseDetailState(
+        state = SearchResultState(
             data = listOf(
                 CourseDetail(),
                 CourseDetail(),
@@ -118,7 +119,7 @@ fun SearchResultHomeScreenPreview() {
 @Composable
 fun SearchResultHomeScreen(
     navController: NavController,
-    state: CourseDetailState = CourseDetailState(),
+    state: SearchResultState = SearchResultState(),
     searchText: String? = null,
 ) {
     val focusManager = LocalFocusManager.current
@@ -299,12 +300,14 @@ fun SearchResultHomeScreen(
                                     item {
                                         ResultChip(navController, searchText!!)
                                     }
-                                    filteredList.forEach {
+                                    filteredList.forEach { courseDetail ->
                                         item {
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                                                 CourseItem(
-                                                    navController = navController,
-                                                    data = it
+                                                    data = courseDetail,
+                                                    onClick = {
+                                                        navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${courseDetail.id}")
+                                                    },
                                                 )
                                             }
                                         }

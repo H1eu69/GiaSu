@@ -1,22 +1,21 @@
-package com.projectprovip.h1eu.giasu.data.course.dto.new_courses
+package com.projectprovip.h1eu.giasu.data.course.dto.course_by_id
 
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 
-
-data class Item(
+data class Value(
     val academicLevelRequirement: String,
     val address: String,
     val chargeFee: Double,
-    val contactNumber: String,
     val creationTime: String,
     val description: String,
-    val fee: Int,
     val genderRequirement: String,
     val id: String,
     val lastModificationTime: String,
     val learnerGender: String,
+    val learnerName: String,
     val learningMode: String,
     val numberOfLearner: Int,
+    val sectionFee: Int,
     val sessionDuration: Int,
     val sessionPerWeek: Int,
     val status: String,
@@ -25,13 +24,13 @@ data class Item(
     val title: String
 )
 
-fun Item.toNewCourse() = CourseDetail(
+fun Value.toCourseDetail() = CourseDetail(
     academicLevelRequirement,
     address,
     chargeFee,
     creationTime,
     description,
-    fee,
+    sectionFee,
     genderRequirement,
     id,
     learnerGender,
@@ -40,8 +39,5 @@ fun Item.toNewCourse() = CourseDetail(
     numberOfLearner,
     sessionPerWeek,
     status,
-    subjectId,
-    subjectName,
-    title,
-    contactNumber,
+    subjectId, subjectName, title
 )

@@ -89,14 +89,16 @@ import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceItem
 import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
+import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
 
 @Preview
 @Composable
 fun PreviewScreen() {
     CourseDetailScreen(
         rememberNavController(),
-        course = CourseDetail(),
+        courseDetailState = CourseDetailState(),
         courseRegisterState = CourseRegisterState(),
         onRegisterClicked = {}
     )
@@ -106,13 +108,14 @@ fun PreviewScreen() {
 @Composable
 fun CourseDetailScreen(
     navController: NavController,
-    course: CourseDetail?,
+    courseDetailState: CourseDetailState,
     courseRegisterState: CourseRegisterState,
     onRegisterClicked: () -> Unit,
 ) {
 
     val context = LocalContext.current
     val showBottomSheet = remember { mutableStateOf(false) }
+    val course = courseDetailState.data
 
     Scaffold(
         topBar = {
@@ -142,54 +145,72 @@ fun CourseDetailScreen(
                 }
             )
         },
+        containerColor = EDSColors.white
     ) {
-        if (showBottomSheet.value) {
-            CourseRegisterPaymentBottomSheet(
-                modifier = Modifier.padding(16.dp),
-                onDismissRequest = {
-                    showBottomSheet.value = false
-                },
-                onButtonClick = {
-                    onRegisterClicked()
-                },
-                fee = course?.fee ?: -1,
-                tax = course?.chargeFee?.toInt() ?: -1
-            )
-        }
-        Box(
-            modifier = Modifier
-                .padding(it)
-                .padding(20.dp)
-        ) {
-            CourseDetailBody(navController = navController, course = course!!)
-            Button(
-                onClick = {
-                    showBottomSheet.value = true
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-                colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
-            ) {
-                if (courseRegisterState.isLoading) {
-                    CircularProgressIndicator()
-                } else {
-                    Text(
-                        text = "Tax: $${course.chargeFee} Register now",
-                        color = EDSColors.white
+        courseDetailState.apply {
+            when {
+                this.isLoading -> {
+                    CircularLoading(
+                        color = EDSColors.primaryColor
                     )
                 }
-                LaunchedEffect(key1 = courseRegisterState) {
+                !this.error.isNullOrEmpty() -> {
 
-                    if (courseRegisterState.error) {
-                        Toast.makeText(context, courseRegisterState.message, Toast.LENGTH_SHORT)
-                            .show()
-                    } else if (courseRegisterState.isSuccess) {
-                        Toast.makeText(context, courseRegisterState.message, Toast.LENGTH_SHORT)
-                            .show()
-                        navController.popBackStack()
+                }
+                else -> {
+                    if (showBottomSheet.value) {
+                        CourseRegisterPaymentBottomSheet(
+                            modifier = Modifier.padding(16.dp),
+                            onDismissRequest = {
+                                showBottomSheet.value = false
+                            },
+                            onButtonClick = {
+                                onRegisterClicked()
+                            },
+                            fee = course?.fee ?: -1,
+                            tax = course?.chargeFee?.toInt() ?: -1
+                        )
                     }
+                    Box(
+                        modifier = Modifier
+                            .padding(it)
+                            .padding(20.dp)
+                            .background(
+                                EDSColors.white
+                            )
+                    ) {
+                        CourseDetailBody(navController = navController, course = course!!)
+                        Button(
+                            onClick = {
+                                showBottomSheet.value = true
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.BottomCenter),
+                            colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
+                        ) {
+                            if (courseRegisterState.isLoading) {
+                                CircularProgressIndicator()
+                            } else {
+                                Text(
+                                    text = "Tax: $${course.chargeFee} Register now",
+                                    color = EDSColors.white
+                                )
+                            }
+                            LaunchedEffect(key1 = courseRegisterState) {
 
+                                if (courseRegisterState.error) {
+                                    Toast.makeText(context, courseRegisterState.message, Toast.LENGTH_SHORT)
+                                        .show()
+                                } else if (courseRegisterState.isSuccess) {
+                                    Toast.makeText(context, courseRegisterState.message, Toast.LENGTH_SHORT)
+                                        .show()
+                                    navController.popBackStack()
+                                }
+
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -212,7 +233,8 @@ fun CourseDetailBody(
 
     val context = LocalContext.current
     LazyColumn(
-        modifier = modifier.fillMaxHeight(),
+        modifier = modifier.fillMaxHeight()
+            .background(EDSColors.white),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {

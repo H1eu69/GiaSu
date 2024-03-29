@@ -6,6 +6,7 @@ import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import retrofit2.Response
@@ -23,6 +24,11 @@ interface CourseApi {
         @Query("PageIndex") page: Int,
         @Query("SubjectName") subjectName: String?
     ) : NewCoursesDto
+
+    @GET("Course/{id}")
+    suspend fun getCourseById(
+        @Path("id") id :String,
+    ) : CourseByIdDto
 
     @POST("Course/Create")
     suspend fun createCourse(

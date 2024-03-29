@@ -7,7 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.common.alphaNumericOnly
+import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.toCourseDetail
+import com.projectprovip.h1eu.giasu.domain.course.usecase.GetCourseByIdUseCase
 import com.projectprovip.h1eu.giasu.domain.course.usecase.RegisterCourseUseCase
+import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
+import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -16,11 +20,37 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CourseDetailViewModel @Inject constructor(
-    private val registerCourseUseCase: RegisterCourseUseCase
+    private val registerCourseUseCase: RegisterCourseUseCase,
+    private val getCourseByIdUseCase: GetCourseByIdUseCase
 )  : ViewModel() {
 
     private var _courseRegisterState = mutableStateOf(CourseRegisterState())
     val courseRegisterState : State<CourseRegisterState> =  _courseRegisterState
+
+    private var _courseDetailState = mutableStateOf(CourseDetailState())
+    val courseDetailState : State<CourseDetailState> =  _courseDetailState
+    fun getCourseById(courseId: String, ) {
+        getCourseByIdUseCase(courseId,).onEach { result ->
+            when (result) {
+                is EDSResult.Loading -> {
+                    _courseDetailState.value = CourseDetailState(isLoading = true)
+                }
+
+                is EDSResult.Error -> {
+                    _courseDetailState.value = CourseDetailState(error = result.message)
+                    Log.d("CourseDetailViewModel", result.message.toString())
+                }
+
+                is EDSResult.Success -> {
+                    _courseDetailState.value = CourseDetailState(
+                        data = result.data!!.value.toCourseDetail()
+                    )
+                    Log.d("CourseDetailViewModel", result.data!!.value.toCourseDetail().toString())
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
     fun registerCourse(courseId: String, token: String) {
         registerCourseUseCase(courseId, token).onEach { result ->
             when (result) {
