@@ -9,5 +9,5 @@ data class Subject(
 )
 
 fun Subject.toSubjectItem() = SubjectItem(
-    description, id, name
+     id, name
 )

@@ -8,7 +8,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class UpdateTutorInformationUseCase @Inject constructor(
+class   UpdateTutorInformationUseCase @Inject constructor(
     private val profileRepository: ProfileRepository
 ) {
     operator fun invoke(token: String, params: UpdateTutorInfoParams) =
@@ -30,6 +30,6 @@ class UpdateTutorInformationUseCase @Inject constructor(
 
 data class UpdateTutorInfoParams(
     val academicLevel: String,
-    val majors: List<String>,
+    val majors: List<Int>,
     val university: String
 )

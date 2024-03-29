@@ -77,7 +77,8 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.domain.profile.model.Profile
+import com.projectprovip.h1eu.giasu.data.profile.dto.tutorInfoDto.Major
+import com.projectprovip.h1eu.giasu.data.profile.dto.tutorInfoDto.toSubjectItem
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.NumberPickerDialog
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
@@ -86,12 +87,13 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.GetProfileState
+import com.projectprovip.h1eu.giasu.presentation.profile.model.GetTutorInfoState
+import com.projectprovip.h1eu.giasu.presentation.profile.model.MiniProfile
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectItem
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
+import com.projectprovip.h1eu.giasu.presentation.profile.model.toMajor
 import kotlinx.coroutines.launch
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -100,9 +102,10 @@ fun UpdateProfilePreview() {
     UpdateProfile(
         navController = rememberNavController(),
         GetProfileState(),
+        GetTutorInfoState(),
         UpdateProfileState(),
         SubjectState(),
-        { a, b, c, d, e, f, g, h, i, k, -> }
+        { a, b, c, d, e, f, g, h, i, k ,re,asd,dsad-> }
     )
 }
 
@@ -111,9 +114,10 @@ fun UpdateProfilePreview() {
 fun UpdateProfile(
     navController: NavController,
     getProfileState: GetProfileState,
+    getTutorInfoState: GetTutorInfoState,
     updateProfileState: UpdateProfileState,
     subjectState: SubjectState,
-    onUpdateBtnClick: (String, String, Int, String, String, String, String, String, String, String,) -> Unit
+    onUpdateBtnClick: (String, String, Int, String, String, String, String, String, String, String, String, String,  List<Major>) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -123,6 +127,8 @@ fun UpdateProfile(
     val isTutor = getProfileState.data.role == "Tutor"
 
     val profile = getProfileState.data
+    val tutor = getTutorInfoState.data
+
     val firstName = remember { mutableStateOf(profile.firstName) }
     val lastName = remember { mutableStateOf(profile.lastName) }
 
@@ -131,10 +137,14 @@ fun UpdateProfile(
     val addressText = remember { mutableStateOf(profile.city) }
     val birthYearText = remember { mutableStateOf(profile.birthYear.toString()) }
     val descriptionText = remember { mutableStateOf(profile.description) }
+    val academicLevel = remember { mutableStateOf(tutor.academicLevel) }
+    val university = remember { mutableStateOf(tutor.university) }
     val phoneText = remember { mutableStateOf(profile.phoneNumber.toString()) }
     val avatar = remember { mutableStateOf(Uri.parse(profile.avatar)) }
 
-    val openDialog = remember { mutableStateOf(false) }
+    val openDatePickerDialog = remember { mutableStateOf(false) }
+    val openEditSubjectDialog = remember { mutableStateOf(false) }
+
     val initValue = remember {
         mutableStateOf(profile.birthYear)
     }
@@ -143,6 +153,15 @@ fun UpdateProfile(
     val (genderSelectedOption, onGenderSelect) = remember {
         mutableStateOf(genderOptions[genderOptions.indexOf(profile.gender)])
     }
+
+    val userMajors = remember {
+        mutableStateOf(tutor.majors)
+    }
+
+    val subject = remember {
+        mutableStateOf(subjectState.data)
+    }
+    var userListMajor: List<SubjectItem>
 
     LaunchedEffect(profile) {
         firstName.value = profile.firstName
@@ -153,7 +172,39 @@ fun UpdateProfile(
         descriptionText.value = profile.description
         phoneText.value = profile.phoneNumber
         avatar.value = Uri.parse(profile.avatar)
+        initValue.value = profile.birthYear
     }
+    LaunchedEffect(tutor) {
+        academicLevel.value = tutor.academicLevel
+        university.value = tutor.university
+
+        userMajors.value = tutor.majors
+        userListMajor = userMajors.value.map {
+            it.toSubjectItem()
+        }
+
+        subject.value = subjectState.data
+        subject.value.map {
+            if (it in userListMajor) {
+                it.isSelected = true
+            }
+        }
+    }
+
+    LaunchedEffect(subjectState) {
+        userMajors.value = tutor.majors
+        userListMajor = userMajors.value.map {
+            it.toSubjectItem()
+        }
+
+        subject.value = subjectState.data
+        subject.value.map {
+            if (it in userListMajor) {
+                it.isSelected = true
+            }
+        }
+    }
+
 
     Scaffold(
         topBar = {
@@ -179,6 +230,7 @@ fun UpdateProfile(
                 this.isLoading -> {
                     CircularLoading()
                 }
+
                 else -> {
                     Box(
                         Modifier
@@ -204,13 +256,17 @@ fun UpdateProfile(
                                 birthYearText,
                                 descriptionText,
                                 phoneText,
-                                openDialog,
+                                openEditSubjectDialog,
                                 avatar,
-                                initValue,
+                                academicLevel,
+                                university,
+                                subject,
+                                userMajors,
                                 genderOptions,
                                 genderSelectedOption,
                                 onGenderSelect,
-                                subjectState
+                                initValue,
+                                openDatePickerDialog
                             ) else
                             LearnerRole(
                                 navController = navController,
@@ -222,7 +278,7 @@ fun UpdateProfile(
                                 birthYearText,
                                 descriptionText,
                                 phoneText,
-                                openDialog,
+                                openDatePickerDialog,
                                 avatar,
                                 initValue,
                                 genderOptions,
@@ -242,6 +298,9 @@ fun UpdateProfile(
                                     genderSelectedOption,
                                     lastName.value,
                                     phoneText.value,
+                                    academicLevel.value,
+                                    university.value,
+                                    userMajors.value
                                 )
                             },
                             isLoading = updateProfileState.isLoading,
@@ -256,18 +315,26 @@ fun UpdateProfile(
         }
         updateProfileState.apply {
             when {
-                this.data != Profile() -> {
+                this.data != MiniProfile() -> {
+                    val userAvatar = this.data.avatar
+                    val fullName = this.data.fullName
+                    val email = this.data.email
+
                     val coroutine = rememberCoroutineScope()
                     LaunchedEffect(key1 = "") {
                         coroutine.launch {
-                            Log.d("test preference", updateProfileState.data.avatar)
+                            Log.d("test preference", userAvatar)
                             context.dataStore.edit { preference ->
                                 preference[stringPreferencesKey(Constant.USER_IMAGE_STRING)] =
-                                    updateProfileState.data.avatar
+                                    userAvatar
+                                preference[stringPreferencesKey(Constant.USERNAME_STRING)] =
+                                    fullName
+                                preference[stringPreferencesKey(Constant.USER_EMAIL_STRING)] =
+                                    email
                             }
                         }
+                        navController.popBackStack()
                     }
-                    navController.popBackStack()
                 }
             }
         }
@@ -588,12 +655,19 @@ fun TutorRole(
     phoneText: MutableState<String>,
     openEditSubjectDialog: MutableState<Boolean>,
     avatar: MutableState<Uri>,
-    initValue: MutableState<Int>,
+    academicLevel: MutableState<String>,
+    university: MutableState<String>,
+    subject: MutableState<List<SubjectItem>>,
+    userMajors: MutableState<List<Major>>,
     genderOptions: List<String>,
     genderSelectedOption: String,
     onGenderSelect: (String) -> Unit,
-    subjectState: SubjectState,
+    initValue: MutableState<Int>,
+    openDatePicker: MutableState<Boolean>,
 ) {
+    val interactionSource = remember {
+        MutableInteractionSource()
+    }
 
     val avatarLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
@@ -603,16 +677,34 @@ fun TutorRole(
         }
 
     if (openEditSubjectDialog.value) {
-        val subject = remember {
-            mutableStateOf(subjectState.data)
-        }
+        Log.d("subject", subject.value.toString())
 
         SubjectDialog(subject, onDisMiss = {
             openEditSubjectDialog.value = false
         },
             onConfirm = {
-
+                val newList = userMajors.value.toMutableList()
+                newList.clear()
+                subject.value.forEach {
+                    if (it.isSelected) {
+                        newList.add(it.toMajor())
+                    }
+                }
+                userMajors.value = newList
             })
+    }
+    if (openDatePicker.value) {
+        NumberPickerDialog(
+            initValue = initValue,
+            onDisMiss = {
+                openDatePicker.value = false
+            },
+            onConfirm = {
+                birthYearText.value = it
+                initValue.value = it.toInt()
+                openDatePicker.value = false
+            }
+        )
     }
 
     LazyColumn(modifier = modifier.background(EDSColors.white)) {
@@ -692,96 +784,20 @@ fun TutorRole(
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    FilterChip(
-                        selected = true,
-                        onClick = { /*TODO*/ },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = EDSColors.greenCheck,
-                            selectedLabelColor = EDSColors.white,
-                            selectedTrailingIconColor = EDSColors.white
-                        ),
-                        label = { Text("Java", fontWeight = FontWeight.W300) }
-                    )
-
-                    FilterChip(
-                        selected = true,
-                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = EDSColors.greenCheck,
-                            selectedLabelColor = EDSColors.white,
-                            selectedTrailingIconColor = EDSColors.white
-                        ),
-                        label = { Text("Python", fontWeight = FontWeight.W400) }
-                    )
-
-                    FilterChip(
-                        selected = true,
-                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = EDSColors.greenCheck,
-                            selectedLabelColor = EDSColors.white,
-                            selectedTrailingIconColor = EDSColors.white
-                        ),
-                        label = { Text("c++", fontWeight = FontWeight.W400) }
-                    )
-
-                    FilterChip(
-                        selected = true,
-                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = EDSColors.greenCheck,
-                            selectedLabelColor = EDSColors.white,
-                            selectedTrailingIconColor = EDSColors.white
-                        ),
-                        label = {
-                            Text(
-                                "Lap trinh cho nguoi mat goc",
-                                fontWeight = FontWeight.W400
-                            )
-                        }
-                    )
-
-                    FilterChip(
-                        selected = true,
-                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = EDSColors.greenCheck,
-                            selectedLabelColor = EDSColors.white,
-                            selectedTrailingIconColor = EDSColors.white
-                        ),
-                        label = { Text("Toan cao cap", fontWeight = FontWeight.W400) }
-                    )
-
-                    FilterChip(
-                        selected = true,
-                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = EDSColors.greenCheck,
-                            selectedLabelColor = EDSColors.white,
-                            selectedTrailingIconColor = EDSColors.white
-                        ),
-                        label = { Text("Ly dai cuong", fontWeight = FontWeight.W400) }
-                    )
-
-                    FilterChip(
-                        selected = true,
-                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = EDSColors.greenCheck,
-                            selectedLabelColor = EDSColors.white,
-                            selectedTrailingIconColor = EDSColors.white
-                        ),
-                        label = { Text("Hoa hoc dai cuong", fontWeight = FontWeight.W400) }
-                    )
-
-                    FilterChip(
-                        selected = true,
-                        onClick = { /*TODO*/ }, colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = EDSColors.greenCheck,
-                            selectedLabelColor = EDSColors.white,
-                            selectedTrailingIconColor = EDSColors.white
-                        ),
-                        label = { Text("Tieng anh", fontWeight = FontWeight.W400) }
-                    )
-
+                    userMajors.value.forEach {
+                        FilterChip(
+                            selected = true,
+                            onClick = { /*TODO*/ },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = EDSColors.greenCheck,
+                                selectedLabelColor = EDSColors.white,
+                                selectedTrailingIconColor = EDSColors.white
+                            ),
+                            label = { Text(it.subjectName, fontWeight = FontWeight.W300) }
+                        )
+                    }
                 }
-
             }
-
         }
         item {
             OutlinedTextField(
@@ -932,20 +948,75 @@ fun TutorRole(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.dp)
+                    .clickable(
+                        interactionSource, null
+                    ) {
+                        openDatePicker.value = true
+                    },
                 label = {
                     Text(
                         text = "Birth Year",
                     )
                 },
+                enabled = false,
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 shape = RoundedCornerShape(12.dp),
                 onValueChange = { value ->
-                    if (value.length <= 4)
+                    if (value.length <= 4) {
                         birthYearText.value = value
+                    }
                 },
                 value = birthYearText.value,
+                colors = OutlinedTextFieldDefaults.colors(
+                    disabledBorderColor = EDSColors.gray,
+                    disabledContainerColor = EDSColors.transparent,
+                    disabledTextColor = EDSColors.blackColor
+                ),
+            )
+        }
+        item {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .padding(horizontal = 20.dp),
+                label = {
+                    Text(
+                        text = "Academic level",
+                    )
+                },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                onValueChange = { value ->
+                    academicLevel.value = value
+                },
+                value = academicLevel.value,
+                colors = OutlinedTextFieldDefaults.colors(
+                    cursorColor = EDSColors.primaryColor,
+                    focusedBorderColor = EDSColors.primaryColor,
+                    focusedLabelColor = EDSColors.primaryColor,
+                ),
+            )
+        }
+        item {
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .padding(horizontal = 20.dp),
+                label = {
+                    Text(
+                        text = "Univeristy",
+                    )
+                },
+                singleLine = true,
+                shape = RoundedCornerShape(12.dp),
+                onValueChange = { value ->
+                    university.value = value
+                },
+                value = university.value,
                 colors = OutlinedTextFieldDefaults.colors(
                     cursorColor = EDSColors.primaryColor,
                     focusedBorderColor = EDSColors.primaryColor,
@@ -1041,6 +1112,8 @@ fun TutorPreview() {
     val descriptionText = remember { mutableStateOf("profile.description") }
     val phoneText = remember { mutableStateOf("profile.phoneNumber.toString()") }
     val avatar = remember { mutableStateOf(Uri.parse("")) }
+    val academicLevel = remember { mutableStateOf("profile.description") }
+    val university = remember { mutableStateOf("profile.phoneNumber.toString()") }
 
     val openDialog = remember { mutableStateOf(false) }
     val initValue = remember {
@@ -1052,6 +1125,13 @@ fun TutorPreview() {
         mutableStateOf(genderOptions[1])
     }
 
+    val userMajors = remember {
+        mutableStateOf<List<Major>>(emptyList())
+    }
+
+    val subject = remember {
+        mutableStateOf<List<SubjectItem>>(emptyList())
+    }
     TutorRole(
         navController = rememberNavController(),
         modifier = Modifier,
@@ -1064,11 +1144,15 @@ fun TutorPreview() {
         phoneText,
         openDialog,
         avatar,
-        initValue,
+        academicLevel,
+        university,
+        subject,
+        userMajors,
         genderOptions,
         genderSelectedOption,
         onGenderSelect,
-        subjectState = SubjectState()
+        initValue,
+        openDialog
     )
 }
 
@@ -1229,6 +1313,7 @@ fun SubjectDialog(
         confirmButton = {
             TextButton(onClick = {
                 onConfirm()
+                onDisMiss()
             }) {
                 Text("Accept", color = EDSColors.primaryColor)
             }

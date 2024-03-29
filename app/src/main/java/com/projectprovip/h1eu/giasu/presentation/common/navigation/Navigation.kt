@@ -2,6 +2,7 @@
 
 package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -28,6 +29,7 @@ import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.common.toEDSIntGender
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
+import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateTutorInfoParams
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScreen
@@ -282,16 +284,18 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable(Screens.InApp.Profile.route) { ProfileScreen(navController) }
         composable(Screens.InApp.Profile.TutorRegistration.route) {
             val vm = hiltViewModel<TutorRegisterViewModel>()
-            TutorRegisterScreen(navController,
+            TutorRegisterScreen(
+                navController,
                 vm.tutorRegisterState.value,
-                registerTutor = { s1, s2, s3 , s4->
+                registerTutor = { s1, s2, s3, s4 ->
                     vm.registerTutor(token.value, s1, s2, s3, s4)
                 },
-               )
+            )
         }
 
         composable(Screens.InApp.Profile.UpdateProfile.route) {
             val vm = hiltViewModel<UpdateProfileViewModel>()
+            Log.d("test get avatar", avatar.value)
             LaunchedEffect(Unit) {
                 vm.getProfile(token.value)
                 vm.getSubject()
@@ -299,15 +303,18 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             UpdateProfile(
                 navController,
                 getProfileState = vm.getProfileState.value,
+                getTutorInfoState = vm.getTutorInfoState.value,
                 updateProfileState = vm.updateProfileState.value,
                 subjectState = vm.subjectState.value,
-                onUpdateBtnClick = { image, email, birthYear, address, country, description, firstName, gender, lastName, phoneNumber, ->
-                    val realAvatar = if(avatar.value == image) "" else image
-
+                onUpdateBtnClick = { image, email, birthYear, address, country, description, firstName, gender, lastName, phoneNumber, academic, university, majors ->
+//                    val realAvatar = if(avatar.value == image) "" else image
+                    val majorIdList = majors.map {
+                        it.subjectId
+                    }
                     vm.updateProfile(
                         token.value,
                         UpdateProfileParams(
-                            avatar = realAvatar, //will change
+                            avatar = image, //will change
                             email = email,
                             birthYear = birthYear,
                             city = address,
@@ -319,7 +326,14 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                             phoneNumber = phoneNumber,
                         )
                     )
-
+                    vm.updateTutorInfo(
+                        token.value,
+                        UpdateTutorInfoParams(
+                            academicLevel = academic,
+                            university = university,
+                            majors = majorIdList
+                        )
+                    )
                 }
             )
         }

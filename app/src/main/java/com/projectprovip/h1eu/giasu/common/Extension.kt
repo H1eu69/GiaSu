@@ -48,8 +48,15 @@ fun String.isPasswordFormatted(): Boolean {
 
 fun String.toEDSIntGender(): Int {
     return when (this) {
-        "Male" -> 0
-        "Female" -> 1
-        else -> 2
+        "Male" -> 1
+        "Female" -> 2
+        else -> 3
     }
+}
+
+fun String.isLink(): Boolean {
+    val regex = Regex(
+        "(http://|https://)?[a-zA-Z0-9]+(\\.[a-zA-Z]{2,})+(\\S*)?"
+    )
+    return regex.matches(this)
 }

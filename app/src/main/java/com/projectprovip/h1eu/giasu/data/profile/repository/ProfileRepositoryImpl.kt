@@ -2,6 +2,7 @@ package com.projectprovip.h1eu.giasu.data.profile.repository
 
 import com.projectprovip.h1eu.giasu.data.profile.api.ProfileApi
 import com.projectprovip.h1eu.giasu.data.profile.dto.profileDto.ProfileDto
+import com.projectprovip.h1eu.giasu.data.profile.dto.tutorInfoDto.TutorInfoDto
 import com.projectprovip.h1eu.giasu.data.profile.dto.updateProfileDto.UpdateProfileDto
 import com.projectprovip.h1eu.giasu.data.profile.dto.updateTutorInfoDto.UpdateTutorInfoDto
 import com.projectprovip.h1eu.giasu.domain.profile.repository.ProfileRepository
@@ -25,5 +26,9 @@ class ProfileRepositoryImpl @Inject constructor(
         params: UpdateTutorInfoParams
     ): UpdateTutorInfoDto {
         return api.updateTutorInformation(token, params)
+    }
+
+    override suspend fun getTutorInfo(token: String): TutorInfoDto {
+        return api.getTutorInfo(token)
     }
 }

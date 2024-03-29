@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.projectprovip.h1eu.giasu.common.EDSResult
+import com.projectprovip.h1eu.giasu.common.isLink
 import com.projectprovip.h1eu.giasu.domain.profile.model.Profile
+import com.projectprovip.h1eu.giasu.domain.profile.usecase.GetTutorInfoUseCase
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.GetUserProfileUseCase
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileUseCase
@@ -17,6 +19,8 @@ import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateTutorInformatio
 import com.projectprovip.h1eu.giasu.domain.subject.model.toSubjectItem
 import com.projectprovip.h1eu.giasu.domain.subject.usecase.GetSubjectUseCase
 import com.projectprovip.h1eu.giasu.presentation.profile.model.GetProfileState
+import com.projectprovip.h1eu.giasu.presentation.profile.model.GetTutorInfoState
+import com.projectprovip.h1eu.giasu.presentation.profile.model.MiniProfile
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +36,8 @@ class UpdateProfileViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val updateProfileUseCase: UpdateProfileUseCase,
     private val updateTutorInfoUseCase: UpdateTutorInformationUseCase,
-    private val getSubjectUseCase: GetSubjectUseCase
+    private val getSubjectUseCase: GetSubjectUseCase,
+    private val getTutorInfoUseCase: GetTutorInfoUseCase,
 ) : ViewModel() {
     private var _updateProfileState = mutableStateOf(UpdateProfileState())
     val updateProfileState: State<UpdateProfileState> = _updateProfileState
@@ -42,43 +47,69 @@ class UpdateProfileViewModel @Inject constructor(
 
     private var _subjectState = mutableStateOf(SubjectState())
     val subjectState: State<SubjectState> = _subjectState
+
+    private var _getTutorInfoState = mutableStateOf(GetTutorInfoState())
+    val getTutorInfoState: State<GetTutorInfoState> = _getTutorInfoState
+
     private var _profile = Profile()
 
     fun getProfile(token: String) {
-        getUserProfileUseCase(token).onEach { result ->
-            when (result) {
-                is EDSResult.Loading -> {
-                    _getProfileState.value = GetProfileState(isLoading = true)
+        viewModelScope.launch {
+            getUserProfileUseCase(token).onEach { result ->
+                when (result) {
+                    is EDSResult.Loading -> {
+                        _getProfileState.value = GetProfileState(isLoading = true)
+                    }
+
+                    is EDSResult.Error -> {
+                        _getProfileState.value = GetProfileState(error = result.message!!)
+                        Log.d("Test get profile error", result.message)
+                    }
+
+                    is EDSResult.Success -> {
+                        _getProfileState.value = GetProfileState(data = result.data!!)
+                        _profile = result.data
+                        Log.d("Test get profile", result.data.toString())
+
+                    }
                 }
 
-                is EDSResult.Error -> {
-                    _getProfileState.value = GetProfileState(error = result.message!!)
-                    Log.d("Test get profile error", result.message)
+            }.launchIn(this)
+
+            getTutorInfoUseCase(token).onEach { result ->
+                when (result) {
+                    is EDSResult.Loading -> {
+                        _getTutorInfoState.value = GetTutorInfoState(isLoading = true)
+                    }
+
+                    is EDSResult.Error -> {
+                        _getTutorInfoState.value = GetTutorInfoState(error = result.message!!)
+                        Log.d("Test get tutor info error", result.message)
+                    }
+
+                    is EDSResult.Success -> {
+                        _getTutorInfoState.value = GetTutorInfoState(data = result.data!!)
+                        Log.d("Test get tutor info", result.data.toString())
+
+                    }
                 }
 
-                is EDSResult.Success -> {
-                    _getProfileState.value = GetProfileState(data = result.data!!)
-                    _profile = result.data
-                    Log.d("Test get profile", result.data.toString())
-
-                }
-            }
-
-        }.launchIn(viewModelScope)
+            }.launchIn(this)
+        }
     }
 
     fun updateProfile(token: String, updateProfileParams: UpdateProfileParams) {
         viewModelScope.launch {
-            val uri = Uri.parse(updateProfileParams.avatar)
-            val timeStamp = System.currentTimeMillis()
+            Log.d("Test register tutor link", updateProfileParams.avatar.isLink().toString())
 
-            if (uri.toString().isNotEmpty()) {
+            if (!updateProfileParams.avatar.isLink()) {
+                val uri = Uri.parse(updateProfileParams.avatar)
+                val timeStamp = System.currentTimeMillis()
+
                 val deferredResults = async {
                     val storagePath = "images/${uri.lastPathSegment}_$timeStamp"
                     val storageRef = FirebaseStorage.getInstance().reference
                     val mountainsRef = storageRef.child(storagePath)
-
-                    // Put file to Firebase Storage
                     val uploadTask = mountainsRef.putFile(uri)
                         .continueWithTask { task ->
                             if (!task.isSuccessful) {
@@ -92,9 +123,9 @@ class UpdateProfileViewModel @Inject constructor(
                 }
 
                 updateProfileParams.avatar = deferredResults.await().toString()
-                _profile = _profile.copy(
-                    avatar = updateProfileParams.avatar
-                )
+//                _profile = _profile.copy(
+//                    avatar = updateProfileParams.avatar
+//                )
                 Log.d("Test register tutor before", updateProfileParams.avatar)
             }
 
@@ -113,7 +144,11 @@ class UpdateProfileViewModel @Inject constructor(
 
                     is EDSResult.Success -> {
                         _updateProfileState.value = UpdateProfileState(
-                            data = _profile
+                            data = MiniProfile(
+                                avatar = result.data!!.value.user.avatar,
+                                fullName = result.data.value.user.fullName,
+                                email = result.data.value.user.email
+                            )
                         )
                         Log.d("Test update profile", result.data.toString())
                     }
