@@ -2,7 +2,7 @@ package com.projectprovip.h1eu.giasu.domain.course.usecase
 
 import android.util.Log
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.course.dto.toLearningCourse
+import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.toLearningCourse
 import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourse
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import kotlinx.coroutines.flow.flow
@@ -21,7 +21,7 @@ private val coursesRepository: CoursesRepository
                 Log.d("Status code", response.code().toString())
                 Log.d("respone bodyu", response.body().toString())
 
-                val list = response.body()!!.learningCourseList.map {
+                val list = response.body()!!.value.map {
                     it.toLearningCourse()
                 }
                 Log.d("data list", list.toString())

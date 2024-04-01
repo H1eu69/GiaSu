@@ -49,6 +49,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -89,7 +90,6 @@ import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.VerticalGrid
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
 import com.projectprovip.h1eu.giasu.presentation.home.model.FilterSelect
 import com.projectprovip.h1eu.giasu.presentation.home.model.SearchResultState
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
@@ -128,7 +128,52 @@ fun SearchResultHomeScreen(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val locationFilter = remember {
+        mutableStateOf(
+            listOf(
+                FilterSelect("Hà Nội"),
+                FilterSelect("Hà Tĩnh"),
+                FilterSelect("Hà Giang"),
+                FilterSelect("Hồ Chí Minh"),
+                FilterSelect("Quận 1"),
+                FilterSelect("Quận 2"),
+                FilterSelect("Quận 3"),
+                FilterSelect("Tây Ninh"),
+                FilterSelect("Tay ninh 9"),
 
+                )
+        )
+    }
+
+    val learningModeFilter = remember {
+        mutableStateOf(
+            listOf(
+                FilterSelect("Online"),
+                FilterSelect("Offline"),
+                FilterSelect("Hybrid"),
+            )
+        )
+    }
+
+    val academicFilter = remember {
+        mutableStateOf(
+            listOf(
+                FilterSelect("Ungraduated"),
+                FilterSelect("Graduated"),
+                FilterSelect("Lecturer"),
+            )
+        )
+    }
+
+    val filteredList = remember {
+        mutableStateOf(
+            state.data
+        )
+    }
+
+    LaunchedEffect(state) {
+        filteredList.value = state.data
+    }
 
     CompositionLocalProvider(
         LocalLayoutDirection provides
@@ -175,23 +220,7 @@ fun SearchResultHomeScreen(
                                 FilterItem(
                                     modifier = Modifier.padding(8.dp),
                                     title = "location",
-                                    filterItemsState = remember {
-                                        mutableStateOf(
-                                            listOf(
-                                                FilterSelect("Tay ninh 1"),
-                                                FilterSelect("Tay ninh2"),
-                                                FilterSelect("Tay ninh3"),
-                                                FilterSelect("Tay ninh4"),
-                                                FilterSelect("Tay ninh5"),
-                                                FilterSelect("Tay ninh6"),
-                                                FilterSelect("Tay ninh7"),
-                                                FilterSelect("Tay ninh8"),
-                                                FilterSelect("Tay ninh9"),
-
-                                                )
-                                        )
-                                    }
-
+                                    filterItemsState = locationFilter
                                 )
                             }
 
@@ -206,15 +235,7 @@ fun SearchResultHomeScreen(
                                     modifier = Modifier.padding(8.dp),
                                     title = "Learning mode",
                                     hasViewMore = false,
-                                    filterItemsState = remember {
-                                        mutableStateOf(
-                                            listOf(
-                                                FilterSelect("Online"),
-                                                FilterSelect("Offline"),
-                                                FilterSelect("Hybrid"),
-                                            )
-                                        )
-                                    }
+                                    filterItemsState = learningModeFilter
                                 )
                             }
 
@@ -223,19 +244,37 @@ fun SearchResultHomeScreen(
                                     modifier = Modifier.padding(8.dp),
                                     title = "Academic level requirement",
                                     hasViewMore = false,
-                                    filterItemsState = remember {
-                                        mutableStateOf(
-                                            listOf(
-                                                FilterSelect("Ungraduated"),
-                                                FilterSelect("Graduated"),
-                                                FilterSelect("Lecturer"),
-                                            )
-                                        )
-                                    }
+                                    filterItemsState = academicFilter
                                 )
                             }
                         }
-                        ApplyFilterButtons(Modifier.padding(8.dp))
+                        ApplyFilterButtons(Modifier.padding(8.dp), onFilterClick = {
+                            filteredList.value = filteredList.value.filter { courseDetail ->
+                                locationFilter.value.forEach { location ->
+                                    if (location.selected && courseDetail.address.contains(
+                                            location.title
+                                        )
+                                    ) return@filter true
+                                }
+                                false
+                            }.filter { courseDetail ->
+                                    learningModeFilter.value.forEach { learningMode ->
+                                        if (learningMode.selected && courseDetail.learningMode.contains(
+                                                learningMode.title
+                                            )
+                                        ) return@filter true
+                                    }
+                                    false
+                                }.filter { courseDetail ->
+                                    academicFilter.value.forEach { academic ->
+                                        if (academic.selected && courseDetail.academicLevelRequirement.contains(
+                                                academic.title
+                                            )
+                                        ) return@filter true
+                                    }
+                                    false
+                                }
+                        })
                     }
                 }
             },
@@ -261,7 +300,6 @@ fun SearchResultHomeScreen(
                     containerColor = EDSColors.white
                 ) { it ->
                     state.apply {
-                        val filteredList = this.data
                         when {
                             this.isLoading -> {
                                 CircularLoading(
@@ -269,7 +307,8 @@ fun SearchResultHomeScreen(
                                     color = EDSColors.primaryColor
                                 )
                             }
-                            filteredList.isEmpty() -> {
+
+                            filteredList.value.isEmpty() -> {
                                 Box(modifier = Modifier.fillMaxSize()) {
                                     val composition by rememberLottieComposition(
                                         LottieCompositionSpec.RawRes(R.raw.empty_box),
@@ -290,6 +329,7 @@ fun SearchResultHomeScreen(
                                     }
                                 }
                             }
+
                             else -> {
                                 LazyColumn(
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -300,7 +340,7 @@ fun SearchResultHomeScreen(
                                     item {
                                         ResultChip(navController, searchText!!)
                                     }
-                                    filteredList.forEach { courseDetail ->
+                                    filteredList.value.forEach { courseDetail ->
                                         item {
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                                                 CourseItem(
@@ -895,14 +935,18 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
 fun ApplyFilterButtonsPreview() {
     Surface {
         ApplyFilterButtons(
-            Modifier.padding(8.dp)
+            Modifier.padding(8.dp),
+            {}
         )
     }
 }
 
 
 @Composable
-fun ApplyFilterButtons(modifier: Modifier = Modifier) {
+fun ApplyFilterButtons(
+    modifier: Modifier = Modifier,
+    onFilterClick: () -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
@@ -924,7 +968,7 @@ fun ApplyFilterButtons(modifier: Modifier = Modifier) {
             )
         }
         OutlinedButton(
-            onClick = { /*TODO*/ },
+            onClick = { onFilterClick() },
             shape = RoundedCornerShape(4.dp),
             border = null,
             colors = ButtonDefaults.outlinedButtonColors(

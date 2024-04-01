@@ -30,7 +30,7 @@ import androidx.annotation.Keep
 @Keep
 data class LearningCourse(
     val creationTime: String = "",
-    val id: Int = -1,
+    val id: String = "-1",
     val lastModificationTime: String = "",
     val status: String = "",
     val subjectName: String = "",

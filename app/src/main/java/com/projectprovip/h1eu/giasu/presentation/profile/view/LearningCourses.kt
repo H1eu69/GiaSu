@@ -17,9 +17,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Subject
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Subject
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,8 +61,8 @@ import kotlinx.coroutines.launch
 fun PreviewLearningCourseScreen() {
     val dummyData = listOf(
         LearningCourse(
-            "2023-12-13T20:34:59.6344398",
-            5,
+            "2015-08-30T22:13:04",
+            "2efe7384-cb24-4d85-a685-a4016e62e2f5",
             "2023-12-13T20:34:59.6344398",
             "Cancel",
             "Java programmisng",
@@ -69,8 +70,8 @@ fun PreviewLearningCourseScreen() {
             "Online"
         ),
         LearningCourse(
-            "2023-12-13T20:34:59.6344398",
-            5,
+            "2015-08-30T22:13:04",
+            "2efe7384-cb24-4d85-a685-a4016e62e2f5",
             "2023-12-13T20:34:59.6344398",
             "Available",
             "Piano",
@@ -78,18 +79,18 @@ fun PreviewLearningCourseScreen() {
             "Hybrid"
         ),
         LearningCourse(
+            "2015-08-30T22:13:04",
+            "2efe7384-cb24-4d85-a685-a4016e62e2f5",
             "2023-12-13T20:34:59.6344398",
-            5,
-            "2023-12-13T20:34:59.6344398",
-            "0967075340",
+            "Verifying",
             "Khoa hoc lap trinh 10p",
             "heheehehehehe",
             "Offline"
 
         ),
         LearningCourse(
-            "2023-12-13T20:34:59.6344398",
-            5,
+            "2015-08-30T22:13:04",
+            "2efe7384-cb24-4d85-a685-a4016e62e2f5",
             "2023-12-13T20:34:59.6344398",
             "0967075340",
             "Vua hai tac",
@@ -110,8 +111,8 @@ fun PreviewLearningCourseScreen() {
 fun PreviewCourseItem() {
     CourseItem(
         data = LearningCourse(
-            "2023-12-13T20:34:59.6344398",
-            5,
+            "2015-08-30T22:13:04",
+            "2efe7384-cb24-4d85-a685-a4016e62e2f5",
             "2023-12-13T20:34:59.6344398",
             "0967075340",
             "sddas",
@@ -229,7 +230,7 @@ fun CourseItem(data: LearningCourse, onClick: () -> Unit) {
 }
 
 @Composable
-fun SubTitle(subTitle: Int, status: String, learningMode: String) {
+fun SubTitle(subTitle: String, status: String, learningMode: String) {
     var statusBackgroundColor = EDSColors.waitingBackgroundColor
     var statusTextColor = EDSColors.waitingTextColor
 
@@ -248,8 +249,8 @@ fun SubTitle(subTitle: Int, status: String, learningMode: String) {
         learningModeBackgroundColor = EDSColors.learningModeOfflineBackgroundColor
         learningModeTextColor = EDSColors.learningModeOfflineTextColor
     } else if (learningMode == "Hybrid") {
-        learningModeBackgroundColor = EDSColors.learningModeHybridBackgroundColor
-        learningModeTextColor = EDSColors.learningModeHybridTextColor
+        learningModeBackgroundColor = EDSColors.purpleBackground
+        learningModeTextColor = EDSColors.purpleText
     }
 
     Row(
@@ -259,13 +260,18 @@ fun SubTitle(subTitle: Int, status: String, learningMode: String) {
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "ID: $subTitle", style = TextStyle(
+            text = "ID: $subTitle",
+            style = TextStyle(
                 fontWeight = FontWeight.Medium, color = EDSColors.myBlackColor, fontSize = 14.sp
-            ), modifier = Modifier
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .weight(0.1f)
                 .background(
                     EDSColors.idClassBackgroundColor, RoundedCornerShape(30)
                 )
-                .padding(all = 4.dp)
+                .padding(8.dp)
         )
         Text(
             text = status, style = TextStyle(
@@ -274,7 +280,7 @@ fun SubTitle(subTitle: Int, status: String, learningMode: String) {
                 .background(
                     statusBackgroundColor, RoundedCornerShape(30)
                 )
-                .padding(all = 4.dp)
+                .padding(8.dp)
         )
         Text(
             text = learningMode, style = TextStyle(
@@ -283,7 +289,7 @@ fun SubTitle(subTitle: Int, status: String, learningMode: String) {
                 .background(
                     learningModeBackgroundColor, RoundedCornerShape(30)
                 )
-                .padding(all = 4.dp)
+                .padding(8.dp)
         )
     }
 }
@@ -304,7 +310,7 @@ fun MiddleContent(subjectName: String, creationTime: String) {
     Column(
         Modifier.padding(top = 12.dp, bottom = 20.dp)
     ) {
-        IconAndText(Icons.Outlined.Subject, subjectName)
+        IconAndText(Icons.AutoMirrored.Outlined.Subject, subjectName)
         IconAndText(
             Icons.Outlined.DateRange, "Created at ${DateFormat.DD_MM_YYYY(creationTime)}"
         )

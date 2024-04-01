@@ -28,7 +28,7 @@ class TutorReviewViewModel @Inject constructor(
     private var _learningCourseDetailState = mutableStateOf(LearningCourseDetailState())
     val learningCourseDetailState: State<LearningCourseDetailState> = _learningCourseDetailState
 
-    fun sendReviewRequest(auth: String, courseId: Int, reviewTutorInput: ReviewTutorInput) {
+    fun sendReviewRequest(auth: String, courseId: String, reviewTutorInput: ReviewTutorInput) {
         reviewTutorUseCase(auth, courseId, reviewTutorInput).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {
@@ -52,7 +52,7 @@ class TutorReviewViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getLearningCourseData(auth: String, courseId: Int) {
+    fun getLearningCourseData(auth: String, courseId: String) {
         getLearningCourseDetailUseCase(auth, courseId).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {

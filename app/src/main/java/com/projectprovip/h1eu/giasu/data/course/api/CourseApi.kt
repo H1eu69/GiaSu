@@ -1,7 +1,7 @@
 package com.projectprovip.h1eu.giasu.data.course.api
 
 import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDetailDto
-import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
@@ -49,13 +49,13 @@ interface CourseApi {
     suspend fun getRequestedCourseDetail(@Path("id") courseId: Int,
                                          @Header("Authorization") token: String) : Response<RequestedCourseDetailDto>
 
-    @GET("Profile/GetLearningCourses")
+    @GET("Profile/learning-courses")
     suspend fun getLearningCourses(@Header("Authorization") token: String) : Response<LearningCourseDto>
     @GET("Profile/GetLearningCourse/{id}")
     suspend fun getLearningCourseDetail(@Header("Authorization") token: String,
-                                        @Path("id") courseId: Int) : Response<LearningCourseDetailDto>
+                                        @Path("id") courseId: String) : Response<LearningCourseDetailDto>
     @POST("Profile/Review/{id}")
     suspend fun reviewTutorOfByCourseId(@Header("Authorization") token: String,
-                                        @Path("id") id: Int,
+                                        @Path("id") id: String,
                                         @Body input: ReviewTutorInput) : Response<Unit>
 }

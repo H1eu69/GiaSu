@@ -14,7 +14,7 @@ import javax.inject.Inject
 class ReviewTutorUseCase @Inject constructor(
     private val coursesRepository: CoursesRepository
 ) {
-    operator fun invoke(auth: String, courseId: Int, input: ReviewTutorInput) = flow<EDSResult<Unit>> {
+    operator fun invoke(auth: String, courseId: String, input: ReviewTutorInput) = flow<EDSResult<Unit>> {
         try {
             emit(EDSResult.Loading())
             val response = coursesRepository.reviewTutorByCourseId(auth, courseId, input)

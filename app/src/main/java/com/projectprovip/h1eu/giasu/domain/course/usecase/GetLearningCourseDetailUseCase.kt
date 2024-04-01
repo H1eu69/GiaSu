@@ -2,9 +2,7 @@ package com.projectprovip.h1eu.giasu.domain.course.usecase
 
 import android.util.Log
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.course.dto.toLearningCourse
 import com.projectprovip.h1eu.giasu.data.course.dto.toLearningCourseDetail
-import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourse
 import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourseDetail
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import kotlinx.coroutines.flow.flow
@@ -15,7 +13,7 @@ import javax.inject.Inject
 class GetLearningCourseDetailUseCase @Inject constructor(
     private val coursesRepository: CoursesRepository
 ) {
-    operator fun invoke(token: String, courseId: Int) = flow<EDSResult<LearningCourseDetail>> {
+    operator fun invoke(token: String, courseId: String) = flow<EDSResult<LearningCourseDetail>> {
         try {
             emit(EDSResult.Loading())
             val response = coursesRepository.getLearningCourseDetail(token, courseId)

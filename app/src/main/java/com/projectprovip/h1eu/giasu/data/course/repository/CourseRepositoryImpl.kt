@@ -2,7 +2,7 @@ package com.projectprovip.h1eu.giasu.data.course.repository
 
 import com.projectprovip.h1eu.giasu.data.course.api.CourseApi
 import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDetailDto
-import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
@@ -50,12 +50,12 @@ class CourseRepositoryImpl @Inject constructor(
 
     override suspend fun getLearningCourseDetail(
         token: String,
-        courseId: Int
+        courseId: String
     ): Response<LearningCourseDetailDto> {
         return api.getLearningCourseDetail(token, courseId)
     }
 
-    override suspend fun reviewTutorByCourseId(token: String, courseId: Int, input: ReviewTutorInput) : Response<Unit>{
+    override suspend fun reviewTutorByCourseId(token: String, courseId: String, input: ReviewTutorInput) : Response<Unit>{
         return api.reviewTutorOfByCourseId(token, courseId, input)
     }
 }

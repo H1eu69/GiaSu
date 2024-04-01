@@ -389,11 +389,11 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             "${Screens.InApp.Profile.LearningCourses.TutorReview.route}/{courseId}",
             arguments = listOf(
                 navArgument("courseId") {
-                    type = NavType.IntType
+                    type = NavType.StringType
                 },
             )
         ) {
-            val courseId = it.arguments?.getInt("courseId")
+            val courseId = it.arguments?.getString("courseId")
             val vm = hiltViewModel<TutorReviewViewModel>()
 
             LaunchedEffect(key1 = vm.learningCourseDetailState) {

@@ -1,7 +1,7 @@
 package com.projectprovip.h1eu.giasu.domain.course.repository
 
 import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDetailDto
-import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
@@ -25,12 +25,12 @@ interface CoursesRepository {
     suspend fun getLearningCourses(token: String): Response<LearningCourseDto>
     suspend fun getLearningCourseDetail(
         token: String,
-        courseId: Int
+        courseId: String
     ): Response<LearningCourseDetailDto>
 
     suspend fun reviewTutorByCourseId(
         token: String,
-        courseId: Int,
+        courseId: String,
         input: ReviewTutorInput
     ): Response<Unit>
 }

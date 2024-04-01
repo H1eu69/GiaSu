@@ -559,7 +559,7 @@ fun BottomContent(fee: Int, createdDate: String) {
                 color = EDSColors.costTextColor
             )
         )
-        IconAndText(Icons.Outlined.DateRange, DateFormat.DD_MM_YYYY(createdDate))
+        IconAndText(Icons.Outlined.DateRange, DateFormat.DD_MM_YYYY_ISO(createdDate))
     }
 }
 

@@ -55,7 +55,6 @@ import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.DateFormat
@@ -346,7 +345,7 @@ fun MiddleContent(subjectName: String, courseId: Int, creationTime: String) {
         IconAndText(Icons.Outlined.Info, "Course ID: $courseId")
         IconAndText(
             Icons.Outlined.DateRange,
-            "Created at ${DateFormat.DD_MM_YYYY(creationTime)}"
+            "Created at ${DateFormat.DD_MM_YYYY_ISO(creationTime)}"
         )
     }
 }

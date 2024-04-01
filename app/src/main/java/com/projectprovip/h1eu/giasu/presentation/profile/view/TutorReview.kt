@@ -414,7 +414,7 @@ fun BottomContent(fee: Double, createdDate: String) {
         )
         com.projectprovip.h1eu.giasu.presentation.home.view.IconAndText(
             Icons.Outlined.DateRange,
-            DateFormat.DD_MM_YYYY(createdDate)
+            DateFormat.DD_MM_YYYY_ISO(createdDate)
         )
     }
 }
