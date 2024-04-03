@@ -5,6 +5,11 @@ data class UserSignUpInput(
     val firstName: String,
     val lastName: String,
     val password: String,
-    val userName: String, val phone: String, val birthYear: String, val city: String
+    val userName: String,
+    val phone: String,
+    val birthYear: String,
+    val city: String,
+    val country: String = "Vietnam",
+    val gender: Int = 1,
 
-)
+    )

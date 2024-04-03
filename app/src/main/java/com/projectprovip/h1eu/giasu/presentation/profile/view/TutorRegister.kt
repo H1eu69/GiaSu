@@ -15,6 +15,8 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,22 +34,31 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -62,6 +73,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -75,7 +87,10 @@ import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectItem
+import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.TutorRegisterState
+import com.projectprovip.h1eu.giasu.presentation.profile.model.toMajor
 import kotlinx.coroutines.launch
 import kotlin.math.ceil
 
@@ -83,14 +98,21 @@ import kotlin.math.ceil
 @Preview
 @Composable
 fun PreviewTutorRegister() {
-    TutorRegisterScreen(rememberNavController(), TutorRegisterState(), { s1, s2, s3 , s4-> },)
+    TutorRegisterScreen(
+        rememberNavController(),
+        TutorRegisterState(),
+        SubjectState(),
+        { s1, s2, s3, s4 -> },
+    )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun TutorRegisterScreen(
-    navController: NavController, registerState: TutorRegisterState,
-    registerTutor: (String, String, String, List<Uri>) -> Unit,
+    navController: NavController,
+    registerState: TutorRegisterState,
+    subjectState: SubjectState,
+    registerTutor: (String, String, List<Int>, List<Uri>) -> Unit,
 ) {
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current
@@ -147,7 +169,6 @@ fun TutorRegisterScreen(
 
         val academicText = remember { mutableStateOf("") }
         val universityText = remember { mutableStateOf("") }
-        val majorText = remember { mutableStateOf("") }
 
         val academicInteractionSource = remember { MutableInteractionSource() }
         val academicIsFocused = academicInteractionSource.collectIsFocusedAsState()
@@ -155,8 +176,38 @@ fun TutorRegisterScreen(
         val universityInteractionSource = remember { MutableInteractionSource() }
         val universityIsFocused = universityInteractionSource.collectIsFocusedAsState()
 
-        val majorInteractionSource = remember { MutableInteractionSource() }
-        val majorIsFocused = majorInteractionSource.collectIsFocusedAsState()
+        val subject = remember {
+            mutableStateOf(subjectState.data)
+        }
+        val selectedSubjects = remember {
+            mutableStateOf(emptyList<SubjectItem>())
+        }
+
+        LaunchedEffect(subjectState) {
+            subject.value = subjectState.data
+        }
+
+        val openEditSubjectDialog = remember { mutableStateOf(false) }
+
+        if (openEditSubjectDialog.value) {
+            Log.d("subject", subject.value.toString())
+
+            SubjectDialog(subject, onDisMiss = {
+                openEditSubjectDialog.value = false
+            },
+                onConfirm = {
+                    val newList = selectedSubjects.value.toMutableList()
+                    newList.clear()
+                    subject.value.forEach {
+                        if (it.isSelected) {
+                            newList.add(it)
+                        }
+                    }
+                    selectedSubjects.value = newList
+                    Log.d("selectedSubjects in enroll", selectedSubjects.value.toString())
+                })
+        }
+
         Box(
             modifier = Modifier
                 .padding(it)
@@ -224,32 +275,56 @@ fun TutorRegisterScreen(
                     )
                 }
                 item {
-                    OutlinedTextField(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp)
                             .padding(horizontal = 20.dp),
-                        interactionSource = majorInteractionSource,
-                        label = {
-                            if (!majorIsFocused.value)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row {
+                                androidx.compose.material3.Text(
+                                    text = "Subjects",
+                                )
                                 Text(
-                                    text = "Major", color = EDSColors.grayX2
-                                ) else Text(
-                                text = "Major",
-                            )
-                        },
-                        keyboardActions = KeyboardActions(),
-                        shape = RoundedCornerShape(12.dp),
-                        onValueChange = { value ->
-                            majorText.value = value
-                        },
-                        value = majorText.value,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = EDSColors.primaryColor,
-                            focusedLabelColor = EDSColors.primaryColor,
-                            cursorColor = EDSColors.primaryColor,
-                        ),
-                    )
+                                    text = "(*)", fontSize = 16.sp,
+                                    color = EDSColors.notScheduleTextColor
+                                )
+                            }
+
+                            androidx.compose.material3.Text(
+                                text = "Edit",
+                                color = EDSColors.primaryColor,
+                                modifier = Modifier.clickable {
+                                    openEditSubjectDialog.value = true
+                                })
+                        }
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            selectedSubjects.value.forEach {
+                                FilterChip(
+                                    selected = true,
+                                    onClick = { /*TODO*/ },
+                                    colors = FilterChipDefaults.filterChipColors(
+                                        selectedContainerColor = EDSColors.greenCheck,
+                                        selectedLabelColor = EDSColors.white,
+                                        selectedTrailingIconColor = EDSColors.white
+                                    ),
+                                    label = {
+                                        androidx.compose.material3.Text(
+                                            it.name,
+                                            fontWeight = FontWeight.W300
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
                 item {
                     Column(
@@ -308,7 +383,9 @@ fun TutorRegisterScreen(
                     registerTutor(
                         academicText.value,
                         universityText.value,
-                        majorText.value,
+                        selectedSubjects.value.map {subject ->
+                            subject.id
+                        },
                         images.value
                     )
                 },
@@ -338,8 +415,10 @@ fun TutorRegisterScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ImagePicker(images: List<Uri>, onImageUriChanged: ((uri: Uri, index: Int) -> Unit),
-                onDeleteUri: (( index: Int) -> Unit)) {
+fun ImagePicker(
+    images: List<Uri>, onImageUriChanged: ((uri: Uri, index: Int) -> Unit),
+    onDeleteUri: ((index: Int) -> Unit)
+) {
 
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val imageWidth = (screenWidth - 40) / 3
@@ -389,7 +468,7 @@ fun ImagePicker(images: List<Uri>, onImageUriChanged: ((uri: Uri, index: Int) ->
                                     CircleShape
                                 )
                                 .clickable {
-                                    onDeleteUri( index)
+                                    onDeleteUri(index)
                                     Log.d("Test uri on delete", u.lastPathSegment.toString())
                                 }
                         )
@@ -417,6 +496,141 @@ fun ImagePicker(images: List<Uri>, onImageUriChanged: ((uri: Uri, index: Int) ->
                 }
             }
         }
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SubjectDialog(
+    subjects: MutableState<List<SubjectItem>>,
+    onDisMiss: () -> Unit = {},
+    onConfirm: () -> Unit = {}
+) {
+    val searchText = remember { mutableStateOf("") }
+    AlertDialog(
+        modifier = Modifier
+            .fillMaxSize(),
+        title = {
+            androidx.compose.material3.Text(text = "Subjects")
+        },
+        containerColor = EDSColors.white,
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+
+            ) {
+                androidx.compose.material3.OutlinedTextField(
+                    value = searchText.value,
+                    onValueChange = {
+                        searchText.value = it
+                    },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = null)
+                    },
+                    singleLine = true,
+                    shape = RoundedCornerShape(30),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLeadingIconColor = EDSColors.primaryColor,
+                    ),
+                )
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+
+                    subjects.value.forEachIndexed { index, subject ->
+                        item {
+                            FilterChip(
+                                modifier = Modifier.fillMaxWidth(),
+                                selected = subject.isSelected,
+                                onClick = {
+                                    val newList = subjects.value.toMutableList()
+                                    newList[index] = subject.copy(isSelected = !subject.isSelected)
+                                    subjects.value = newList
+                                },
+                                label = {
+                                    androidx.compose.material3.Text(
+                                        subject.name, fontWeight = FontWeight.W300,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier
+                                            .fillMaxWidth(.85f)
+                                    )
+                                },
+                                trailingIcon = {
+                                    if (subject.isSelected)
+                                        Icon(
+                                            imageVector = Icons.Default.CheckCircle,
+                                            contentDescription = null
+                                        )
+                                },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = EDSColors.greenCheck,
+                                    selectedLabelColor = EDSColors.white,
+                                    selectedTrailingIconColor = EDSColors.white
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
+        },
+
+        onDismissRequest = {
+            onDisMiss()
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onConfirm()
+                onDisMiss()
+            }) {
+                androidx.compose.material3.Text("Accept", color = EDSColors.primaryColor)
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDisMiss()
+                }
+            ) {
+                androidx.compose.material3.Text("Dismiss", color = EDSColors.notScheduleTextColor)
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+private fun FilterItemPreview() {
+    Surface {
+        FilterChip(
+            modifier = Modifier.fillMaxWidth(),
+            selected = true,
+            onClick = {
+
+            },
+            label = {
+                androidx.compose.material3.Text(
+                    "subject.name", fontWeight = FontWeight.W300,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .fillMaxWidth(.85f)
+                )
+            },
+
+            colors = FilterChipDefaults.filterChipColors(
+                selectedContainerColor = EDSColors.greenBackground,
+                selectedLabelColor = EDSColors.greenText,
+                selectedTrailingIconColor = EDSColors.greenText
+            ),
+        )
     }
 
 }

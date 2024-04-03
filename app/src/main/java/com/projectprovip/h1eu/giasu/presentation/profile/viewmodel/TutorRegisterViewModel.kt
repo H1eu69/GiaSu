@@ -9,7 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
+import com.projectprovip.h1eu.giasu.domain.subject.model.toSubjectItem
+import com.projectprovip.h1eu.giasu.domain.subject.usecase.GetSubjectUseCase
 import com.projectprovip.h1eu.giasu.domain.tutor.usecase.RegisterTutorUseCase
+import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.TutorRegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -23,12 +26,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TutorRegisterViewModel @Inject constructor(
-    private val registerTutorUseCase: RegisterTutorUseCase
+    private val registerTutorUseCase: RegisterTutorUseCase,
+    private val getSubjectUseCase: GetSubjectUseCase
 ) : ViewModel() {
+
     private var downloadPath = mutableListOf<Uri>()
     private var _tutorRegisterState = mutableStateOf(TutorRegisterState())
     val tutorRegisterState: State<TutorRegisterState> = _tutorRegisterState
-    fun registerTutor(auth: String, academicLevel: String, university: String, major: String, uri: List<Uri>) {
+
+    private var _subjectState = mutableStateOf(SubjectState())
+    val subjectState: State<SubjectState> = _subjectState
+
+    fun registerTutor(auth: String, academicLevel: String, university: String, major: List<Int>, uri: List<Uri>) {
         viewModelScope.launch {
             val timeStamp = System.currentTimeMillis()
 
@@ -62,8 +71,8 @@ class TutorRegisterViewModel @Inject constructor(
                 auth, TutorRegisterInput(
                     academicLevel,
                     university,
-                    listOf(major),
-                    downloadPath.toList().map {
+                    major,
+                    downloadPath.map {
                         it.toString()
                     }.apply {
                         Log.d("Test register tutor after apply", this.toString())
@@ -91,5 +100,29 @@ class TutorRegisterViewModel @Inject constructor(
                 }
             }.launchIn(this)
         }
+    }
+
+    fun getSubject() {
+        getSubjectUseCase().onEach { result ->
+            when (result) {
+                is EDSResult.Loading -> {
+                    _subjectState.value = SubjectState(isLoading = true)
+                }
+
+                is EDSResult.Error -> {
+                    _subjectState.value = SubjectState(error = result.message!!)
+                    Log.d("Test get subject error", result.message)
+                }
+
+                is EDSResult.Success -> {
+                    _subjectState.value = SubjectState(data = result.data!!.map {
+                        it.toSubjectItem()
+                    })
+                    Log.d("Test get subject", result.data.toString())
+
+                }
+            }
+
+        }.launchIn(viewModelScope)
     }
 }

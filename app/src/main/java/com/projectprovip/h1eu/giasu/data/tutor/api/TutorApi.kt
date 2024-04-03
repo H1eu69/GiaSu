@@ -2,6 +2,7 @@ package com.projectprovip.h1eu.giasu.data.tutor.api
 
 import com.projectprovip.h1eu.giasu.data.tutor.dto.TutorDetailDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.TutorDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRegisterDto.TutorRegisterDto
 import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
 import retrofit2.Response
 import retrofit2.http.Body
@@ -16,8 +17,8 @@ interface TutorApi {
     suspend fun getAllTutor(@Query("PageIndex") index: Int) : TutorDto
     @GET("TutorInformation/{id}")
     suspend fun getTutorDetail(@Path("id") tutorId: Int) : Response<TutorDetailDto>
-    @POST("TutorInformation/Register")
+    @POST("tutor/register")
     suspend fun registerTutor(@Header("Authorization") auth: String,
-                              @Body tutorRegisterInput: TutorRegisterInput) : Response<Unit>
+                              @Body tutorRegisterInput: TutorRegisterInput) : TutorRegisterDto
 
 }

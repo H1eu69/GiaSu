@@ -24,6 +24,8 @@ object Constant {
     const val USERID_STRING = "userid"
     const val USER_IMAGE_STRING = "user_image"
     const val USER_EMAIL_STRING = "email"
+    const val USER_ROLE_STRING = "role"
+
 }
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "share data")

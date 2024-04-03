@@ -78,6 +78,7 @@ fun ProfileScreen(navController: NavController) {
     val useridKey = stringPreferencesKey(Constant.USERID_STRING)
     val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
     val userEmailKey = stringPreferencesKey(Constant.USER_EMAIL_STRING)
+    val userRoleKey = stringPreferencesKey(Constant.USER_ROLE_STRING)
 
     val userName = remember {
         mutableStateOf("")
@@ -92,16 +93,20 @@ fun ProfileScreen(navController: NavController) {
     val onShowDialog: (Boolean) -> Unit = {
         showDialog.value = it
     }
-    val isTutor = false
+    val role = remember {
+        mutableStateOf("")
+    }
     LaunchedEffect(key1 = "") {
         coroutine.launch {
             context.dataStore.data.collect {
                 userName.value = it[usernameKey].toString()
                 userImage.value = it[userImageKey].toString()
                 userEmail.value = it[userEmailKey].toString()
+                role.value = it[userRoleKey].toString()
             }
         }
     }
+    val isTutor = role.value == "Tutor"
     Scaffold(
         containerColor = EDSColors.mainBackground,
         topBar = {
@@ -144,7 +149,7 @@ fun ProfileScreen(navController: NavController) {
                         })
                     if (!isTutor) {
                         ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
-                            "Learning courses", true,
+                            "Your courses", true,
                             onClick = {
                                 navController.navigate(Screens.InApp.Profile.LearningCourses.route)
                             })
@@ -155,7 +160,7 @@ fun ProfileScreen(navController: NavController) {
                             })
                     } else {
                         ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
-                            "Course requested", true,
+                            "Your courses", true,
                             onClick = {
                                 navController.navigate(Screens.InApp.Profile.LearningCourses.route)
                             })

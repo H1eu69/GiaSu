@@ -290,9 +290,13 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable(Screens.InApp.Profile.route) { ProfileScreen(navController) }
         composable(Screens.InApp.Profile.TutorRegistration.route) {
             val vm = hiltViewModel<TutorRegisterViewModel>()
+            LaunchedEffect(Unit) {
+                vm.getSubject()
+            }
             TutorRegisterScreen(
                 navController,
                 vm.tutorRegisterState.value,
+                vm.subjectState.value,
                 registerTutor = { s1, s2, s3, s4 ->
                     vm.registerTutor(token.value, s1, s2, s3, s4)
                 },

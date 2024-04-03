@@ -3,6 +3,7 @@ package com.projectprovip.h1eu.giasu.data.tutor.repository
 import com.projectprovip.h1eu.giasu.data.tutor.api.TutorApi
 import com.projectprovip.h1eu.giasu.data.tutor.dto.TutorDetailDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.TutorDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRegisterDto.TutorRegisterDto
 import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
 import com.projectprovip.h1eu.giasu.domain.tutor.repository.TutorRepository
 import retrofit2.Response
@@ -22,7 +23,7 @@ class TutorRepositoryImpl @Inject constructor(
     override suspend fun registerTutor(
         auth: String,
         tutorRegisterInput: TutorRegisterInput
-    ): Response<Unit> {
+    ): TutorRegisterDto {
         return api.registerTutor(auth, tutorRegisterInput)
     }
 }

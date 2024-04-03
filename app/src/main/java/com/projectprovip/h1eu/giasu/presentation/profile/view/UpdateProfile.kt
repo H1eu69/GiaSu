@@ -1228,7 +1228,7 @@ fun SubjectDialogPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubjectDialog(
+private fun SubjectDialog(
     subjects: MutableState<List<SubjectItem>>,
     onDisMiss: () -> Unit = {},
     onConfirm: () -> Unit = {}
