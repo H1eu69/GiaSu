@@ -3,7 +3,7 @@ package com.projectprovip.h1eu.giasu.data.user.api
 import com.projectprovip.h1eu.giasu.data.user.dto.loginDto.UserLoginDto
 import com.projectprovip.h1eu.giasu.data.user.dto.signupDto.UserSignUpDto
 import com.projectprovip.h1eu.giasu.data.user.model.UserLoginInput
-import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
+import com.projectprovip.h1eu.giasu.domain.authentication.model.UserSignUpParams
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -12,5 +12,5 @@ interface UserAuthApi {
     suspend fun sendLoginRequest(@Body userLoginInput: UserLoginInput) : UserLoginDto
 
     @POST("Authentication/Register")
-    suspend fun sendSignUpRequest(@Body userSignUpInput: UserSignUpInput) : UserSignUpDto
+    suspend fun sendSignUpRequest(@Body userSignUpInput: UserSignUpParams) : UserSignUpDto
 }

@@ -2,7 +2,7 @@ package com.projectprovip.h1eu.giasu.domain.authentication.usecase
 
 import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.data.user.dto.signupDto.UserToken
-import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
+import com.projectprovip.h1eu.giasu.domain.authentication.model.UserSignUpParams
 import com.projectprovip.h1eu.giasu.domain.authentication.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class SignUpUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke(userSignUpInput: UserSignUpInput): Flow<EDSResult<UserToken>> = flow {
+    operator fun invoke(userSignUpInput: UserSignUpParams): Flow<EDSResult<UserToken>> = flow {
         try {
             emit(EDSResult.Loading())
             val data = userRepository.register(userSignUpInput)

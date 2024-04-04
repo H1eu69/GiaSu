@@ -10,7 +10,7 @@ import com.projectprovip.h1eu.giasu.common.isEmailFormatted
 import com.projectprovip.h1eu.giasu.common.isPasswordFormatted
 import com.projectprovip.h1eu.giasu.common.isPhoneNumber
 import com.projectprovip.h1eu.giasu.common.isUsername
-import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
+import com.projectprovip.h1eu.giasu.domain.authentication.model.UserSignUpParams
 import com.projectprovip.h1eu.giasu.domain.authentication.usecase.SignUpUseCase
 import com.projectprovip.h1eu.giasu.domain.location.usecase.GetProvinceUseCase
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceState
@@ -60,7 +60,8 @@ class SignUpViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun signUp(input: UserSignUpInput) {
+    fun signUp(input: UserSignUpParams) {
+        Log.d("SignUpViewModel", input.toString())
         signUpUseCase(input).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {

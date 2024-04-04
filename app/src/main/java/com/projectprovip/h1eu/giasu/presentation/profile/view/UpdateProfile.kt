@@ -150,8 +150,10 @@ fun UpdateProfile(
     }
     val genderOptions = listOf("Male", "Female", "Other")
 
+    val index = if(genderOptions.indexOf(profile.gender) != -1) genderOptions.indexOf(profile.gender) else 0
+
     val (genderSelectedOption, onGenderSelect) = remember {
-        mutableStateOf(genderOptions[genderOptions.indexOf(profile.gender)])
+        mutableStateOf(genderOptions[index])
     }
 
     val userMajors = remember {

@@ -67,7 +67,7 @@ import com.chargemap.compose.numberpicker.NumberPicker
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
+import com.projectprovip.h1eu.giasu.domain.authentication.model.UserSignUpParams
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceItem
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.SignUpState
@@ -95,7 +95,7 @@ fun SignUpScreen(
     navController: NavController,
     validate: (String?, String?, String?, String?, String?, String?, String?, String?) -> Boolean,
     onRegisterClicked: (
-        UserSignUpInput
+        UserSignUpParams
     ) -> Unit,
     signUpState: SignUpState,
     provinceState: ProvinceState
@@ -234,15 +234,15 @@ fun SignUpScreen(
                         validate = validate,
                         onDone = {
                             onRegisterClicked(
-                                UserSignUpInput(
-                                    firstNameText.value,
-                                    lastNameText.value,
-                                    emailText.value,
-                                    passText.value,
-                                    usernameText.value,
-                                    phoneNumberText.value,
-                                    birthYearText.value,
-                                    cityText.value
+                                UserSignUpParams(
+                                    birthYear = birthYearText.value.toInt(),
+                                    city = cityText.value,
+                                    firstname = firstNameText.value,
+                                    lastName = lastNameText.value,
+                                    email = emailText.value,
+                                    password = passText.value,
+                                    username = usernameText.value,
+                                    phoneNumber = phoneNumberText.value,
                                 )
                             )
                         })
