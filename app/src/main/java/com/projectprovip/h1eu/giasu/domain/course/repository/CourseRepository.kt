@@ -1,12 +1,13 @@
 package com.projectprovip.h1eu.giasu.domain.course.repository
 
-import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
+import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
+import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import retrofit2.Response
@@ -22,15 +23,15 @@ interface CoursesRepository {
         token: String?
     ): Response<RequestedCourseDetailDto>
 
-    suspend fun getLearningCourses(token: String): Response<LearningCourseDto>
+    suspend fun getLearningCourses(token: String): LearningCourseDto
     suspend fun getLearningCourseDetail(
         token: String,
         courseId: String
-    ): Response<LearningCourseDetailDto>
+    ): LearningCourseDetailDto
 
     suspend fun reviewTutorByCourseId(
         token: String,
         courseId: String,
         input: ReviewTutorInput
-    ): Response<Unit>
+    ): ReviewTutorDto
 }

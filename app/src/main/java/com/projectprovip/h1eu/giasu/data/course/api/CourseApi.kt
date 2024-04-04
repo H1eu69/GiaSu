@@ -1,12 +1,13 @@
 package com.projectprovip.h1eu.giasu.data.course.api
 
-import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
+import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.LearningCourseDetailDto
+import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import retrofit2.Response
@@ -50,12 +51,12 @@ interface CourseApi {
                                          @Header("Authorization") token: String) : Response<RequestedCourseDetailDto>
 
     @GET("Profile/learning-courses")
-    suspend fun getLearningCourses(@Header("Authorization") token: String) : Response<LearningCourseDto>
-    @GET("Profile/GetLearningCourse/{id}")
+    suspend fun getLearningCourses(@Header("Authorization") token: String) : LearningCourseDto
+    @GET("Profile/learning-course/{courseId}")
     suspend fun getLearningCourseDetail(@Header("Authorization") token: String,
-                                        @Path("id") courseId: String) : Response<LearningCourseDetailDto>
-    @POST("Profile/Review/{id}")
+                                        @Path("courseId") courseId: String) : LearningCourseDetailDto
+    @POST("profile/learning-course/{courseId}/review")
     suspend fun reviewTutorOfByCourseId(@Header("Authorization") token: String,
-                                        @Path("id") id: String,
-                                        @Body input: ReviewTutorInput) : Response<Unit>
+                                        @Path("courseId") id: String,
+                                        @Body input: ReviewTutorInput) : ReviewTutorDto
 }

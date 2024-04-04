@@ -26,6 +26,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
@@ -64,10 +65,11 @@ import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.DateFormat
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
-import com.projectprovip.h1eu.giasu.domain.course.model.isValid
+import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.RatingBar
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.home.view.SessionSection
 import com.projectprovip.h1eu.giasu.presentation.profile.model.LearningCourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.ReviewTutorState
 
@@ -132,7 +134,7 @@ fun TutorReviewScreen(
                     }
                 }
 
-                this.data.isValid() -> {
+                this.data != LearningCourseDetail() -> {
                     Column(
                         horizontalAlignment = Alignment.Start,
                         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -185,19 +187,36 @@ fun TutorReviewScreen(
                                 fontWeight = FontWeight.Bold
                             )
                         )
-                        androidx.compose.material.Text(
-                            text = learningCourseDetailState.data.status,
-                            style = TextStyle(
-                                fontWeight = FontWeight.Medium,
-                                color = statusTextColor,
-                                fontSize = 14.sp
-                            ),
-                            modifier = Modifier
-                                .background(
-                                    statusBackgroundColor,
-                                    RoundedCornerShape(20.dp)
-                                )
-                                .padding(start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = learningCourseDetailState.data.status,
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Medium,
+                                    color = statusTextColor
+                                ),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(EDSColors.greenBackground)
+                                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                            )
+
+                            androidx.compose.material3.Text(
+                                text = learningCourseDetailState.data.learningMode,
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Medium,
+                                    color = EDSColors.purpleText
+                                ),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(EDSColors.purpleBackground)
+                                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                            )
+                        }
+                        SessionSection(
+                            dayAWeek = learningCourseDetailState.data.sessionPerWeek,
+                            minPerDay = learningCourseDetailState.data.sessionDuration
                         )
 
                         androidx.compose.material.Text(
@@ -216,7 +235,7 @@ fun TutorReviewScreen(
                                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                         )
                         BottomContent(
-                            fee = learningCourseDetailState.data.fee,
+                            fee = learningCourseDetailState.data.chargeFee,
                             createdDate = learningCourseDetailState.data.creationTime
                         )
 
@@ -227,36 +246,13 @@ fun TutorReviewScreen(
 
 
                         DetailIconAndText(
-                            Icons.Outlined.Phone,
-                            "Contact number: ", learningCourseDetailState.data.contactNumber
-                        )
-
-                        DetailIconAndText(
                             Icons.Outlined.Person,
-                            "Tutor gender requirement: ",
-                            learningCourseDetailState.data.genderRequirement
+                            "Tutor name: ", learningCourseDetailState.data.tutorName
                         )
 
                         DetailIconAndText(
-                            Icons.Outlined.Face,
-                            "Student gender: ", learningCourseDetailState.data.learnerGender
-                        )
-
-                        DetailIconAndText(
-                            Icons.Outlined.Person,
-                            "Number of learner: ",
-                            learningCourseDetailState.data.numberOfLearner.toString()
-                        )
-
-                        DetailIconAndText(
-                            Icons.Outlined.Info,
-                            "Learning mode: ", learningCourseDetailState.data.learningMode
-                        )
-
-                        DetailIconAndText(
-                            Icons.Outlined.Info,
-                            "Academic Requirement: ",
-                            learningCourseDetailState.data.academicLevelRequirement
+                            Icons.Outlined.Email,
+                            "Tutor email: ", learningCourseDetailState.data.tutorEmail
                         )
 
                         DetailIconAndText(
@@ -264,15 +260,6 @@ fun TutorReviewScreen(
                             "Address: ", learningCourseDetailState.data.address
                         )
 
-                        DetailIconAndText(
-                            Icons.Outlined.Info,
-                            "Session: ", pluralStringResource(
-                                R.plurals.session_string,
-                                learningCourseDetailState.data.sessionPerWeek,
-                                learningCourseDetailState.data.sessionPerWeek,
-                                learningCourseDetailState.data.minutePerSession
-                            )
-                        )
                         Spacer(modifier = Modifier.height(12.dp))
                         Row {
                             Icon(
@@ -319,7 +306,7 @@ fun TutorReviewScreen(
                             text = "Review", onClick = {
                                 onReviewButtonClick(
                                     ReviewTutorInput(
-                                        rate = rate.intValue.toString(),
+                                        rate = rate.intValue,
                                         detail = reviewDescription.value
                                     )
                                 )

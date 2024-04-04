@@ -2,7 +2,7 @@ package com.projectprovip.h1eu.giasu.domain.course.usecase
 
 import android.util.Log
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.course.dto.toLearningCourseDetail
+import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.toLearningCourseDetail
 import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourseDetail
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import kotlinx.coroutines.flow.flow
@@ -19,13 +19,13 @@ class GetLearningCourseDetailUseCase @Inject constructor(
             val response = coursesRepository.getLearningCourseDetail(token, courseId)
             Log.d("Test GetLearningCourseDetailUseCase", response.toString())
             Log.d("Test GetLearningCourseDetailUseCase", courseId.toString())
-            Log.d("Test GetLearningCourseDetailUseCase", response.isSuccessful.toString())
+            Log.d("Test GetLearningCourseDetailUseCase", response.isSuccess.toString())
 
-            if(response.isSuccessful) {
-                emit(EDSResult.Success(data = response.body()!!.learningCourseDetail.toLearningCourseDetail()))
+            if(response.isSuccess) {
+                emit(EDSResult.Success(data = response.value.toLearningCourseDetail()))
             }
             else {
-                emit(EDSResult.Error(message = response.message().toString()))
+                emit(EDSResult.Error(message = response.error.description))
             }
         } catch (e: HttpException) {
             emit(EDSResult.Error(e.localizedMessage))

@@ -1,13 +1,14 @@
 package com.projectprovip.h1eu.giasu.data.course.repository
 
 import com.projectprovip.h1eu.giasu.data.course.api.CourseApi
-import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
+import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.LearningCourseDetailDto
+import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
@@ -44,18 +45,18 @@ class CourseRepositoryImpl @Inject constructor(
         return api.getRequestedCourseDetail(id, token!!)
     }
 
-    override suspend fun getLearningCourses(token: String): Response<LearningCourseDto> {
+    override suspend fun getLearningCourses(token: String): LearningCourseDto {
         return api.getLearningCourses(token)
     }
 
     override suspend fun getLearningCourseDetail(
         token: String,
         courseId: String
-    ): Response<LearningCourseDetailDto> {
+    ): LearningCourseDetailDto {
         return api.getLearningCourseDetail(token, courseId)
     }
 
-    override suspend fun reviewTutorByCourseId(token: String, courseId: String, input: ReviewTutorInput) : Response<Unit>{
+    override suspend fun reviewTutorByCourseId(token: String, courseId: String, input: ReviewTutorInput) : ReviewTutorDto {
         return api.reviewTutorOfByCourseId(token, courseId, input)
     }
 }

@@ -33,12 +33,12 @@ class TutorReviewViewModel @Inject constructor(
             when (result) {
                 is EDSResult.Loading -> {
                     _reviewTutorState.value = ReviewTutorState(isLoading = true)
-                    Log.d("Test state", "loading")
+                    Log.d("Test state tutor review", "loading")
                 }
 
                 is EDSResult.Error -> {
                     _reviewTutorState.value = ReviewTutorState(message = result.message!!.alphaNumericOnly())
-                    Log.d("Test state", "error")
+                    Log.d("Test state tutor review", "error")
                 }
 
                 is EDSResult.Success -> {
@@ -46,13 +46,14 @@ class TutorReviewViewModel @Inject constructor(
                         success = true,
                         message = "Review successfully"
                     )
-                    Log.d("Test state", "success")
+                    Log.d("Test state tutor review", "success")
                 }
             }
         }.launchIn(viewModelScope)
     }
 
     fun getLearningCourseData(auth: String, courseId: String) {
+        Log.d("Test courseId review tutor", courseId)
         getLearningCourseDetailUseCase(auth, courseId).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {
