@@ -1,12 +1,11 @@
 package com.projectprovip.h1eu.giasu.domain.course.repository
 
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
-import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
-import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
+import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
@@ -16,8 +15,8 @@ interface CoursesRepository {
     suspend fun getAllClasses(page: Int, subjectName: String?): NewCoursesDto
     suspend fun getCourseById(id: String, ): CourseByIdDto
     suspend fun createCourse(token: String, input: CreateCourseInput): Response<Unit>
-    suspend fun registerCourse(id: String, token: String?): Response<RequestCourseDto>
-    suspend fun getRequestedCourse(token: String?): Response<RequestedCourseDto>
+    suspend fun registerCourse(id: String, token: String?): RequestCourseDto
+    suspend fun getRequestedCourse(token: String?): RequestCourseDto
     suspend fun getRequestedCourseDetail(
         id: Int,
         token: String?

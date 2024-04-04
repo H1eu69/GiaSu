@@ -2,11 +2,10 @@ package com.projectprovip.h1eu.giasu.data.course.api
 
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
-import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
-import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.LearningCourseDetailDto
+import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
@@ -42,12 +41,12 @@ interface CourseApi {
 
     @PUT("Course/{courseId}/RequestCourse")
     suspend fun registerCourse(@Path("courseId") id: String,
-                               @Header("Authorization") token: String) : Response<RequestCourseDto>
-    @GET("Profile/GetCourseRequests")
-    suspend fun getRequestedCourse(@Header("Authorization") token: String) : Response<RequestedCourseDto>
+                               @Header("Authorization") token: String) : RequestCourseDto
+    @GET("Profile/course-requests")
+    suspend fun getRequestedCourse(@Header("Authorization") token: String) : RequestCourseDto
 
-    @GET("Profile/CourseRequestDetail/{id}")
-    suspend fun getRequestedCourseDetail(@Path("id") courseId: Int,
+    @GET("profile/course-request/{courseRequestId}")
+    suspend fun getRequestedCourseDetail(@Path("courseRequestId") courseId: Int,
                                          @Header("Authorization") token: String) : Response<RequestedCourseDetailDto>
 
     @GET("Profile/learning-courses")
@@ -55,7 +54,7 @@ interface CourseApi {
     @GET("Profile/learning-course/{courseId}")
     suspend fun getLearningCourseDetail(@Header("Authorization") token: String,
                                         @Path("courseId") courseId: String) : LearningCourseDetailDto
-    @POST("profile/learning-course/{courseId}/review")
+    @PUT("profile/learning-course/{courseId}/review")
     suspend fun reviewTutorOfByCourseId(@Header("Authorization") token: String,
                                         @Path("courseId") id: String,
                                         @Body input: ReviewTutorInput) : ReviewTutorDto
