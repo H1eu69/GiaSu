@@ -312,7 +312,7 @@ fun MiddleContent(subjectName: String, creationTime: String) {
     ) {
         IconAndText(Icons.AutoMirrored.Outlined.Subject, subjectName)
         IconAndText(
-            Icons.Outlined.DateRange, "Created at ${DateFormat.DD_MM_YYYY(creationTime)}"
+            Icons.Outlined.DateRange, "Created at ${DateFormat.DD_MM_YYYY_ISO(creationTime)}"
         )
     }
 }

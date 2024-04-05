@@ -1,18 +1,18 @@
 package com.projectprovip.h1eu.giasu.data.course.model
 
-data class CreateCourseInput(
-    val academicLevel: String,
+data class CreateCourseParams(
+    val academicLevelRequirement: Int,
     val address: String,
-    val chargeFee: Int,
     val contactNumber: String,
     val description: String,
-    val fee: Int,
-    val genderRequirement: String,
-    val learnerGender: String,
-    val learningMode: String,
+    val fee: Double,
+    val genderRequirement: Int,
+    val learnerGender: Int,
+    val learnerName: String,
+    val learningMode: Int,
     val minutePerSession: Int,
     val numberOfLearner: Int,
     val sessionPerWeek: Int,
-    val subjectName: String,
+    val subjectId: Int,
     val title: String
 )

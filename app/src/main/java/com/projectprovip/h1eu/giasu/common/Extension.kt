@@ -2,19 +2,19 @@ package com.projectprovip.h1eu.giasu.common
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 object DateFormat {
     fun DD_MM_YYYY_ISO(date: String): String {
-        val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-        val dateTime = LocalDateTime.parse(date, formatter)
-        return dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-
-    }
-
-    fun DD_MM_YYYY(date: String): String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-        val dateTime = LocalDateTime.parse(date, formatter)
-        return dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        return try {
+            val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+            val dateTime = LocalDateTime.parse(date, formatter)
+            dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        } catch (e: DateTimeParseException) {
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+            val dateTime = LocalDateTime.parse(date, formatter)
+            dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+        }
     }
 }
 
@@ -55,6 +55,22 @@ fun String.toEDSIntGender(): Int {
     return when (this) {
         "Male" -> 1
         "Female" -> 2
+        else -> 3
+    }
+}
+
+fun String.toEDSIntLearningMode(): Int {
+    return when (this) {
+        "Offline" -> 1
+        "Online" -> 2
+        else -> 3
+    }
+}
+
+fun String.toEDSIntAcademicLevel(): Int {
+    return when (this) {
+        "Ungraduated" -> 1
+        "Graduated" -> 2
         else -> 3
     }
 }

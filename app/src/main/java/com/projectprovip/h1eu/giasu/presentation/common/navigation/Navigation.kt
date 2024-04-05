@@ -27,7 +27,7 @@ import androidx.navigation.navArgument
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.common.toEDSIntGender
-import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
+import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateTutorInfoParams
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.ForgetPasswordScreen
@@ -350,7 +350,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
 
         composable(Screens.InApp.Profile.RequestClass.route) {
             val vm = hiltViewModel<CreateClassViewModel>()
-            val createCourse: (CreateCourseInput) -> Unit = {
+            val createCourse: (CreateCourseParams) -> Unit = {
                 vm.requestClass(token.value, it)
             }
             CreateClassScreen(navController, vm.state.value, createCourse)

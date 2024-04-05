@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
+import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.domain.course.usecase.CreateCourseUseCase
 import com.projectprovip.h1eu.giasu.domain.subject.model.toSubjectItem
 import com.projectprovip.h1eu.giasu.domain.subject.usecase.GetSubjectUseCase
@@ -28,7 +28,7 @@ class CreateClassViewModel @Inject constructor(
         getSubjects()
     }
 
-    fun requestClass(token: String, input: CreateCourseInput) {
+    fun requestClass(token: String, input: CreateCourseParams) {
         Log.d("Test create course", input.toString())
 
         createCourseUseCase(token, input).onEach { result ->

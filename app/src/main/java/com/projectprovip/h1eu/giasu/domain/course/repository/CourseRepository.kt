@@ -7,14 +7,14 @@ import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.Lear
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
-import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
+import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import retrofit2.Response
 
 interface CoursesRepository {
     suspend fun getAllClasses(page: Int, subjectName: String?): NewCoursesDto
     suspend fun getCourseById(id: String, ): CourseByIdDto
-    suspend fun createCourse(token: String, input: CreateCourseInput): Response<Unit>
+    suspend fun createCourse(token: String, input: CreateCourseParams): Response<Unit>
     suspend fun registerCourse(id: String, token: String?): RequestCourseDto
     suspend fun getRequestedCourse(token: String?): RequestCourseDto
     suspend fun getRequestedCourseDetail(

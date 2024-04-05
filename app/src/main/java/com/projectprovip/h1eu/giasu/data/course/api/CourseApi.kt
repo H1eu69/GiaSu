@@ -7,7 +7,7 @@ import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
-import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
+import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import retrofit2.Response
 import retrofit2.http.Body
@@ -30,10 +30,10 @@ interface CourseApi {
         @Path("id") id :String,
     ) : CourseByIdDto
 
-    @POST("Course/Create")
+    @POST("Course")
     suspend fun createCourse(
         @Header("Authorization") token: String,
-        @Body input: CreateCourseInput
+        @Body input: CreateCourseParams
     ) : Response<Unit>
 
 //    @GET("Course/{id}")

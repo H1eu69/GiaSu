@@ -56,7 +56,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
+import com.projectprovip.h1eu.giasu.common.toEDSIntAcademicLevel
+import com.projectprovip.h1eu.giasu.common.toEDSIntGender
+import com.projectprovip.h1eu.giasu.common.toEDSIntLearningMode
+import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
@@ -76,7 +79,7 @@ fun CreateClassScreenPreview() {
 fun CreateClassScreen(
     navController: NavController,
     state: CreateCourseState,
-    onButtonClick: (CreateCourseInput) -> Unit
+    onButtonClick: (CreateCourseParams) -> Unit
 ) {
     val context = LocalContext.current
     LaunchedEffect(key1 = state) {
@@ -146,7 +149,7 @@ fun ClassRequestBody(
     modifier: Modifier = Modifier,
     navController: NavController,
     state: CreateCourseState,
-    onButtonClick: (CreateCourseInput) -> Unit
+    onButtonClick: (CreateCourseParams) -> Unit
 ) {
 
     val title = remember {
@@ -173,18 +176,26 @@ fun ClassRequestBody(
     val description = remember {
         mutableStateOf("")
     }
+
+    val learnerName = remember {
+        mutableStateOf("")
+    }
     val minutePerSession = remember {
         mutableStateOf("")
     }
     val sessionPerWeek = remember {
         mutableStateOf("")
     }
-    val academicLevel = remember {
-        mutableStateOf("")
-    }
+
     val subject = remember {
-        mutableStateOf("")
+        mutableStateOf(SubjectItem(name = ""))
     }
+
+    val academicLevel = listOf("Ungraduated", "Graduated", "Lecturer")
+    val (academicLevelSelectedOption, academicOnOptionSelected) = remember {
+        mutableStateOf(academicLevel[0])
+    }
+
     val genderOptions = listOf("Male", "Female", "Other")
     val (studentSelectedOptions, studentOnOptionSelected) = remember {
         mutableStateOf(genderOptions[0])
@@ -292,6 +303,20 @@ fun ClassRequestBody(
                 )
             }
 
+
+            item {
+                CommonRadioButton(
+                    title = "Academic Requirement",
+                    radioOptions = academicLevel,
+                    selectedOption = academicLevelSelectedOption,
+                    onOptionSelected = academicOnOptionSelected,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .background(Color.White)
+                )
+            }
+
             item {
                 OutlinedTextField(
                     modifier = Modifier
@@ -369,7 +394,31 @@ fun ClassRequestBody(
                     ),
                 )
             }
-
+            item {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                        .padding(horizontal = 20.dp),
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Learner name",
+                            color = EDSColors.grayX2
+                        )
+                    },
+                    keyboardActions = KeyboardActions(),
+                    shape = RoundedCornerShape(12.dp),
+                    onValueChange = { value ->
+                        learnerName.value = value
+                    },
+                    value = learnerName.value,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLabelColor = EDSColors.primaryColor,
+                    ),
+                )
+            }
             item {
                 OutlinedTextField(
                     modifier = Modifier
@@ -415,9 +464,11 @@ fun ClassRequestBody(
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
-                        subject.value = value
+                        subject.value = subject.value.copy(
+                            name = value
+                        )
                     },
-                    value = subject.value,
+                    value = subject.value.name,
                     colors = OutlinedTextFieldDefaults.colors(
                         disabledTextColor = EDSColors.myBlackColor,
                         cursorColor = EDSColors.primaryColor,
@@ -604,32 +655,6 @@ fun ClassRequestBody(
             }
 
             item {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
-                        .padding(horizontal = 20.dp),
-                    placeholder = {
-                        androidx.compose.material3.Text(
-                            text = "Academic Level",
-                            color = EDSColors.grayX2
-                        )
-                    },
-                    keyboardActions = KeyboardActions(),
-                    shape = RoundedCornerShape(12.dp),
-                    onValueChange = { value ->
-                        academicLevel.value = value
-                    },
-                    value = academicLevel.value,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        cursorColor = EDSColors.primaryColor,
-                        focusedBorderColor = EDSColors.primaryColor,
-                        focusedLabelColor = EDSColors.primaryColor,
-                    ),
-                )
-            }
-
-            item {
                 CommonRadioButton(
                     title = "Tutor Gender",
                     radioOptions = genderOptions,
@@ -645,21 +670,21 @@ fun ClassRequestBody(
         EduSmartButton(
             onClick = {
                 onButtonClick(
-                    CreateCourseInput(
+                    CreateCourseParams(
                         title = title.value,
-                        fee = fee.value.toInt(),
-                        chargeFee = chargeFee.value.toInt(),
+                        fee = fee.value.toDouble(),
                         numberOfLearner = numOfStudent.value.toInt(),
                         contactNumber = contactNumber.value,
-                        subjectName = subject.value,
+                        subjectId = subject.value.id,
                         address = address.value,
-                        academicLevel = academicLevel.value,
+                        academicLevelRequirement = academicLevelSelectedOption.toEDSIntAcademicLevel(),
                         sessionPerWeek = sessionPerWeek.value.toInt(),
                         minutePerSession = minutePerSession.value.toInt(),
                         description = description.value,
-                        learningMode = learningModeSelectedOptions,
-                        learnerGender = studentSelectedOptions,
-                        genderRequirement = tutorSelectedOptions
+                        learningMode = learningModeSelectedOptions.toEDSIntLearningMode(),
+                        learnerGender = studentSelectedOptions.toEDSIntGender(),
+                        learnerName = learnerName.value,
+                        genderRequirement = tutorSelectedOptions.toEDSIntGender()
                     )
                 )
             },
@@ -677,10 +702,10 @@ fun ClassRequestBody(
 fun PickSubjectDialog(
     subjects: MutableState<List<SubjectItem>>,
     onDisMiss: () -> Unit = {},
-    onConfirm: (String) -> Unit = {}
+    onConfirm: (SubjectItem) -> Unit = {}
 ) {
     val searchText = remember { mutableStateOf("") }
-    val selectedText = remember { mutableStateOf("") }
+    val selectedText = remember { mutableStateOf(SubjectItem()) }
     AlertDialog(
         modifier = Modifier
             .fillMaxSize(),
@@ -729,7 +754,7 @@ fun PickSubjectDialog(
                                     newList[index] = chip.copy(isSelected = !chip.isSelected)
 
                                     subjects.value = newList
-                                    selectedText.value = newList[index].name
+                                    selectedText.value = newList[index]
                                 },
                                 label = {
                                     androidx.compose.material3.Text(

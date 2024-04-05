@@ -8,7 +8,7 @@ import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
-import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
+import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import retrofit2.Response
@@ -25,7 +25,7 @@ class CourseRepositoryImpl @Inject constructor(
         return api.getCourseById(id)
     }
 
-    override suspend fun createCourse(token: String, input: CreateCourseInput): Response<Unit> {
+    override suspend fun createCourse(token: String, input: CreateCourseParams): Response<Unit> {
         return api.createCourse(token, input)
     }
 

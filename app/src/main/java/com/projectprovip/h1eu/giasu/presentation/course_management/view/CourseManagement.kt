@@ -270,13 +270,13 @@ fun ClassItem(data: RequestedCourse, navController: NavController) {
         ) {
             AppBarTitle(text = data.title)
             SubTitle(data.id, data.requestStatus)
-            MiddleContent(data.subjectName, data.courseId, data.creationTime)
+            MiddleContent(data.subjectName, data.creationTime)
         }
     }
 }
 
 @Composable
-fun SubTitle(subTitle: Int, status: String) {
+fun SubTitle(subTitle: String, status: String) {
     var backgroundColor = EDSColors.notScheduleBackgroundColor
     var textColor = EDSColors.notScheduleTextColor
 
@@ -337,12 +337,11 @@ fun IconAndText(imageVector: ImageVector, text: String) {
 }
 
 @Composable
-fun MiddleContent(subjectName: String, courseId: Int, creationTime: String) {
+fun MiddleContent(subjectName: String, creationTime: String) {
     Column(
         Modifier.padding(top = 12.dp, bottom = 20.dp)
     ) {
         IconAndText(Icons.Outlined.Subject, subjectName)
-        IconAndText(Icons.Outlined.Info, "Course ID: $courseId")
         IconAndText(
             Icons.Outlined.DateRange,
             "Created at ${DateFormat.DD_MM_YYYY_ISO(creationTime)}"
