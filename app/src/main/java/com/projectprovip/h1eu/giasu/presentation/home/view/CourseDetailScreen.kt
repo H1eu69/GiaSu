@@ -167,8 +167,8 @@ fun CourseDetailScreen(
                             onButtonClick = {
                                 onRegisterClicked()
                             },
-                            fee = course?.fee ?: -1,
-                            tax = course?.chargeFee?.toInt() ?: -1
+                            fee = course.fee,
+                            tax = course.chargeFee
                         )
                     }
                     Box(
@@ -455,8 +455,8 @@ fun CourseRegisterPaymentBottomSheet(
         skipPartiallyExpanded = true
     ),
     onButtonClick: () -> Unit = {},
-    fee: Int = 100000,
-    tax: Int = 20000
+    fee: Double = 1000.00,
+    tax: Double = 200.00
 ) {
     val context = LocalContext.current
     val otpValue = remember { mutableStateOf("") }

@@ -6,7 +6,7 @@ data class CourseDetail(
     val chargeFee: Double = -50.0,
     val creationTime: String = "2024-03-19T00:43:19.7047926-05:00",
     val description: String = "Can tim gia su chuyen day cho hoc sinh mat goc Toan, Ly, Hoa, Van, Sinh, Su, Dia. Dac biet co day cho sinh vien dai hoc cac mon dai cuong co ban: Toan cao cap, Ly, hoa,...",
-    val fee: Int = -10,
+    val fee: Double = -10.0,
     val genderRequirement: String = "Male",
     val id: String = "-1",
     val learnerGender: String = "Male",

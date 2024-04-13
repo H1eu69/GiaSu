@@ -102,9 +102,17 @@ fun SearchResultHomeScreenPreview() {
         rememberNavController(),
         state = SearchResultState(
             data = listOf(
-                CourseDetail(),
-                CourseDetail(),
-                CourseDetail(),
+                CourseDetail(
+                    address = "Tây Ninh",
+                    fee = 200.0
+                ),
+                CourseDetail(
+                    address = "Hà Nội",
+                    fee = 100.0
+                ),
+                CourseDetail(
+                    fee = 2000.0
+                ),
                 CourseDetail(),
                 CourseDetail(),
                 CourseDetail(),
@@ -165,6 +173,27 @@ fun SearchResultHomeScreen(
         )
     }
 
+    val budgetFilter = remember {
+        mutableStateOf(
+            Pair(0.0, 0.0)
+        )
+    }
+    val isLocationFilterSelected = remember {
+        mutableStateOf(false)
+    }
+
+    val isLearningModeFilterSelected = remember {
+        mutableStateOf(false)
+    }
+
+    val isBudgetRangeSelected = remember {
+        mutableStateOf(false)
+    }
+
+    val isAcademicFilterSelected = remember {
+        mutableStateOf(false)
+    }
+
     val filteredList = remember {
         mutableStateOf(
             state.data
@@ -220,13 +249,20 @@ fun SearchResultHomeScreen(
                                 FilterItem(
                                     modifier = Modifier.padding(8.dp),
                                     title = "location",
-                                    filterItemsState = locationFilter
+                                    filterItemsState = locationFilter,
+                                    onSelected = {
+                                        isLocationFilterSelected.value = it
+                                    }
                                 )
                             }
 
                             item {
                                 BudgetRangeSection(
                                     modifier = Modifier.padding(8.dp),
+                                    onSelected = { selected, minimum, maximum ->
+                                        isBudgetRangeSelected.value = selected
+                                        budgetFilter.value = Pair(minimum, maximum)
+                                    }
                                 )
                             }
 
@@ -235,7 +271,10 @@ fun SearchResultHomeScreen(
                                     modifier = Modifier.padding(8.dp),
                                     title = "Learning mode",
                                     hasViewMore = false,
-                                    filterItemsState = learningModeFilter
+                                    filterItemsState = learningModeFilter,
+                                    onSelected = {
+                                        isLearningModeFilterSelected.value = it
+                                    }
                                 )
                             }
 
@@ -244,37 +283,90 @@ fun SearchResultHomeScreen(
                                     modifier = Modifier.padding(8.dp),
                                     title = "Academic level requirement",
                                     hasViewMore = false,
-                                    filterItemsState = academicFilter
+                                    filterItemsState = academicFilter,
+                                    onSelected = {
+                                        isAcademicFilterSelected.value = it
+                                    }
                                 )
                             }
                         }
-                        ApplyFilterButtons(Modifier.padding(8.dp), onFilterClick = {
-                            filteredList.value = filteredList.value.filter { courseDetail ->
-                                locationFilter.value.forEach { location ->
-                                    if (location.selected && courseDetail.address.contains(
-                                            location.title
-                                        )
-                                    ) return@filter true
-                                }
-                                false
-                            }.filter { courseDetail ->
-                                    learningModeFilter.value.forEach { learningMode ->
-                                        if (learningMode.selected && courseDetail.learningMode.contains(
-                                                learningMode.title
+                        ApplyFilterButtons(
+                            Modifier.padding(8.dp),
+                            onFilterClick = {
+                                filteredList.value = state.data
+
+                                if (isLocationFilterSelected.value)
+                                    filteredList.value = filteredList.value.filter { courseDetail ->
+                                        locationFilter.value.forEach { location ->
+                                            Log.d(
+                                                "Test filter 4",
+                                                location.title + location.selected
                                             )
-                                        ) return@filter true
+
+                                            if (location.selected && courseDetail.address.contains(
+                                                    location.title
+                                                )
+                                            ) {
+                                                return@filter true
+                                            }
+                                        }
+                                        false
                                     }
-                                    false
-                                }.filter { courseDetail ->
-                                    academicFilter.value.forEach { academic ->
-                                        if (academic.selected && courseDetail.academicLevelRequirement.contains(
-                                                academic.title
+                                Log.d("Test filter 1", filteredList.value.toString())
+                                if (isLearningModeFilterSelected.value)
+                                    filteredList.value = filteredList.value.filter { courseDetail ->
+                                        learningModeFilter.value.forEach { learningMode ->
+                                            Log.d(
+                                                "Test filter 5",
+                                                learningMode.title + learningMode.selected
                                             )
-                                        ) return@filter true
+
+                                            if (learningMode.selected && courseDetail.learningMode.contains(
+                                                    learningMode.title
+                                                )
+                                            ) {
+                                                return@filter true
+                                            }
+                                        }
+                                        false
                                     }
-                                    false
+                                Log.d("Test filter 2", filteredList.value.toString())
+
+                                if (isAcademicFilterSelected.value)
+                                    filteredList.value = filteredList.value.filter { courseDetail ->
+                                        academicFilter.value.forEach { academic ->
+                                            Log.d(
+                                                "Test filter 6",
+                                                academic.title + academic.selected
+                                            )
+
+                                            if (academic.selected && courseDetail.academicLevelRequirement.contains(
+                                                    academic.title
+                                                )
+                                            ) {
+                                                return@filter true
+                                            }
+                                        }
+                                        false
+                                    }
+                                Log.d("Test filter 3", filteredList.value.toString())
+
+                                if (isBudgetRangeSelected.value)
+                                    filteredList.value = filteredList.value.filter { courseDetail ->
+                                        if (courseDetail.fee in budgetFilter.value.first..budgetFilter.value.second)
+                                            return@filter true
+                                        false
+                                    }
+                                Log.d("Test filter 4", filteredList.value.toString())
+
+                                if (!isLocationFilterSelected.value &&
+                                    !isLearningModeFilterSelected.value &&
+                                    !isAcademicFilterSelected.value &&
+                                    !isBudgetRangeSelected.value
+                                ) {
+                                    filteredList.value = state.data
                                 }
-                        })
+                            })
                     }
                 }
             },
@@ -338,7 +430,7 @@ fun SearchResultHomeScreen(
                                         .padding(it)
                                 ) {
                                     item {
-                                        ResultChip(navController, searchText!!)
+                                        ResultChip(navController, searchText ?: "")
                                     }
                                     filteredList.value.forEach { courseDetail ->
                                         item {
@@ -617,6 +709,7 @@ fun FilterItem(
     filterItemsState: MutableState<List<FilterSelect>>,
     hasViewMore: Boolean = true,
     multipleSelection: Boolean = false,
+    onSelected: (Boolean) -> Unit = {},
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val wantViewMore = remember {
@@ -645,13 +738,18 @@ fun FilterItem(
                         val newList = filterItemsState.value.toMutableList()
                         newList[index] = filterItems[index].copy(selected = false)
                         filterItemsState.value = newList
+                        onSelected(false)
                     })
             else
                 UnselectItem(title = filterItems[index].title,
                     onClick = {
                         val newList = filterItemsState.value.toMutableList()
+                        newList.forEach {
+                            it.selected = false
+                        }
                         newList[index] = filterItems[index].copy(selected = true)
                         filterItemsState.value = newList
+                        onSelected(true)
                     })
 
         }
@@ -774,14 +872,20 @@ fun UnselectItem(title: String, onClick: () -> Unit) {
 fun BudgetSectionPreview() {
     Surface {
         BudgetRangeSection(
-            Modifier.padding(8.dp)
+            Modifier.padding(8.dp),
+            onSelected = { s1, s2, s3 ->
+            }
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = true) {
+fun BudgetRangeSection(
+    modifier: Modifier = Modifier,
+    hasViewMore: Boolean = true,
+    onSelected: (Boolean, Double, Double) -> Unit
+) {
     val minimum = remember {
         mutableStateOf("")
     }
@@ -805,9 +909,16 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
             verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedTextField(
-                value = minimum.value, onValueChange = {
+                value = minimum.value,
+                onValueChange = {
                     minimum.value = it
-                }, singleLine = true,
+                    onSelected(
+                        true,
+                        if(minimum.value.isNotEmpty()) minimum.value.toDouble() else 0.0,
+                        if(maximum.value.isNotEmpty()) maximum.value.toDouble() else 0.0
+                    )
+                },
+                singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                 shape = RectangleShape,
 
@@ -839,6 +950,12 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
             OutlinedTextField(
                 value = maximum.value, onValueChange = {
                     maximum.value = it
+                    onSelected(
+                        true,
+                        if(minimum.value.isNotEmpty()) minimum.value.toDouble() else 0.0,
+                        if(maximum.value.isNotEmpty()) maximum.value.toDouble() else 0.0
+                    )
+
                 }, singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
 
@@ -872,6 +989,11 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                     ) {
                         minimum.value = "0"
                         maximum.value = "500000"
+                        onSelected(
+                            true,
+                            minimum.value.toDouble(),
+                            maximum.value.toDouble()
+                        )
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -892,6 +1014,11 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                     ) {
                         minimum.value = "500000"
                         maximum.value = "1000000"
+                        onSelected(
+                            true,
+                            minimum.value.toDouble(),
+                            maximum.value.toDouble()
+                        )
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -914,6 +1041,11 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                     ) {
                         minimum.value = "1000000"
                         maximum.value = "2000000"
+                        onSelected(
+                            true,
+                            minimum.value.toDouble(),
+                            maximum.value.toDouble()
+                        )
                     },
                 contentAlignment = Alignment.Center
             ) {

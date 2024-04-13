@@ -10,7 +10,7 @@ data class Item(
     val contactNumber: String,
     val creationTime: String,
     val description: String,
-    val fee: Int,
+    val fee: Double,
     val genderRequirement: String,
     val id: String,
     val lastModificationTime: String,

@@ -15,7 +15,7 @@ data class Value(
     val learnerName: String,
     val learningMode: String,
     val numberOfLearner: Int,
-    val sectionFee: Int,
+    val sectionFee: Double,
     val sessionDuration: Int,
     val sessionPerWeek: Int,
     val status: String,
