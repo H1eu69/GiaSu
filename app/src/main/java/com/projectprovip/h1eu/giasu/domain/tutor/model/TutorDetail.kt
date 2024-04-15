@@ -1,30 +1,20 @@
 package com.projectprovip.h1eu.giasu.domain.tutor.model
 
-import com.projectprovip.h1eu.giasu.data.tutor.dto.ReviewDetailDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDetailDto.ReviewDetailDto
 
 data class TutorDetail(
-    val academicLevel: String = "dummy Lecturer",
-    val address: String = "dummy data",
-    val birthYear: Int = -1,
-    val description: String = "dummy description",
-    val email: String = "dummyemail@gmail.com",
-    val firstName: String = "dummy firstName",
-    val gender: String = "dummy gender",
-    val id: Int = -1,
-    val image: String = "https://upload.wikimedia.org/wikipedia/commons/e/e8/Chris_Hemsworth_by_Gage_Skidmore_2_%28cropped%29.jpg",
-    val isVerified: Boolean = false,
-    val lastName: String = "dummy lastName",
-    val phoneNumber: String = "0967075340",
-    val rate: Int = -1,
-    val reviewDetailDtos: List<ReviewDetailDto> = emptyList(),
-    val subjects: List<String> = listOf(
-        "Dummy Java",
-        "Dummy",
-        "Dummy Toan Cao Cap",
-        "Dummy Guitar",
-        "Dummy English",
-        "Dummy Lap trinh",
-        "Dummy C++",
-    ),
-    val university: String = "dummy university"
+    val academicLevel: String = "dummy",
+    val address: String = "dummy",
+    val avatar: String = "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
+    val birthYear: Int = 2000,
+    val creationTime: String = "2014-12-23T17:13:36",
+    val description: String = "dummy",
+    val fullName: String = "dummy",
+    val gender: String = "dummy",
+    val id: String = "dummy",
+    val lastModificationTime: String = "2014-12-23T17:13:36",
+    val rate: Int = 1,
+    val reviews: List<ReviewDetailDto> = emptyList(),
+    val tutorMajors: List<String> = emptyList(),
+    val university: String = "dummy"
 )

@@ -1,8 +1,8 @@
 package com.projectprovip.h1eu.giasu.data.tutor.repository
 
 import com.projectprovip.h1eu.giasu.data.tutor.api.TutorApi
-import com.projectprovip.h1eu.giasu.data.tutor.dto.TutorDetailDto
-import com.projectprovip.h1eu.giasu.data.tutor.dto.TutorDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDetailDto.TutorDetailDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDto.TutorDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRegisterDto.TutorRegisterDto
 import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
 import com.projectprovip.h1eu.giasu.domain.tutor.repository.TutorRepository
@@ -16,7 +16,7 @@ class TutorRepositoryImpl @Inject constructor(
         return api.getAllTutor(pageIndex)
     }
 
-    override suspend fun getTutorDetail(tutorId: Int): Response<TutorDetailDto> {
+    override suspend fun getTutorDetail(tutorId: String): TutorDetailDto {
         return api.getTutorDetail(tutorId)
     }
 

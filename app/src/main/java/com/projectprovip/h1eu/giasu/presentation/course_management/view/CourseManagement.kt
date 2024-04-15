@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DateRange
@@ -83,7 +84,7 @@ fun ClassManagementScreen(
     val tabSelectedIndex = remember {
         mutableIntStateOf(0)
     }
-    val list = listOf("All", "Success", "Canceled", "Verifying")
+    val list = listOf("All", "Learning courses","Requested courses","Success", "Canceled", "Verifying")
     val context = LocalContext.current
 
     LaunchedEffect(key1 = "",) {
@@ -98,8 +99,10 @@ fun ClassManagementScreen(
         }
     ) {
         Column(modifier = Modifier.padding(it)) {
-            TabRow(
+            ScrollableTabRow(
                 selectedTabIndex = tabSelectedIndex.intValue,
+                backgroundColor = EDSColors.white,
+                edgePadding = 0.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 list.forEachIndexed { index, item ->
@@ -269,7 +272,7 @@ fun ClassItem(data: RequestedCourse, navController: NavController) {
                 .padding(20.dp)
         ) {
             AppBarTitle(text = data.title)
-            SubTitle(data.id, data.requestStatus)
+            SubTitle(data.id, data.status)
             MiddleContent(data.subjectName, data.creationTime)
         }
     }

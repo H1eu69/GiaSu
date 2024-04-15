@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.tutor.view
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -66,12 +68,9 @@ fun TutorPreview() {
                         2022,
                         "desdasdasas",
                         "hehe",
-                        "gender",
-                        4,
+                        "4",
                         "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
-                        false,
                         "last",
-                        "0967075340",
                         3,
                         "UIT"
                     ),
@@ -80,12 +79,9 @@ fun TutorPreview() {
                         2022,
                         "desdasdasas",
                         "hehe",
-                        "gender",
-                        4,
-                        "https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-                        false,
+                        "4",
+                        "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
                         "last",
-                        "0967075340",
                         3,
                         "UIT"
                     ),
@@ -94,12 +90,9 @@ fun TutorPreview() {
                         2022,
                         "desdasdasas",
                         "hehe",
-                        "gender",
-                        4,
-                        "https://cdn-icons-png.flaticon.com/512/5556/5556499.png",
-                        false,
+                        "4",
+                        "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
                         "last",
-                        "0967075340",
                         3,
                         "UIT"
                     )
@@ -125,12 +118,9 @@ fun TutorItemPreview() {
             2022,
             "desdasdasas",
             "hehe",
-            "gender",
-            4,
-            "dsadas",
-            false,
+            "4",
+            "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
             "last",
-            "0967075340",
             3,
             "UIT"
         )
@@ -144,14 +134,16 @@ fun TutorScreen(
     navController: NavController,
     loadMore: (() -> Unit),
 ) {
-
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Tutors",
+                    Text(
+                        text = "Tutors",
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp)
+                        fontSize = 20.sp
+                    )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = EDSColors.white,
@@ -177,9 +169,15 @@ fun TutorScreen(
 
                 }
 
+                state.value.error.isNotEmpty() -> {
+                    Toast.makeText(context, state.value.error, Toast.LENGTH_SHORT).show()
+                }
+
                 state.value.data.isNotEmpty() -> {
                     SearchTextField(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
                         onTap = {
                             navController.navigate(Screens.InApp.Tutor.SearchSuggest.route)
                         })
@@ -202,7 +200,7 @@ fun TutorScreen(
 fun InfiniteStaggeredList(
     data: List<Tutor>,
     modifier: Modifier,
-    onItemClick: (Int) -> Unit,
+    onItemClick: (String) -> Unit,
     onLoadMore: (() -> Unit)
 ) {
     val listState = rememberLazyGridState()
@@ -223,7 +221,7 @@ fun InfiniteStaggeredList(
 }
 
 @Composable
-fun TutorItem(tutor: Tutor, onItemClick: (Int) -> Unit = {}) {
+fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
     Card(shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
             containerColor = EDSColors.white

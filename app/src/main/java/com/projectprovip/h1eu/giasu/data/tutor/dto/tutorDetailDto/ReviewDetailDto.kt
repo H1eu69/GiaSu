@@ -1,4 +1,4 @@
-package com.projectprovip.h1eu.giasu.data.tutor.dto
+package com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDetailDto
 
 data class ReviewDetailDto(
     val courseId: Int,

@@ -241,11 +241,11 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         composable("${Screens.InApp.Tutor.TutorDetail.route}/{tutorId}",
             arguments = listOf(
                 navArgument("tutorId") {
-                    type = NavType.IntType
+                    type = NavType.StringType
                 }
             )
         ) { backStackEntry ->
-            val tutorId = backStackEntry.arguments?.getInt("tutorId")
+            val tutorId = backStackEntry.arguments?.getString("tutorId")
             val vm = hiltViewModel<TutorDetailViewModel>()
             LaunchedEffect(key1 = vm.state) {
                 vm.getTutorDetail(tutorId!!)
@@ -262,7 +262,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             ClassManagementScreen(navController,
                 state = vm.state.value,
                 callback = {
-                    vm.getRequestedCourses(token.value)
+                    vm.getCourses(token.value)
                 },
                 getListByFilter = {
                     vm.getListByFilter(it)

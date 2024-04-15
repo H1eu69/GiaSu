@@ -37,3 +37,7 @@ data class LearningCourse(
     val title: String = "",
     val learningMode: String = ""
 )
+
+fun LearningCourse.toRequestedCourse() = RequestedCourse(
+    creationTime,id, lastModificationTime, status, subjectName, title, learningMode
+)

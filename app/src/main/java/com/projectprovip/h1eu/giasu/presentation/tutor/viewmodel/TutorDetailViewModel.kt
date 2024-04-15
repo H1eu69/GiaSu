@@ -20,7 +20,7 @@ class TutorDetailViewModel @Inject constructor(
     private var _state = mutableStateOf(TutorDetailState())
     val state: State<TutorDetailState> = _state
 
-    fun getTutorDetail(tutorId: Int) {
+    fun getTutorDetail(tutorId: String) {
         getTutorDetailUseCase(tutorId).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {

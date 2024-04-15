@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.tutor.view
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +58,7 @@ import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.domain.tutor.model.TutorDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
 import com.projectprovip.h1eu.giasu.presentation.tutor.model.TutorDetailState
 
 
@@ -74,6 +77,7 @@ fun TutorDetailScreen(
     state: TutorDetailState,
     onNavigateIconClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(title = { },
@@ -96,145 +100,148 @@ fun TutorDetailScreen(
         containerColor = EDSColors.white
 
     ) {
-        if (state.isLoading) {
-            Box(
-                modifier = Modifier
-                    .padding(it)
-                    .fillMaxSize()
-            ) {
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(it)
-                    .padding(horizontal = 20.dp),
-                contentPadding = PaddingValues(bottom = 50.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                item {
-                    Profile(
-                        image = state.data.image,
-                        name = "${state.data.firstName} ${state.data.lastName}",
-                        id = state.data.id,
-                        rate = state.data.rate
-                    )
+        state.apply {
+            when {
+                this.isLoading -> {
+                    CircularLoading(color = EDSColors.primaryColor)
                 }
+                this.error.isNotEmpty() -> {
+                    Toast.makeText(context, this.error, Toast.LENGTH_SHORT).show()
 
-                item {
-                    Text(
-                        text = state.data.description,
-                        style = TextStyle(
-                            fontWeight = FontWeight.Medium,
-                            color = EDSColors.myBlackColor,
-                            fontSize = 14.sp
-                        ),
+                }
+                this.data != TutorDetail() -> {
+                    LazyColumn(
                         modifier = Modifier
-                            .padding(top = 8.dp, bottom = 8.dp)
-                            .background(
-                                EDSColors.idClassBackgroundColor,
-                                RoundedCornerShape(20.dp)
-                            )
-                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
-                    )
-                }
-                item {
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            .padding(it)
+                            .padding(horizontal = 20.dp),
+                        contentPadding = PaddingValues(bottom = 50.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        state.data.subjects.forEach { subject ->
-
-                            FilterChip(
-                                selected = true,
-                                onClick = { /*TODO*/ },
-                                colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = EDSColors.primaryColor,
-                                    selectedLabelColor = EDSColors.white,
-                                    selectedTrailingIconColor = EDSColors.white
-                                ),
-                                label = { Text(subject, fontWeight = FontWeight.W300) }
+                        item {
+                            Profile(
+                                image = state.data.avatar,
+                                name = state.data.fullName,
+                                id = state.data.id,
+                                rate = state.data.rate
                             )
                         }
 
-                    }
-                }
-                item {
-                    DetailIconAndText(
-                        Icons.Filled.LocationCity,
-                        "Location"
-                    ) {
-                        Text(
-                            text = state.data.address,
-                            textAlign = TextAlign.End,
-                            color = EDSColors.costTextColor,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 16.sp
-                        )
-                    }
+                        item {
+                            Text(
+                                text = state.data.description,
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Medium,
+                                    color = EDSColors.myBlackColor,
+                                    fontSize = 14.sp
+                                ),
+                                modifier = Modifier
+                                    .padding(top = 8.dp, bottom = 8.dp)
+                                    .background(
+                                        EDSColors.idClassBackgroundColor,
+                                        RoundedCornerShape(20.dp)
+                                    )
+                                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
+                            )
+                        }
+                        item {
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                state.data.tutorMajors.forEach { subject ->
 
-                }
-                item {
-                    DetailIconAndText(
-                        Icons.Filled.Cake,
-                        "Birth year",
-                    ) {
-                        Text(
-                            text = state.data.birthYear.toString(),
-                            textAlign = TextAlign.End,
-                            color = EDSColors.costTextColor,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 16.sp
-                        )
-                    }
-                }
-                item {
-                    DetailIconAndText(
-                        Icons.Filled.AutoStories,
-                        "Graduation",
-                    ) {
-                        Text(
-                            text = state.data.academicLevel,
-                            textAlign = TextAlign.End,
-                            color = EDSColors.costTextColor,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 16.sp
-                        )
-                    }
+                                    FilterChip(
+                                        selected = true,
+                                        onClick = { /*TODO*/ },
+                                        colors = FilterChipDefaults.filterChipColors(
+                                            selectedContainerColor = EDSColors.primaryColor,
+                                            selectedLabelColor = EDSColors.white,
+                                            selectedTrailingIconColor = EDSColors.white
+                                        ),
+                                        label = { Text(subject, fontWeight = FontWeight.W300) }
+                                    )
+                                }
 
-                }
+                            }
+                        }
+                        item {
+                            DetailIconAndText(
+                                Icons.Filled.LocationCity,
+                                "Location"
+                            ) {
+                                Text(
+                                    text = state.data.address,
+                                    textAlign = TextAlign.End,
+                                    color = EDSColors.costTextColor,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 16.sp
+                                )
+                            }
 
-                item {
-                    Spacer(modifier = Modifier.height(20.dp))
+                        }
+                        item {
+                            DetailIconAndText(
+                                Icons.Filled.Cake,
+                                "Birth year",
+                            ) {
+                                Text(
+                                    text = state.data.birthYear.toString(),
+                                    textAlign = TextAlign.End,
+                                    color = EDSColors.costTextColor,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 16.sp
+                                )
+                            }
+                        }
+                        item {
+                            DetailIconAndText(
+                                Icons.Filled.AutoStories,
+                                "Graduation",
+                            ) {
+                                Text(
+                                    text = state.data.academicLevel,
+                                    textAlign = TextAlign.End,
+                                    color = EDSColors.costTextColor,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 16.sp
+                                )
+                            }
 
-                }
-                item {
-                    Text(text = "Ratings and reviews", fontSize = 20.sp)
+                        }
 
-                }
-                item {
-                    Spacer(modifier = Modifier.height(6.dp))
+                        item {
+                            Spacer(modifier = Modifier.height(20.dp))
 
-                }
-                item {
-                    Text(text = "Ratings and reviews are verified and are from people who learn the same course as you do",
-                        fontSize = 12.sp)
+                        }
+                        item {
+                            Text(text = "Ratings and reviews", fontSize = 20.sp)
 
-                }
-                item {
-                    Spacer(modifier = Modifier.height(20.dp))
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(6.dp))
 
-                }
-                state.data.reviewDetailDtos.forEach {
-                    item {
-                        ReviewItem(
-                            rate = it.rate,
-                            reviewer = it.learnerName,
-                            review = it.detail
-                        )
-                    }
-                    item {
-                        Spacer(modifier = Modifier.height(10.dp))
+                        }
+                        item {
+                            Text(text = "Ratings and reviews are verified and are from people who learn the same course as you do",
+                                fontSize = 12.sp)
 
+                        }
+                        item {
+                            Spacer(modifier = Modifier.height(20.dp))
+
+                        }
+                        state.data.reviews.forEach {
+                            item {
+                                ReviewItem(
+                                    rate = it.rate,
+                                    reviewer = it.learnerName,
+                                    review = it.detail
+                                )
+                            }
+                            item {
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                            }
+                        }
                     }
                 }
             }
@@ -243,7 +250,7 @@ fun TutorDetailScreen(
 }
 
 @Composable
-fun Profile(image: String, name: String, id: Int, rate: Int) {
+fun Profile(image: String, name: String, id: String, rate: Int) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

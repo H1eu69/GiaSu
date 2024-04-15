@@ -1,7 +1,7 @@
 package com.projectprovip.h1eu.giasu.domain.tutor.usecase
 
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.tutor.dto.toTutor
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDto.toTutor
 import com.projectprovip.h1eu.giasu.domain.tutor.model.Tutor
 import com.projectprovip.h1eu.giasu.domain.tutor.repository.TutorRepository
 import kotlinx.coroutines.flow.flow
@@ -15,7 +15,7 @@ class GetAllTutorUseCase @Inject constructor(
     operator fun invoke(pageIndex : Int = 1) = flow<EDSResult<List<Tutor>>> {
         try {
             emit(EDSResult.Loading())
-            val data = tutorRepository.getAllTutor(pageIndex).tutorInformation.map {
+            val data = tutorRepository.getAllTutor(pageIndex).value.items.map {
                 it.toTutor()
             }
             emit(EDSResult.Success(data))
