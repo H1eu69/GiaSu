@@ -2,9 +2,9 @@ package com.projectprovip.h1eu.giasu.data.course.api
 
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
-import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
+import com.projectprovip.h1eu.giasu.data.course.dto.requested_course_detail.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
-import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.LearningCourseDetailDto
+import com.projectprovip.h1eu.giasu.data.course.dto.learning_course_detail_dto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
@@ -46,8 +46,8 @@ interface CourseApi {
     suspend fun getRequestedCourse(@Header("Authorization") token: String) : RequestCourseDto
 
     @GET("profile/course-request/{courseRequestId}")
-    suspend fun getRequestedCourseDetail(@Path("courseRequestId") courseId: Int,
-                                         @Header("Authorization") token: String) : Response<RequestedCourseDetailDto>
+    suspend fun getRequestedCourseDetail(@Path("courseRequestId") courseId: String,
+                                         @Header("Authorization") token: String) : RequestedCourseDetailDto
 
     @GET("Profile/learning-courses")
     suspend fun getLearningCourses(@Header("Authorization") token: String) : LearningCourseDto

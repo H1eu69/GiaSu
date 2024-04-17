@@ -39,7 +39,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
 import com.projectprovip.h1eu.giasu.presentation.course_management.view.ClassManagementScreen
 import com.projectprovip.h1eu.giasu.presentation.course_management.view.RequestedCourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.course_management.viewmodel.CourseManagementViewModel
-import com.projectprovip.h1eu.giasu.presentation.course_management.viewmodel.RequestedCourseDetailViewModel
+import com.projectprovip.h1eu.giasu.presentation.course_management.viewmodel.CourseManagementDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.model.SearchSuggestState
 import com.projectprovip.h1eu.giasu.presentation.home.view.CourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.home.view.HomeScreen
@@ -261,8 +261,14 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
 
             ClassManagementScreen(navController,
                 state = vm.state.value,
-                callback = {
+                getAllCoursesCallBack = {
                     vm.getCourses(token.value)
+                },
+                getLearningCoursesCallBack = {
+                    vm.getLearningCourses(token.value)
+                },
+                getRequestedCoursesCallBack = {
+                    vm.getRequestedCourses(token.value)
                 },
                 getListByFilter = {
                     vm.getListByFilter(it)
@@ -275,15 +281,17 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                 type = NavType.IntType
             })
         ) { backStackEntry ->
-            val courseDetailViewModel = hiltViewModel<RequestedCourseDetailViewModel>()
+            val courseDetailViewModel = hiltViewModel<CourseManagementDetailViewModel>()
 
+            val id = backStackEntry.arguments?.getString("courseId")
+
+            if (courseDetailViewModel.state.value.data == null) {
+                courseDetailViewModel.getRequestedCourseDetail(id!!, token.value)
+
+            }
             RequestedCourseDetailScreen(
                 navController,
-                courseDetailViewModel.state.value,
-                { id ->
-                    courseDetailViewModel.getRequestedCourseDetail(id, token.value)
-                },
-                backStackEntry.arguments?.getInt("courseId")
+                courseDetailViewModel.state.value
             )
         }
 

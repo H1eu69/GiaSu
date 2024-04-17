@@ -1,6 +1,6 @@
-package com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto
+package com.projectprovip.h1eu.giasu.data.course.dto.requested_course_detail
 
-data class LearningCourseDetailDto(
+data class RequestedCourseDetailDto(
     val displayMessage: String,
     val error: Error,
     val isFailure: Boolean,

@@ -2,7 +2,7 @@ package com.projectprovip.h1eu.giasu.domain.course.usecase
 
 import android.util.Log
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto.toLearningCourseDetail
+import com.projectprovip.h1eu.giasu.data.course.dto.learning_course_detail_dto.toLearningCourseDetail
 import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourseDetail
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import kotlinx.coroutines.flow.flow

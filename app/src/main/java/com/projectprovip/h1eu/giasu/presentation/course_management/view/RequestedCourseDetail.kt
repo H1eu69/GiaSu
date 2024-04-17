@@ -67,7 +67,6 @@ fun PreviewDetailScreen() {
         RequestedCourseDetailState(
             data = RequestedCourseDetail()
         ),
-        id = 1
     )
 }
 
@@ -76,14 +75,7 @@ fun PreviewDetailScreen() {
 fun RequestedCourseDetailScreen(
     navController: NavController,
     state: RequestedCourseDetailState,
-    callback: (Int) -> Unit = { id ->
-    },
-    id: Int?
 ) {
-
-    if (state.data == null) {
-        callback(id!!)
-    }
 
     Scaffold(
         topBar = {

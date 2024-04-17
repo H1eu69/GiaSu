@@ -1,6 +1,6 @@
-package com.projectprovip.h1eu.giasu.data.course.dto.learningCourseDetailDto
+package com.projectprovip.h1eu.giasu.data.course.dto.requested_course_detail
 
-import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourseDetail
+import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourseDetail
 
 data class Value(
     val address: String,
@@ -22,22 +22,7 @@ data class Value(
     val tutorName: String
 )
 
-fun Value.toLearningCourseDetail() = LearningCourseDetail(
-    address,
-    chargeFee,
-    creationTime,
-    description,
-    id,
-    lastModificationTime,
-    learningMode,
-    sectionFee,
-    sessionDuration,
-    sessionPerWeek,
-    status,
-    subjectName,
-    title,
-    tutorContact,
-    tutorEmail,
-    tutorId,
-    tutorName
+fun Value.toRequestedCourseDetail() = RequestedCourseDetail(
+    creationTime = creationTime, description = description, id = id, subjectName = subjectName,
+    tutorId = tutorId, tutorName = tutorName, tutorPhone = tutorContact, title = title, requestStatus = status
 )
