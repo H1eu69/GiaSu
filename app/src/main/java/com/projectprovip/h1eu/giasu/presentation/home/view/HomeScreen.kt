@@ -546,9 +546,10 @@ fun IconAndText(imageVector: ImageVector, text: String) {
 }
 
 @Composable
-fun BottomContent(fee: Double, createdDate: String) {
+fun BottomContent(fee: Double, createdDate: String,
+                  modifier: Modifier = Modifier) {
     Row(
-        Modifier.fillMaxWidth(),
+        modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(

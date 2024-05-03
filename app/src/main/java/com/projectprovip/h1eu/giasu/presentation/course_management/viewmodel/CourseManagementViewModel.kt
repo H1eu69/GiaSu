@@ -50,30 +50,30 @@ class CourseManagementViewModel @Inject constructor(
                 }
             }.launchIn(this)
 
-            getLearningCourseUseCase(token).onEach { result ->
-                when (result) {
-                    is EDSResult.Loading -> {
-                        Log.d("course loading", result.message.toString())
-                        _state.value = RequestedCourseState(isLoading = true)
-                    }
-
-                    is EDSResult.Error -> {
-                        Log.d("course error", result.message.toString());
-                        _state.value = RequestedCourseState(message = result.message.toString())
-                    }
-
-                    is EDSResult.Success -> {
-                        Log.d("course management", result.data!!.toString())
-                        val oldData = _state.value.data.toMutableList()
-                        oldData.addAll(result.data.map {
-                            it.toRequestedCourse()
-                        })
-
-                        _state.value =
-                            RequestedCourseState(data = oldData, filteredData = oldData)
-                    }
-                }
-            }.launchIn(this)
+//            getLearningCourseUseCase(token).onEach { result ->
+//                when (result) {
+//                    is EDSResult.Loading -> {
+//                        Log.d("course loading", result.message.toString())
+//                        _state.value = RequestedCourseState(isLoading = true)
+//                    }
+//
+//                    is EDSResult.Error -> {
+//                        Log.d("course error", result.message.toString());
+//                        _state.value = RequestedCourseState(message = result.message.toString())
+//                    }
+//
+//                    is EDSResult.Success -> {
+//                        Log.d("course management", result.data!!.toString())
+//                        val oldData = _state.value.data.toMutableList()
+//                        oldData.addAll(result.data.map {
+//                            it.toRequestedCourse()
+//                        })
+//
+//                        _state.value =
+//                            RequestedCourseState(data = oldData, filteredData = oldData)
+//                    }
+//                }
+//            }.launchIn(this)
         }
     }
 

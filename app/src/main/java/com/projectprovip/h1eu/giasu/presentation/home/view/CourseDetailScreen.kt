@@ -4,12 +4,15 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,6 +23,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
@@ -37,6 +43,8 @@ import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -87,6 +95,7 @@ import com.projectprovip.h1eu.giasu.common.CodeGenerator
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceItem
+import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
@@ -174,7 +183,6 @@ fun CourseDetailScreen(
                     Box(
                         modifier = Modifier
                             .padding(it)
-                            .padding(20.dp)
                             .background(
                                 EDSColors.white
                             )
@@ -186,6 +194,7 @@ fun CourseDetailScreen(
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(20.dp)
                                 .align(Alignment.BottomCenter),
                             colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
                         ) {
@@ -217,6 +226,7 @@ fun CourseDetailScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CourseDetailBody(
     modifier: Modifier = Modifier,
@@ -224,6 +234,9 @@ fun CourseDetailBody(
     course: CourseDetail
 ) {
     var statusTextColor = EDSColors.notScheduleTextColor
+    val pagerState = rememberPagerState(pageCount = {
+        10
+    })
 
     if (course.status == "Available") {
         statusTextColor = EDSColors.teachingTextColor
@@ -233,13 +246,15 @@ fun CourseDetailBody(
 
     val context = LocalContext.current
     LazyColumn(
-        modifier = modifier.fillMaxHeight()
+        modifier = modifier
+            .fillMaxHeight()
             .background(EDSColors.white),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         item {
             Text(
-                text = course.title,
+                text = course.title,                modifier = modifier
+                    .padding(horizontal =  20.dp),
                 style = TextStyle(
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -250,7 +265,9 @@ fun CourseDetailBody(
         }
         item {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = modifier
+                    .padding(horizontal =  20.dp),
             ) {
                 androidx.compose.material3.Text(
                     text = course.status,
@@ -281,7 +298,9 @@ fun CourseDetailBody(
 
         item {
             SessionSection(
-                course.sessionPerWeek, course.sessionDuration
+                course.sessionPerWeek, course.sessionDuration,
+                modifier = modifier
+                    .padding(horizontal =  20.dp),
             )
         }
         item {
@@ -292,7 +311,8 @@ fun CourseDetailBody(
                     color = EDSColors.myBlackColor,
                     fontSize = 14.sp
                 ),
-                modifier = Modifier
+                modifier = modifier
+                    .padding(horizontal =  20.dp)
                     .padding(top = 8.dp, bottom = 8.dp)
                     .background(
                         EDSColors.idClassBackgroundColor,
@@ -302,12 +322,16 @@ fun CourseDetailBody(
             )
         }
         item {
-            BottomContent(fee = course.fee, createdDate = course.creationTime)
+            BottomContent(fee = course.fee, createdDate = course.creationTime,
+                modifier = modifier
+                    .padding(horizontal =  20.dp),)
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Info,
-                "Subject: ", course.subjectName
+                "Subject: ", course.subjectName,
+                modifier = modifier
+                    .padding(horizontal =  20.dp),
             )
         }
 
@@ -316,7 +340,8 @@ fun CourseDetailBody(
                 Icons.Outlined.Phone,
                 "Contact number: ", course.contactNumber,
                 textColor = EDSColors.costTextColor,
-                modifier = Modifier.clickable {
+                               modifier = modifier
+                    .padding(horizontal =  20.dp).clickable {
                     val uri = Uri.parse("tel: ${course.contactNumber}")
                     val dialIntent = Intent(Intent.ACTION_DIAL, uri)
                     context.startActivity(dialIntent)
@@ -326,38 +351,132 @@ fun CourseDetailBody(
         item {
             DetailIconAndText(
                 Icons.Outlined.Person,
-                "Tutor gender: ", course.genderRequirement
+                "Tutor gender: ", course.genderRequirement,
+                modifier = modifier
+                    .padding(horizontal =  20.dp),
             )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Face,
-                "Student gender: ", course.learnerGender
+                "Student gender: ", course.learnerGender,
+                modifier = modifier
+                    .padding(horizontal =  20.dp),
             )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Person,
-                "Number of learner: ", course.numberOfLearner.toString()
+                "Number of learner: ", course.numberOfLearner.toString(),
+                modifier = modifier
+                    .padding(horizontal =  20.dp),
             )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Info,
-                "Academic: ", course.academicLevelRequirement
+                "Academic: ", course.academicLevelRequirement,
+                modifier = modifier
+                    .padding(horizontal =  20.dp),
             )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Place,
-                "Address: ", course.address
+                "Address: ", course.address,
+                modifier = modifier
+                    .padding(horizontal =  20.dp),
             )
+        }
+        item {
+            Text(
+                text = "You may like",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                modifier = modifier
+                    .padding(horizontal =  20.dp),
+            )
+        }
+        item{
+            HorizontalPager(state = pagerState,
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                pageSpacing = 12.dp
+            ) { page ->
+                // Our page content
+
+                RelatedCourses(data = CourseDetail(), {
+
+                })
+
+            }
         }
         item {
             Spacer(modifier = Modifier.height(50.dp))
         }
     }
 }
+
+@OptIn(ExperimentalFoundationApi::class)
+@Preview
+@Composable
+private fun PreviewRelatedCourses() {
+    val pagerState = rememberPagerState(pageCount = {
+        10
+    })
+    Surface {
+        HorizontalPager(state = pagerState,
+            contentPadding = PaddingValues( 20.dp),
+            pageSpacing = 12.dp
+            ) { page ->
+            // Our page content
+
+            RelatedCourses(data = CourseDetail(), {
+
+            })
+
+        }
+    }
+}
+@Composable
+private fun RelatedCourses(
+    data: CourseDetail,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        shape = RoundedCornerShape(10),
+        colors = CardDefaults.elevatedCardColors(),
+        border = BorderStroke(2.dp, Color.LightGray),
+        elevation = CardDefaults.outlinedCardElevation(3.dp),
+        modifier = modifier
+            .clip(
+                RoundedCornerShape(10)
+            )
+            .clickable {
+                onClick()
+            }
+    ) {
+        Column(
+            modifier = Modifier
+                .background(Color.White)
+                .padding(20.dp)
+        ) {
+            AppBarTitle(text = data.title, fontSize = 16)
+            //SubTitle(text = "ID: ${data.id}")
+            MiddleContent(
+                sessionDuration = data.sessionDuration,
+                sessionPerWeek = data.sessionPerWeek,
+                info = data.subjectName,
+                location = data.address
+            )
+            BottomContent(
+                fee = data.fee,
+                createdDate = data.creationTime
+            )
+        }
+    }
+}
+
 
 @Composable
 fun DetailIconAndText(
@@ -367,7 +486,7 @@ fun DetailIconAndText(
     textColor: Color = EDSColors.blackColor,
     modifier: Modifier = Modifier
 ) {
-    Row {
+    Row(modifier) {
         Icon(
             imageVector, null,
             tint = EDSColors.primaryColor
@@ -399,9 +518,10 @@ fun SessionSectionPreview() {
 }
 
 @Composable
-fun SessionSection(dayAWeek: Int, minPerDay: Int) {
+fun SessionSection(dayAWeek: Int, minPerDay: Int, modifier: Modifier = Modifier) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier

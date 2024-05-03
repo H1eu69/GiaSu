@@ -7,3 +7,9 @@ data class CourseDetailState(
     var data: CourseDetail = CourseDetail(),
     var error: String? = null
 )
+
+data class RecommendCoursesState(
+    var isLoading: Boolean = false,
+    var data: CourseDetail = CourseDetail(),
+    var error: String? = null
+)

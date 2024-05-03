@@ -291,7 +291,6 @@ fun Phase1(
 
     Column(
         Modifier
-            .fillMaxWidth()
             .padding(horizontal = 64.dp)
     ) {
         OutlinedTextField(

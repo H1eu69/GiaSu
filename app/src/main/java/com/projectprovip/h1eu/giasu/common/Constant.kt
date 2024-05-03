@@ -19,6 +19,7 @@ import kotlin.random.Random
 object Constant {
     const val API_BASE_URL = "http://escenter.somee.com/api/"
     const val LOCATION_API_BASE_URL = "https://vapi.vnappmob.com"
+    const val RECOMMEND_API_BASE_URL = "recommendapis.azurewebsites.net"
     const val TOKEN_STRING = "token"
     const val USERNAME_STRING = "username"
     const val USERID_STRING = "userid"

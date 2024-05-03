@@ -261,15 +261,15 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
 
             ClassManagementScreen(navController,
                 state = vm.state.value,
-                getAllCoursesCallBack = {
+                callback = {
                     vm.getCourses(token.value)
                 },
-                getLearningCoursesCallBack = {
-                    vm.getLearningCourses(token.value)
-                },
-                getRequestedCoursesCallBack = {
-                    vm.getRequestedCourses(token.value)
-                },
+//                getLearningCoursesCallBack = {
+//                    vm.getLearningCourses(token.value)
+//                },
+//                getRequestedCoursesCallBack = {
+//                    vm.getRequestedCourses(token.value)
+//                },
                 getListByFilter = {
                     vm.getListByFilter(it)
                 })
