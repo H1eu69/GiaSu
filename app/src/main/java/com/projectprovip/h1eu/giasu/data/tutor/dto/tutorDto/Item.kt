@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDto
 
+import com.projectprovip.h1eu.giasu.common.keepFirstDecimalDouble
 import com.projectprovip.h1eu.giasu.domain.tutor.model.Tutor
 
 data class Item(
@@ -10,9 +11,12 @@ data class Item(
     val firstName: String,
     val id: String,
     val lastName: String,
+    val rate: Double,
     val university: String
 )
 
 fun Item.toTutor() = Tutor(
-    academicLevel, birthYear, description, firstName, id = id, lastName = lastName, university = university, image = avatar
+    academicLevel, birthYear, description,
+    firstName,
+    id, avatar, lastName, rate.keepFirstDecimalDouble(), university
 )

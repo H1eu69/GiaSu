@@ -8,7 +8,7 @@ data class LearningCourseDetail(
     val id: String = "",
     val lastModificationTime: String = "",
     val learningMode: String = "",
-    val sectionFee: Int= -1,
+    val sectionFee: Double = -1.0,
     val sessionDuration: Int= -1,
     val sessionPerWeek: Int= -1,
     val status: String = "",

@@ -2,18 +2,14 @@ package com.projectprovip.h1eu.giasu.domain.course.usecase
 
 import android.util.Log
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.toLearningCourse
 import com.projectprovip.h1eu.giasu.data.course.dto.recommend_courses_dto.RecommendedCoursesDto
-import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourse
-import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import com.projectprovip.h1eu.giasu.domain.course.repository.RecommendCourseRepository
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
-import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
-class GetRecommendedCoursesUseCase @Inject constructor(
+class GetRecommendedCoursesNameUseCase @Inject constructor(
     private val recommendCourseRepository: RecommendCourseRepository
 ) {
     operator fun invoke(id: String) = flow<EDSResult<RecommendedCoursesDto>> {
@@ -26,7 +22,7 @@ class GetRecommendedCoursesUseCase @Inject constructor(
                 Log.d("GetRecommendedCoursesUseCase list", data.toString())
                 emit(EDSResult.Success(data = data))
             } else
-                emit(EDSResult.Error(message = response.errorBody().toString()))
+                emit(EDSResult.Error(message = response.message()))
 
         } catch (e: HttpException) {
             emit(EDSResult.Error(e.localizedMessage))

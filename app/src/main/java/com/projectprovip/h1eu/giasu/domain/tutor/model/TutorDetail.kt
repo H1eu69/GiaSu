@@ -13,7 +13,7 @@ data class TutorDetail(
     val gender: String = "dummy",
     val id: String = "dummy",
     val lastModificationTime: String = "2014-12-23T17:13:36",
-    val rate: Int = 1,
+    val rate: Double = 1.0,
     val reviews: List<ReviewDetailDto> = emptyList(),
     val tutorMajors: List<String> = emptyList(),
     val university: String = "dummy"

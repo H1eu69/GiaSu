@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface RecommendCourseApi {
-    @GET("/{id}")
+    @GET("/get_recommend/{id}")
     suspend fun getRecommendedCourses(
         @Path("id") id: String,
     ) : Response<RecommendedCoursesDto>

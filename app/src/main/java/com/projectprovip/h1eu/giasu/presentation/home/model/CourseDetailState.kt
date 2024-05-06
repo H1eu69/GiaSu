@@ -10,6 +10,6 @@ data class CourseDetailState(
 
 data class RecommendCoursesState(
     var isLoading: Boolean = false,
-    var data: CourseDetail = CourseDetail(),
+    var data: List<CourseDetail> = emptyList(),
     var error: String? = null
 )

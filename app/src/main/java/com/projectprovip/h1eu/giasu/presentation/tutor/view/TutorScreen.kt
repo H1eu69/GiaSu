@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.tutor.view
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -71,7 +72,7 @@ fun TutorPreview() {
                         "4",
                         "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
                         "last",
-                        3,
+                        3.0,
                         "UIT"
                     ),
                     Tutor(
@@ -82,7 +83,7 @@ fun TutorPreview() {
                         "4",
                         "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
                         "last",
-                        3,
+                        3.0,
                         "UIT"
                     ),
                     Tutor(
@@ -93,7 +94,7 @@ fun TutorPreview() {
                         "4",
                         "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
                         "last",
-                        3,
+                        3.0,
                         "UIT"
                     )
                 )
@@ -121,7 +122,7 @@ fun TutorItemPreview() {
             "4",
             "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
             "last",
-            3,
+            3.0,
             "UIT"
         )
     )
@@ -236,6 +237,7 @@ fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
             )
             .clickable {
                 onItemClick(tutor.id)
+                Log.d("Test tutor id clicked", tutor.id)
                 //navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${data.id}")
             }) {
         Column(

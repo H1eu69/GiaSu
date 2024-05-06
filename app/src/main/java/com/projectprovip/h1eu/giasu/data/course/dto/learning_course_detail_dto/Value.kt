@@ -10,7 +10,7 @@ data class Value(
     val id: String,
     val lastModificationTime: String,
     val learningMode: String,
-    val sectionFee: Int,
+    val sectionFee: Double,
     val sessionDuration: Int,
     val sessionPerWeek: Int,
     val status: String,

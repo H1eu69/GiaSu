@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDetailDto
 
+import com.projectprovip.h1eu.giasu.common.keepFirstDecimalDouble
 import com.projectprovip.h1eu.giasu.domain.tutor.model.TutorDetail
 
 
@@ -14,7 +15,7 @@ data class Value(
     val gender: String,
     val id: String,
     val lastModificationTime: String,
-    val rate: Int,
+    val rate: Double,
     val reviews: List<ReviewDetailDto>,
     val tutorMajors: List<String>,
     val university: String
@@ -31,7 +32,7 @@ fun Value.toTutorDetail() = TutorDetail(
     gender,
     id,
     lastModificationTime,
-    rate,
+    rate.keepFirstDecimalDouble(),
     reviews,
     tutorMajors,
     university

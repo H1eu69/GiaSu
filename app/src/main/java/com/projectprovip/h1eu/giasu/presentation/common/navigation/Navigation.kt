@@ -210,6 +210,13 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
             LaunchedEffect(Unit) {
                 courseDetailViewModel.getCourseById(courseId!!)
             }
+            LaunchedEffect(courseDetailViewModel.courseDetailState.value.data.subjectId) {
+                if(courseDetailViewModel.courseDetailState.value.data.subjectId > 0)
+                courseDetailViewModel.getRecommendedCoursesName(courseDetailViewModel.courseDetailState.value.data.subjectId.toString())
+            }
+            LaunchedEffect(courseDetailViewModel.recommendedCourseNameState.value) {
+                courseDetailViewModel.getRecommendedCourses()
+            }
 
             CourseDetailScreen(
                 navController,
@@ -247,6 +254,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         ) { backStackEntry ->
             val tutorId = backStackEntry.arguments?.getString("tutorId")
             val vm = hiltViewModel<TutorDetailViewModel>()
+            Log.d("Test tutorId tutor reivew", tutorId.toString())
             LaunchedEffect(key1 = vm.state) {
                 vm.getTutorDetail(tutorId!!)
             }
