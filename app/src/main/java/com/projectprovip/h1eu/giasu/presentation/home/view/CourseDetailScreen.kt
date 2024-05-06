@@ -2,7 +2,6 @@ package com.projectprovip.h1eu.giasu.presentation.home.view
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,7 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
@@ -32,15 +29,12 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Place
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -50,20 +44,14 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -84,7 +72,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -94,7 +81,6 @@ import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.CodeGenerator
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
-import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceItem
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
@@ -129,7 +115,9 @@ fun CourseDetailScreen(
     val context = LocalContext.current
     val showBottomSheet = remember { mutableStateOf(false) }
     val course = courseDetailState.data
-
+    val code = remember {
+        mutableStateOf(CodeGenerator.generate())
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -182,6 +170,7 @@ fun CourseDetailScreen(
                             onButtonClick = {
                                 onRegisterClicked()
                             },
+                            code = code.value,
                             fee = course.fee,
                             tax = course.chargeFee
                         )
@@ -194,7 +183,7 @@ fun CourseDetailScreen(
                             )
                     ) {
                         CourseDetailBody(
-                            navController = navController, course = course!!,
+                            navController = navController, course = course,
                             recommendedCourseState = recommendCourseState
                         )
                         Button(
@@ -412,10 +401,10 @@ fun CourseDetailBody(
         item {
             Text(
                 text = "You may like",
-                fontWeight = FontWeight.Bold,
+                color = EDSColors.primaryColor,
                 fontSize = 16.sp,
                 modifier = modifier
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.dp, vertical = 8.dp),
             )
         }
         when {
@@ -466,7 +455,7 @@ private fun PreviewRelatedCourses() {
             state = pagerState,
             contentPadding = PaddingValues(20.dp),
             pageSpacing = 12.dp
-        ) { page ->
+        ) {
             // Our page content
 
             RelatedCourses(data = CourseDetail(), {
@@ -600,7 +589,8 @@ fun SessionSection(dayAWeek: Int, minPerDay: Int, modifier: Modifier = Modifier)
 fun CourseRegisterPaymentDialogPreview() {
     Surface {
         CourseRegisterPaymentBottomSheet(
-            modifier = Modifier.padding(16.dp), onDismissRequest = {
+            modifier = Modifier.padding(16.dp),
+            code = CodeGenerator.generate(), onDismissRequest = {
 
             })
     }
@@ -615,6 +605,7 @@ fun CourseRegisterPaymentBottomSheet(
         skipPartiallyExpanded = true
     ),
     onButtonClick: () -> Unit = {},
+    code: String,
     fee: Double = 1000.00,
     tax: Double = 200.00
 ) {
@@ -625,8 +616,6 @@ fun CourseRegisterPaymentBottomSheet(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
-
-    val code = CodeGenerator.generate()
 
     ModalBottomSheet(sheetState = sheetState, onDismissRequest = { onDismissRequest() }) {
         Column(
