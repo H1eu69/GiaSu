@@ -97,9 +97,11 @@ import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceItem
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
+import com.projectprovip.h1eu.giasu.presentation.home.model.RecommendCoursesState
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
 
 @Preview
@@ -107,6 +109,7 @@ import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
 fun PreviewScreen() {
     CourseDetailScreen(
         rememberNavController(),
+        recommendCourseState = RecommendCoursesState(),
         courseDetailState = CourseDetailState(),
         courseRegisterState = CourseRegisterState(),
         onRegisterClicked = {}
@@ -117,6 +120,7 @@ fun PreviewScreen() {
 @Composable
 fun CourseDetailScreen(
     navController: NavController,
+    recommendCourseState: RecommendCoursesState,
     courseDetailState: CourseDetailState,
     courseRegisterState: CourseRegisterState,
     onRegisterClicked: () -> Unit,
@@ -163,9 +167,11 @@ fun CourseDetailScreen(
                         color = EDSColors.primaryColor
                     )
                 }
+
                 !this.error.isNullOrEmpty() -> {
 
                 }
+
                 else -> {
                     if (showBottomSheet.value) {
                         CourseRegisterPaymentBottomSheet(
@@ -187,7 +193,10 @@ fun CourseDetailScreen(
                                 EDSColors.white
                             )
                     ) {
-                        CourseDetailBody(navController = navController, course = course!!)
+                        CourseDetailBody(
+                            navController = navController, course = course!!,
+                            recommendedCourseState = recommendCourseState
+                        )
                         Button(
                             onClick = {
                                 showBottomSheet.value = true
@@ -209,10 +218,18 @@ fun CourseDetailScreen(
                             LaunchedEffect(key1 = courseRegisterState) {
 
                                 if (courseRegisterState.error) {
-                                    Toast.makeText(context, courseRegisterState.message, Toast.LENGTH_SHORT)
+                                    Toast.makeText(
+                                        context,
+                                        courseRegisterState.message,
+                                        Toast.LENGTH_SHORT
+                                    )
                                         .show()
                                 } else if (courseRegisterState.isSuccess) {
-                                    Toast.makeText(context, courseRegisterState.message, Toast.LENGTH_SHORT)
+                                    Toast.makeText(
+                                        context,
+                                        courseRegisterState.message,
+                                        Toast.LENGTH_SHORT
+                                    )
                                         .show()
                                     navController.popBackStack()
                                 }
@@ -231,11 +248,12 @@ fun CourseDetailScreen(
 fun CourseDetailBody(
     modifier: Modifier = Modifier,
     navController: NavController,
+    recommendedCourseState: RecommendCoursesState,
     course: CourseDetail
 ) {
     var statusTextColor = EDSColors.notScheduleTextColor
     val pagerState = rememberPagerState(pageCount = {
-        10
+        recommendedCourseState.data.size
     })
 
     if (course.status == "Available") {
@@ -253,8 +271,8 @@ fun CourseDetailBody(
     ) {
         item {
             Text(
-                text = course.title,                modifier = modifier
-                    .padding(horizontal =  20.dp),
+                text = course.title, modifier = modifier
+                    .padding(horizontal = 20.dp),
                 style = TextStyle(
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -267,7 +285,7 @@ fun CourseDetailBody(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = modifier
-                    .padding(horizontal =  20.dp),
+                    .padding(horizontal = 20.dp),
             ) {
                 androidx.compose.material3.Text(
                     text = course.status,
@@ -300,7 +318,7 @@ fun CourseDetailBody(
             SessionSection(
                 course.sessionPerWeek, course.sessionDuration,
                 modifier = modifier
-                    .padding(horizontal =  20.dp),
+                    .padding(horizontal = 20.dp),
             )
         }
         item {
@@ -312,7 +330,7 @@ fun CourseDetailBody(
                     fontSize = 14.sp
                 ),
                 modifier = modifier
-                    .padding(horizontal =  20.dp)
+                    .padding(horizontal = 20.dp)
                     .padding(top = 8.dp, bottom = 8.dp)
                     .background(
                         EDSColors.idClassBackgroundColor,
@@ -322,16 +340,18 @@ fun CourseDetailBody(
             )
         }
         item {
-            BottomContent(fee = course.fee, createdDate = course.creationTime,
+            BottomContent(
+                fee = course.fee, createdDate = course.creationTime,
                 modifier = modifier
-                    .padding(horizontal =  20.dp),)
+                    .padding(horizontal = 20.dp),
+            )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Info,
                 "Subject: ", course.subjectName,
                 modifier = modifier
-                    .padding(horizontal =  20.dp),
+                    .padding(horizontal = 20.dp),
             )
         }
 
@@ -340,12 +360,13 @@ fun CourseDetailBody(
                 Icons.Outlined.Phone,
                 "Contact number: ", course.contactNumber,
                 textColor = EDSColors.costTextColor,
-                               modifier = modifier
-                    .padding(horizontal =  20.dp).clickable {
-                    val uri = Uri.parse("tel: ${course.contactNumber}")
-                    val dialIntent = Intent(Intent.ACTION_DIAL, uri)
-                    context.startActivity(dialIntent)
-                }
+                modifier = modifier
+                    .padding(horizontal = 20.dp)
+                    .clickable {
+                        val uri = Uri.parse("tel: ${course.contactNumber}")
+                        val dialIntent = Intent(Intent.ACTION_DIAL, uri)
+                        context.startActivity(dialIntent)
+                    }
             )
         }
         item {
@@ -353,7 +374,7 @@ fun CourseDetailBody(
                 Icons.Outlined.Person,
                 "Tutor gender: ", course.genderRequirement,
                 modifier = modifier
-                    .padding(horizontal =  20.dp),
+                    .padding(horizontal = 20.dp),
             )
         }
         item {
@@ -361,7 +382,7 @@ fun CourseDetailBody(
                 Icons.Outlined.Face,
                 "Student gender: ", course.learnerGender,
                 modifier = modifier
-                    .padding(horizontal =  20.dp),
+                    .padding(horizontal = 20.dp),
             )
         }
         item {
@@ -369,7 +390,7 @@ fun CourseDetailBody(
                 Icons.Outlined.Person,
                 "Number of learner: ", course.numberOfLearner.toString(),
                 modifier = modifier
-                    .padding(horizontal =  20.dp),
+                    .padding(horizontal = 20.dp),
             )
         }
         item {
@@ -377,7 +398,7 @@ fun CourseDetailBody(
                 Icons.Outlined.Info,
                 "Academic: ", course.academicLevelRequirement,
                 modifier = modifier
-                    .padding(horizontal =  20.dp),
+                    .padding(horizontal = 20.dp),
             )
         }
         item {
@@ -385,7 +406,7 @@ fun CourseDetailBody(
                 Icons.Outlined.Place,
                 "Address: ", course.address,
                 modifier = modifier
-                    .padding(horizontal =  20.dp),
+                    .padding(horizontal = 20.dp),
             )
         }
         item {
@@ -394,24 +415,41 @@ fun CourseDetailBody(
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
                 modifier = modifier
-                    .padding(horizontal =  20.dp),
+                    .padding(horizontal = 20.dp),
             )
         }
-        item{
-            HorizontalPager(state = pagerState,
-                contentPadding = PaddingValues(horizontal = 20.dp),
-                pageSpacing = 12.dp
-            ) { page ->
-                // Our page content
+        when {
+            recommendedCourseState.isLoading -> {
+                item {
+                    CircularLoading(
+                        color = EDSColors.primaryColor
+                    )
+                }
+            }
 
-                RelatedCourses(data = CourseDetail(), {
-
-                })
-
+            recommendedCourseState.data.isNotEmpty() -> {
+                item {
+                    HorizontalPager(
+                        state = pagerState,
+                        contentPadding = PaddingValues(horizontal = 20.dp),
+                        pageSpacing = 12.dp
+                    ) { page ->
+                        // Our page content
+                        RelatedCourses(data = recommendedCourseState.data[page], {
+                            navController.navigate(
+                                concat(
+                                    Screens.InApp.Home.ClassDetail.route,
+                                    recommendedCourseState.data[page].id
+                                )
+                            )
+                        })
+                    }
+                }
             }
         }
+
         item {
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }
@@ -424,10 +462,11 @@ private fun PreviewRelatedCourses() {
         10
     })
     Surface {
-        HorizontalPager(state = pagerState,
-            contentPadding = PaddingValues( 20.dp),
+        HorizontalPager(
+            state = pagerState,
+            contentPadding = PaddingValues(20.dp),
             pageSpacing = 12.dp
-            ) { page ->
+        ) { page ->
             // Our page content
 
             RelatedCourses(data = CourseDetail(), {
@@ -437,6 +476,7 @@ private fun PreviewRelatedCourses() {
         }
     }
 }
+
 @Composable
 private fun RelatedCourses(
     data: CourseDetail,
@@ -804,3 +844,5 @@ private fun CourseRegisterDialogText(
         subTitle()
     }
 }
+
+private fun concat(s1: String, s2: String) = "$s1/$s2"

@@ -22,7 +22,8 @@ interface CourseApi {
     @GET("Course")
     suspend fun getAllClasses(
         @Query("PageIndex") page: Int,
-        @Query("SubjectName") subjectName: String?
+        @Query("SubjectName") subjectName: String?,
+        @Query("PageSize") pageSize: Int?
     ) : NewCoursesDto
 
     @GET("Course/{id}")

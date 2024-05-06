@@ -222,6 +222,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                 navController,
                 courseDetailState = courseDetailViewModel.courseDetailState.value,
                 courseRegisterState = courseDetailViewModel.courseRegisterState.value,
+                recommendCourseState = courseDetailViewModel.recommendedCourseState.value,
                 onRegisterClicked = {
                     courseDetailViewModel.registerCourse(courseId!!, token.value)
                 }

@@ -16,9 +16,9 @@ import javax.inject.Inject
 
 class CourseRepositoryImpl @Inject constructor(
     private val api: CourseApi
-) : CoursesRepository{
-    override suspend fun getAllClasses(page: Int, subjectName: String?): NewCoursesDto {
-        return api.getAllClasses(page, subjectName)
+) : CoursesRepository {
+    override suspend fun getAllClasses(page: Int, subjectName: String?, size: Int?): NewCoursesDto {
+        return api.getAllClasses(page, subjectName, size)
     }
 
     override suspend fun getCourseById(id: String): CourseByIdDto {
@@ -55,7 +55,11 @@ class CourseRepositoryImpl @Inject constructor(
         return api.getLearningCourseDetail(token, courseId)
     }
 
-    override suspend fun reviewTutorByCourseId(token: String, courseId: String, input: ReviewTutorInput) : ReviewTutorDto {
+    override suspend fun reviewTutorByCourseId(
+        token: String,
+        courseId: String,
+        input: ReviewTutorInput
+    ): ReviewTutorDto {
         return api.reviewTutorOfByCourseId(token, courseId, input)
     }
 }

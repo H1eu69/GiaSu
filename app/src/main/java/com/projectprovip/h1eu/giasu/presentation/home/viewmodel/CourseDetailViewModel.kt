@@ -115,7 +115,7 @@ class CourseDetailViewModel @Inject constructor(
     fun getRecommendedCourses() {
         viewModelScope.launch {
             recommendedCourseNameState.value.forEach { name ->
-                getCoursesUseCase(_currentPage, name).onEach { result ->
+                getCoursesUseCase(_currentPage, name, size = 3).onEach { result ->
                     when (result) {
                         is EDSResult.Loading -> {
                             _recommendedCourseState.value = RecommendCoursesState(isLoading = true)

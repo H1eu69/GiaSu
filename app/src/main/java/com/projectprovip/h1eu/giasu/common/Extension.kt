@@ -81,7 +81,6 @@ fun String.isLink(): Boolean {
     )
     return regex.matches(this)
 }
-
 fun Double.keepFirstDecimalDouble(): Double {
     return (this * 10.0).toInt() / 10.0
 }
