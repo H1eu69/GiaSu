@@ -40,6 +40,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -152,61 +153,63 @@ fun ClassRequestBody(
     onButtonClick: (CreateCourseParams) -> Unit
 ) {
 
-    val title = remember {
+    val title = rememberSaveable {
         mutableStateOf("")
     }
-    val fee = remember {
+    val fee = rememberSaveable {
         mutableStateOf("")
     }
-    val chargeFee = remember {
+    val chargeFee = rememberSaveable {
         mutableStateOf("")
     }
-    val address = remember {
+    val address = rememberSaveable {
         mutableStateOf("")
     }
-    val houseNumber = remember {
+    val houseNumber = rememberSaveable {
         mutableStateOf("")
     }
-    val numOfStudent = remember {
+    val numOfStudent = rememberSaveable {
         mutableStateOf("")
     }
-    val contactNumber = remember {
+    val contactNumber = rememberSaveable {
         mutableStateOf("")
     }
-    val description = remember {
+    val description = rememberSaveable {
         mutableStateOf("")
     }
 
-    val learnerName = remember {
+    val learnerName = rememberSaveable {
         mutableStateOf("")
     }
-    val minutePerSession = remember {
+    val minutePerSession = rememberSaveable {
         mutableStateOf("")
     }
-    val sessionPerWeek = remember {
+    val sessionPerWeek = rememberSaveable {
         mutableStateOf("")
     }
 
     val subject = remember {
         mutableStateOf(SubjectItem(name = ""))
     }
-
+    val subjectName = rememberSaveable {
+        mutableStateOf("")
+    }
     val academicLevel = listOf("Ungraduated", "Graduated", "Lecturer")
-    val (academicLevelSelectedOption, academicOnOptionSelected) = remember {
+    val (academicLevelSelectedOption, academicOnOptionSelected) = rememberSaveable {
         mutableStateOf(academicLevel[0])
     }
 
     val genderOptions = listOf("Male", "Female", "Other")
-    val (studentSelectedOptions, studentOnOptionSelected) = remember {
+    val (studentSelectedOptions, studentOnOptionSelected) = rememberSaveable {
         mutableStateOf(genderOptions[0])
     }
 
-    val (tutorSelectedOptions, tutorOnOptionSelected) = remember {
+    val (tutorSelectedOptions, tutorOnOptionSelected) = rememberSaveable {
         mutableStateOf(genderOptions[0])
     }
 
     val learningModeOptions = listOf("Offline", "Online", "Hybrid")
-    val (learningModeSelectedOptions, learningModeOnOptionSelected) = remember {
+    val (learningModeSelectedOptions, learningModeOnOptionSelected) = rememberSaveable {
         mutableStateOf(learningModeOptions[0])
     }
     val openEditSubjectDialog = remember { mutableStateOf(false) }
@@ -254,7 +257,7 @@ fun ClassRequestBody(
                 onConfirm = {
                     subject.value = it
                     openEditSubjectDialog.value = false
-
+                    subjectName.value = it.name
                 })
         }
 
@@ -467,8 +470,9 @@ fun ClassRequestBody(
                         subject.value = subject.value.copy(
                             name = value
                         )
+                        subjectName.value = value
                     },
-                    value = subject.value.name,
+                    value = subjectName.value,
                     colors = OutlinedTextFieldDefaults.colors(
                         disabledTextColor = EDSColors.myBlackColor,
                         cursorColor = EDSColors.primaryColor,
@@ -485,7 +489,15 @@ fun ClassRequestBody(
                         .padding(top = 12.dp)
                         .padding(horizontal = 20.dp)
                         .clickable {
-                            navController.navigate(Screens.InApp.Profile.RequestClass.LocationPick.route)
+                            navController.navigate(Screens.InApp.Profile.RequestClass.LocationPick.route) {
+//                                navController.graph.startDestinationRoute?.let { route ->
+//                                    popUpTo(route) {
+//                                        saveState = true
+//                                    }
+//                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         },
                     placeholder = {
                         androidx.compose.material3.Text(

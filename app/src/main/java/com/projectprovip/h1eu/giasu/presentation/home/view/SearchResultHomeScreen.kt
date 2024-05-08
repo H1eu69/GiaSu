@@ -93,6 +93,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.FilterSelect
 import com.projectprovip.h1eu.giasu.presentation.home.model.SearchResultState
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Preview
@@ -146,9 +147,13 @@ fun SearchResultHomeScreen(
                 FilterSelect("Quận 1"),
                 FilterSelect("Quận 2"),
                 FilterSelect("Quận 3"),
-                FilterSelect("Tây Ninh"),
-                FilterSelect("Tay ninh 9"),
-
+                FilterSelect("Quận 4"),
+                FilterSelect("Quận 5"),
+                FilterSelect("Quận 6"),
+                FilterSelect("Quận 7"),
+                FilterSelect("Quận 8"),
+                FilterSelect("Quận 9"),
+                FilterSelect("Quận 10"),
                 )
         )
     }
@@ -294,6 +299,11 @@ fun SearchResultHomeScreen(
                             Modifier.padding(8.dp),
                             onFilterClick = {
                                 filteredList.value = state.data
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
+                                }
 
                                 if (isLocationFilterSelected.value)
                                     filteredList.value = filteredList.value.filter { courseDetail ->
@@ -1109,7 +1119,7 @@ fun ApplyFilterButtons(
             modifier = Modifier.weight(.5f)
         ) {
             Text(
-                text = "Apply Filters",
+                text = "Apply",
                 style = EDSTextStyle.H2Reg(
                     EDSColors.white
                 )

@@ -133,7 +133,7 @@ fun UIBasedOnState(
 
     when {
         state.message.isNotEmpty() -> {
-            if (state.message == "Error403 Forbidden") {
+            if (state.message == "HTTP 403 Forbidden") {
                 TutorRegisterAlertDialog(open = openDialog.value,
                     onDismissRequest = {
                         openDialog.value = false
@@ -153,12 +153,14 @@ fun UIBasedOnState(
 
         state.data.isNotEmpty() -> {
             if (state.filteredData.isNotEmpty()) {
+                Log.d("state.filteredData", state.filteredData.toString())
                 ListCourses(
                     modifier,
                     data = state.filteredData,
                     navController
                 )
             } else {
+                Log.d("state.filteredData", state.filteredData.toString())
                 Box(modifier = Modifier.fillMaxSize()) {
                     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_box),
                         onRetry = {
@@ -177,6 +179,25 @@ fun UIBasedOnState(
                 }
 
             }
+        }
+        state.data.isEmpty() -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_box),
+                    onRetry = {
+                            failCount, exception ->
+                        Log.d("LottieAnimation", failCount.toString())
+                        Log.d("LottieAnimation", exception.toString())
+                        // Continue retrying. Return false to stop trying.
+                        false
+                    })
+
+                LottieAnimation(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                )
+
+            }
+
         }
     }
 }

@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,10 +22,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,6 +37,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -52,6 +57,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -59,10 +65,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -75,6 +84,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.data.profile.dto.tutorInfoDto.Major
@@ -94,6 +106,7 @@ import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.toMajor
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
 
 
 @Composable
@@ -105,6 +118,7 @@ fun UpdateProfilePreview() {
         GetTutorInfoState(),
         UpdateProfileState(),
         SubjectState(),
+        false,
         { a, b, c, d, e, f, g, h, i, k ,re,asd,dsad-> }
     )
 }
@@ -117,14 +131,13 @@ fun UpdateProfile(
     getTutorInfoState: GetTutorInfoState,
     updateProfileState: UpdateProfileState,
     subjectState: SubjectState,
+    isTutor: Boolean,
     onUpdateBtnClick: (String, String, Int, String, String, String, String, String, String, String, String, String,  List<Major>) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
     val context = LocalContext.current
-
-    val isTutor = getProfileState.data.role == "Tutor"
 
     val profile = getProfileState.data
     val tutor = getTutorInfoState.data
@@ -150,10 +163,14 @@ fun UpdateProfile(
     }
     val genderOptions = listOf("Male", "Female", "Other")
 
-    val index = if(genderOptions.indexOf(profile.gender) != -1) genderOptions.indexOf(profile.gender) else 0
+    var (genderSelectedOption, onGenderSelect) = remember {
+        mutableStateOf(genderOptions[0])
+    }
 
-    val (genderSelectedOption, onGenderSelect) = remember {
-        mutableStateOf(genderOptions[index])
+    val academicLevels = listOf("Ungraduated", "Graduated", "Lecturer")
+
+    var (academicLevelSelectedOption, academicOnOptionSelected) = remember {
+        mutableStateOf(academicLevels[0])
     }
 
     val userMajors = remember {
@@ -164,6 +181,10 @@ fun UpdateProfile(
         mutableStateOf(subjectState.data)
     }
     var userListMajor: List<SubjectItem>
+    val images = remember {
+        mutableStateOf(
+            listOf("".toUri()))
+    }
 
     LaunchedEffect(profile) {
         firstName.value = profile.firstName
@@ -175,11 +196,16 @@ fun UpdateProfile(
         phoneText.value = profile.phoneNumber
         avatar.value = Uri.parse(profile.avatar)
         initValue.value = profile.birthYear
+
+
+        var genderIndex = genderOptions.indexOf(profile.gender )
+        if(genderIndex == -1)
+            genderIndex = 0
+        onGenderSelect(genderOptions[genderIndex])
     }
     LaunchedEffect(tutor) {
         academicLevel.value = tutor.academicLevel
         university.value = tutor.university
-
         userMajors.value = tutor.majors
         userListMajor = userMajors.value.map {
             it.toSubjectItem()
@@ -191,6 +217,14 @@ fun UpdateProfile(
                 it.isSelected = true
             }
         }
+        images.value = tutor.verificationDtos.map {
+            it.image.toUri()
+        }
+
+        var acaIndex = academicLevels.indexOf(tutor.academicLevel )
+        if(acaIndex == -1)
+            acaIndex = 0
+        academicOnOptionSelected(academicLevels[acaIndex])
     }
 
     LaunchedEffect(subjectState) {
@@ -264,9 +298,13 @@ fun UpdateProfile(
                                 university,
                                 subject,
                                 userMajors,
+                                images,
                                 genderOptions,
                                 genderSelectedOption,
                                 onGenderSelect,
+                                academicLevels,
+                                academicLevelSelectedOption,
+                                academicOnOptionSelected,
                                 initValue,
                                 openDatePickerDialog
                             ) else
@@ -661,9 +699,13 @@ fun TutorRole(
     university: MutableState<String>,
     subject: MutableState<List<SubjectItem>>,
     userMajors: MutableState<List<Major>>,
+    verificationImages: MutableState<List<Uri>>,
     genderOptions: List<String>,
     genderSelectedOption: String,
     onGenderSelect: (String) -> Unit,
+    academicOptions: List<String>,
+    academicSelectedOptions: String,
+    onAcademicSelect: (String) -> Unit,
     initValue: MutableState<Int>,
     openDatePicker: MutableState<Boolean>,
 ) {
@@ -979,27 +1021,37 @@ fun TutorRole(
             )
         }
         item {
-            OutlinedTextField(
+//            OutlinedTextField(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(top = 12.dp)
+//                    .padding(horizontal = 20.dp),
+//                label = {
+//                    Text(
+//                        text = "Academic level",
+//                    )
+//                },
+//                singleLine = true,
+//                shape = RoundedCornerShape(12.dp),
+//                onValueChange = { value ->
+//                    academicLevel.value = value
+//                },
+//                value = academicLevel.value,
+//                colors = OutlinedTextFieldDefaults.colors(
+//                    cursorColor = EDSColors.primaryColor,
+//                    focusedBorderColor = EDSColors.primaryColor,
+//                    focusedLabelColor = EDSColors.primaryColor,
+//                ),
+//            )
+            CommonRadioButton(
+                title = "Academic Requirement",
+                radioOptions = academicOptions,
+                selectedOption = academicSelectedOptions,
+                onOptionSelected = onAcademicSelect,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp)
-                    .padding(horizontal = 20.dp),
-                label = {
-                    Text(
-                        text = "Academic level",
-                    )
-                },
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp),
-                onValueChange = { value ->
-                    academicLevel.value = value
-                },
-                value = academicLevel.value,
-                colors = OutlinedTextFieldDefaults.colors(
-                    cursorColor = EDSColors.primaryColor,
-                    focusedBorderColor = EDSColors.primaryColor,
-                    focusedLabelColor = EDSColors.primaryColor,
-                ),
+                    .padding(12.dp)
+                    .background(Color.White)
             )
         }
         item {
@@ -1039,13 +1091,6 @@ fun TutorRole(
             )
         }
         item {
-            val images = remember {
-                mutableStateOf(
-                    listOf(
-                        "".toUri(),
-                    )
-                )
-            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1070,29 +1115,29 @@ fun TutorRole(
                         text = "Add more", fontSize = 16.sp,
                         color = EDSColors.primaryColor,
                         modifier = Modifier.clickable {
-                            val newList = images.value.toMutableList()
+                            val newList = verificationImages.value.toMutableList()
                             newList.add(Uri.EMPTY)
-                            images.value = newList
+                            verificationImages.value = newList
                         }
                     )
 
                 }
                 ImagePicker(
-                    images.value,
+                    verificationImages.value,
                     onImageUriChanged = { uri, index ->
-                        val newList = images.value.toMutableList()
+                        val newList = verificationImages.value.toMutableList()
                         newList.removeAt(index)
                         newList.add(index, uri)
-                        images.value = newList
+                        verificationImages.value = newList
                         //uploadImage(uri)
                     },
                     onDeleteUri = { index ->
-                        val newList = images.value.toMutableList()
+                        val newList = verificationImages.value.toMutableList()
                         val emptyUri = Uri.EMPTY
 
                         newList.removeAt(index)
                         newList.add(index, emptyUri)
-                        images.value = newList
+                        verificationImages.value = newList
                     },
                 )
             }
@@ -1126,6 +1171,11 @@ fun TutorPreview() {
     val (genderSelectedOption, onGenderSelect) = remember {
         mutableStateOf(genderOptions[1])
     }
+    val academicOptions = listOf("Male", "Female", "Other")
+
+    val (academicSelectedOption, onAcademicSelected) = remember {
+        mutableStateOf(genderOptions[1])
+    }
 
     val userMajors = remember {
         mutableStateOf<List<Major>>(emptyList())
@@ -1133,6 +1183,9 @@ fun TutorPreview() {
 
     val subject = remember {
         mutableStateOf<List<SubjectItem>>(emptyList())
+    }
+    val images = remember {
+        mutableStateOf<List<Uri>>(emptyList())
     }
     TutorRole(
         navController = rememberNavController(),
@@ -1150,9 +1203,13 @@ fun TutorPreview() {
         university,
         subject,
         userMajors,
+        images,
         genderOptions,
         genderSelectedOption,
         onGenderSelect,
+        academicOptions,
+        academicSelectedOption,
+        onAcademicSelected,
         initValue,
         openDialog
     )
@@ -1332,3 +1389,89 @@ private fun SubjectDialog(
     )
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+private fun ImagePicker(
+    images: List<Uri>, onImageUriChanged: ((uri: Uri, index: Int) -> Unit),
+    onDeleteUri: ((index: Int) -> Unit)
+) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp
+    val imageWidth = (screenWidth - 40) / 3
+    val rowCount = ceil(images.count().toDouble() / 3).toInt()
+    val listHeight = rowCount * imageWidth + ((rowCount - 1) * 8)
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        userScrollEnabled = false,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .padding(top = 20.dp)
+            .height(listHeight.dp)
+    ) {
+        images.forEachIndexed { index, u ->
+            Log.d("Test uri ", u.toString())
+            item {
+                val launcher =
+                    rememberLauncherForActivityResult(contract = ActivityResultContracts.PickVisualMedia()) {
+                        if (it != null) {
+                            onImageUriChanged(it, index)
+                            Log.d("Test last path uri ", u.lastPathSegment.toString())
+                        }
+                    }
+
+                if (u.toString().isNotEmpty()) {
+                    Box {
+                        GlideImage(model = u, contentDescription = "",
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .size(imageWidth.dp)
+                                .clip(
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .clickable {
+                                    launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                }
+                        )
+                        Image(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.close_with_bg),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(top = 2.dp, end = 2.dp)
+                                .background(
+                                    EDSColors.imageBackground,
+                                    CircleShape
+                                )
+                                .clickable {
+                                    onDeleteUri(index)
+                                    Log.d("Test uri on delete", u.lastPathSegment.toString())
+                                }
+                        )
+                    }
+
+
+                } else {
+                    Box(modifier = Modifier
+                        .size(imageWidth.dp)
+                        .background(
+                            EDSColors.imageBackground,
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                        .clickable {
+                            launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            contentDescription = "",
+                            tint = EDSColors.plusBackground,
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+}

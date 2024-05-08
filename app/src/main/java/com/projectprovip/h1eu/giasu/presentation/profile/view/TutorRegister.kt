@@ -415,7 +415,7 @@ fun TutorRegisterScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ImagePicker(
+private fun ImagePicker(
     images: List<Uri>, onImageUriChanged: ((uri: Uri, index: Int) -> Unit),
     onDeleteUri: ((index: Int) -> Unit)
 ) {

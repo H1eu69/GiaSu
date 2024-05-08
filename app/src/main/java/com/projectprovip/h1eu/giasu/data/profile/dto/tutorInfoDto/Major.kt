@@ -8,6 +8,5 @@ data class Major(
 )
 
 fun Major.toSubjectItem() = SubjectItem(
-    id = subjectId,
-    name = subjectName
+    subjectId, subjectName
 )

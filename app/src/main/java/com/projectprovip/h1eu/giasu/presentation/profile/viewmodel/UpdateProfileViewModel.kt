@@ -93,7 +93,6 @@ class UpdateProfileViewModel @Inject constructor(
 
                     }
                 }
-
             }.launchIn(this)
         }
     }

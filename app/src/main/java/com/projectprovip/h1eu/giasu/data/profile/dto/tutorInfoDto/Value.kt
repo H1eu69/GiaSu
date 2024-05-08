@@ -11,9 +11,8 @@ data class Value(
     val majors: List<Major>,
     val rate: Int,
     val university: String,
-    val verificationDtos: List<Any>
+    val verificationDtos: List<VerificationDto>
 )
-
 fun Value.toTutorInfo() = TutorInfo(
     academicLevel, id, isVerified, majors, rate, university, verificationDtos
 )
