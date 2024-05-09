@@ -194,6 +194,9 @@ fun ClassRequestBody(
     val subjectName = rememberSaveable {
         mutableStateOf("")
     }
+    val subjectId = rememberSaveable {
+        mutableStateOf(-1)
+    }
     val academicLevel = listOf("Ungraduated", "Graduated", "Lecturer")
     val (academicLevelSelectedOption, academicOnOptionSelected) = rememberSaveable {
         mutableStateOf(academicLevel[0])
@@ -231,7 +234,7 @@ fun ClassRequestBody(
     provinceResult?.value?.let { province ->
         districtResult?.value?.let { district ->
             wardResult?.value?.let { ward ->
-                address.value = "${ward}, ${district}, ${province}"
+                address.value = "${ward}, ${district}, $province"
             }
         }
     }
@@ -258,6 +261,10 @@ fun ClassRequestBody(
                     subject.value = it
                     openEditSubjectDialog.value = false
                     subjectName.value = it.name
+                    subjectId.value = it.id
+                    Log.d("Test subject", subject.value.toString())
+                    Log.d("Test subject", subjectName.value.toString())
+
                 })
         }
 
@@ -293,6 +300,7 @@ fun ClassRequestBody(
                         androidx.compose.material3.Text(text = "Title", color = EDSColors.grayX2)
                     },
                     keyboardActions = KeyboardActions(),
+                    singleLine = true,
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
                         title.value = value
@@ -329,6 +337,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(text = "Fee", color = EDSColors.grayX2)
                     },
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(12.dp),
@@ -356,6 +365,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -383,6 +393,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -409,6 +420,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
@@ -434,6 +446,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -505,6 +518,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
@@ -533,6 +547,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
@@ -622,6 +637,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -651,7 +667,7 @@ fun ClassRequestBody(
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
@@ -687,8 +703,8 @@ fun ClassRequestBody(
                         fee = fee.value.toDouble(),
                         numberOfLearner = numOfStudent.value.toInt(),
                         contactNumber = contactNumber.value,
-                        subjectId = subject.value.id,
-                        address = address.value,
+                        subjectId = subjectId.value,
+                        address = "${houseNumber.value}, ${address.value}",
                         academicLevelRequirement = academicLevelSelectedOption.toEDSIntAcademicLevel(),
                         sessionPerWeek = sessionPerWeek.value.toInt(),
                         minutePerSession = minutePerSession.value.toInt(),
