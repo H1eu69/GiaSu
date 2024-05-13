@@ -4,6 +4,7 @@ package com.projectprovip.h1eu.giasu.presentation.profile.view
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -89,6 +90,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
+import com.projectprovip.h1eu.giasu.common.toEDSStringGender
 import com.projectprovip.h1eu.giasu.data.profile.dto.tutorInfoDto.Major
 import com.projectprovip.h1eu.giasu.data.profile.dto.tutorInfoDto.toSubjectItem
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.NumberPickerDialog
@@ -187,6 +189,7 @@ fun UpdateProfile(
     }
 
     LaunchedEffect(profile) {
+        Log.d("Get profile", profile.toString())
         firstName.value = profile.firstName
         lastName.value = profile.lastName
         emailText.value = profile.email
@@ -198,7 +201,7 @@ fun UpdateProfile(
         initValue.value = profile.birthYear
 
 
-        var genderIndex = genderOptions.indexOf(profile.gender )
+        var genderIndex = genderOptions.indexOf(profile.gender.toEDSStringGender() )
         if(genderIndex == -1)
             genderIndex = 0
         onGenderSelect(genderOptions[genderIndex])
@@ -359,7 +362,7 @@ fun UpdateProfile(
                     val userAvatar = this.data.avatar
                     val fullName = this.data.fullName
                     val email = this.data.email
-
+                    val context = LocalContext.current
                     val coroutine = rememberCoroutineScope()
                     LaunchedEffect(key1 = "") {
                         coroutine.launch {
@@ -373,6 +376,7 @@ fun UpdateProfile(
                                     email
                             }
                         }
+                        Toast.makeText(context, "Update successfully", Toast.LENGTH_SHORT).show()
                         navController.popBackStack()
                     }
                 }

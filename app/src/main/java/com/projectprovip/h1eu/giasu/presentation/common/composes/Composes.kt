@@ -102,6 +102,9 @@ import kotlinx.coroutines.delay
 fun AppBarTitle(text: String, fontSize: Int = 20) {
     Text(
         text = text,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+
         style = TextStyle(
             fontWeight = FontWeight.Bold,
             fontSize = fontSize.sp

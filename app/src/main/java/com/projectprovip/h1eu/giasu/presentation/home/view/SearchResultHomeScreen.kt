@@ -87,6 +87,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
+import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.VerticalGrid
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
@@ -404,10 +405,16 @@ fun SearchResultHomeScreen(
                     state.apply {
                         when {
                             this.isLoading -> {
-                                CircularLoading(
-                                    modifier = Modifier.fillMaxSize(),
-                                    color = EDSColors.primaryColor
-                                )
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    ShimmerCourse()
+                                    ShimmerCourse()
+                                    ShimmerCourse()
+                                    ShimmerCourse()
+                                    ShimmerCourse()
+
+                                }
                             }
 
                             filteredList.value.isEmpty() -> {

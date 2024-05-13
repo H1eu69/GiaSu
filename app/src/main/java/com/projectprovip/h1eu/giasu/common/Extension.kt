@@ -75,12 +75,37 @@ fun String.toEDSIntAcademicLevel(): Int {
     }
 }
 
+fun Int.toEDSStringGender(): String {
+    return when (this) {
+        1 -> "Male"
+        2 -> "Female"
+        else -> "Other"
+    }
+}
+
+fun Int.toEDSStringLearningMode(): String {
+    return when (this) {
+        1 -> "Offline"
+        2 -> "Online"
+        else -> "Other"
+    }
+}
+
+fun Int.toEDSStringAcademicLevel(): String {
+    return when (this) {
+        1 -> "Ungraduated"
+        2 -> "Graduated"
+        else -> "Other"
+    }
+}
+
 fun String.isLink(): Boolean {
     val regex = Regex(
         "(http://|https://)?[a-zA-Z0-9]+(\\.[a-zA-Z]{2,})+(\\S*)?"
     )
     return regex.matches(this)
 }
+
 fun Double.keepFirstDecimalDouble(): Double {
     return (this * 10.0).toInt() / 10.0
 }

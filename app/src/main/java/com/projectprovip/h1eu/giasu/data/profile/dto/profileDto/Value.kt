@@ -11,7 +11,7 @@ data class Value(
     val description: String,
     val email: String,
     val firstName: String,
-    val gender: String,
+    val gender: Int,
     val id: String,
     val lastModificationTime: String,
     val lastName: String,

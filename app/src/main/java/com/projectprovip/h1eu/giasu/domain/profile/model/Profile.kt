@@ -8,7 +8,7 @@ data class Profile(
     val description: String = "",
     val email: String = "",
     val firstName: String = "",
-    val gender: String = "Male",
+    val gender: Int = 1,
     val lastName: String = "",
     val phoneNumber: String = "",
     val role: String = ""

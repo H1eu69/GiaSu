@@ -83,6 +83,7 @@ import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
+import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
@@ -339,7 +340,7 @@ fun CourseDetailBody(
             DetailIconAndText(
                 Icons.Outlined.Info,
                 "Subject: ", course.subjectName,
-                modifier = modifier
+                modifier = Modifier
                     .padding(horizontal = 20.dp),
             )
         }
@@ -410,8 +411,9 @@ fun CourseDetailBody(
         when {
             recommendedCourseState.isLoading -> {
                 item {
-                    CircularLoading(
-                        color = EDSColors.primaryColor
+                    ShimmerCourse(
+                        modifier
+                            .padding(horizontal = 20.dp, vertical = 8.dp)
                     )
                 }
             }
@@ -515,24 +517,27 @@ fun DetailIconAndText(
     textColor: Color = EDSColors.blackColor,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier) {
-        Icon(
-            imageVector, null,
-            tint = EDSColors.primaryColor
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = boldedText,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp
-        )
-        Spacer(modifier = Modifier.weight(1f))
+    Row(
+        modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row {
+            Icon(
+                imageVector, null,
+                tint = EDSColors.primaryColor
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = boldedText,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+        }
         Text(
             text = text,
             textAlign = TextAlign.End,
             color = textColor,
             fontSize = 16.sp,
-            modifier = modifier
         )
     }
 }
@@ -618,200 +623,225 @@ fun CourseRegisterPaymentBottomSheet(
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     ModalBottomSheet(sheetState = sheetState, onDismissRequest = { onDismissRequest() }) {
-        Column(
+        LazyColumn(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text(
-                text = "To complete registration, please transfer money according to content:",
-                style = EDSTextStyle.H2Reg()
-            )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            item {
                 Text(
-                    text = "Vietinbank (VTB): ", style = EDSTextStyle.H2Thin(
-                        EDSColors.gray
-                    )
+                    text = "To complete registration, please transfer money according to content:",
+                    style = EDSTextStyle.H2Reg()
                 )
+            }
+            item {
                 Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.clickable {
-                        clipboardManager.setText(AnnotatedString(("107867236970")))
-                        Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
-
-                    }
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Image(
-                        imageVector = Icons.Default.ContentCopy, contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        colorFilter = ColorFilter.tint(
+                    Text(
+                        text = "Vietinbank (VTB): ", style = EDSTextStyle.H2Thin(
                             EDSColors.gray
                         )
                     )
-                    Text(
-                        text = "107867236970",
-                        style = EDSTextStyle.H2Reg(
-                            EDSColors.primaryColor
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.clickable {
+                            clipboardManager.setText(AnnotatedString(("107867236970")))
+                            Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
+
+                        }
+                    ) {
+                        Image(
+                            imageVector = Icons.Default.ContentCopy, contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            colorFilter = ColorFilter.tint(
+                                EDSColors.gray
+                            )
                         )
-                    )
-
-                }
-            }
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Account Owner: ", style = EDSTextStyle.H2Thin(
-                        EDSColors.gray
-                    )
-                )
-                Text(
-                    text = "Huỳnh Trung Hiếu",
-                    style = EDSTextStyle.H2Reg(
-                        EDSColors.primaryColor
-                    )
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Content: ", style = EDSTextStyle.H2Thin(
-                        EDSColors.gray
-                    )
-                )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Image(
-                        imageVector = Icons.Default.ContentCopy, contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        colorFilter = ColorFilter.tint(
-                            EDSColors.gray
-                        )
-                    )
-                    Text(
-                        text = "Register ES $code",
-                        style = EDSTextStyle.H2Reg(
-                            EDSColors.primaryColor
-                        )
-                    )
-
-                }
-            }
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Course fee: ", style = EDSTextStyle.H2Reg(
-                        EDSColors.gray
-
-                    )
-                )
-                Text(
-                    text = "$fee đ",
-                    style = EDSTextStyle.H1MedBold(
-                    )
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Tax: ", style = EDSTextStyle.H2Reg(
-                        EDSColors.gray
-
-                    )
-                )
-                Text(
-                    text = "$tax đ",
-                    style = EDSTextStyle.H1MedBold(
-                    )
-                )
-            }
-            Divider(modifier = Modifier.padding(horizontal = 8.dp), color = EDSColors.grayX3)
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Total amount: ", style = EDSTextStyle.H2Reg(
-                        EDSColors.gray
-
-                    )
-                )
-                Text(
-                    text = "${fee + tax} đ",
-                    style = EDSTextStyle.H1MedBold(
-                    )
-                )
-            }
-            Text(
-                text = "After transferring money, please fill in the Registration Code in a box below. Registration Code is:",
-                style = EDSTextStyle.H2Reg()
-            )
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    code.forEach { digit ->
                         Text(
-                            text = digit.toString(),
-                            style = EDSTextStyle.H1Large(
+                            text = "107867236970",
+                            style = EDSTextStyle.H2Reg(
                                 EDSColors.primaryColor
                             )
                         )
+
                     }
                 }
+            }
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Account Owner: ", style = EDSTextStyle.H2Thin(
+                            EDSColors.gray
+                        )
+                    )
+                    Text(
+                        text = "Huỳnh Trung Hiếu",
+                        style = EDSTextStyle.H2Reg(
+                            EDSColors.primaryColor
+                        )
+                    )
+                }
+            }
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Content: ", style = EDSTextStyle.H2Thin(
+                            EDSColors.gray
+                        )
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Image(
+                            imageVector = Icons.Default.ContentCopy, contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                            colorFilter = ColorFilter.tint(
+                                EDSColors.gray
+                            )
+                        )
+                        Text(
+                            text = "Register ES $code",
+                            style = EDSTextStyle.H2Reg(
+                                EDSColors.primaryColor
+                            )
+                        )
+
+                    }
+                }
+            }
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Course fee: ", style = EDSTextStyle.H2Reg(
+                            EDSColors.gray
+
+                        )
+                    )
+                    Text(
+                        text = "$fee đ",
+                        style = EDSTextStyle.H1MedBold(
+                        )
+                    )
+                }
+            }
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Tax: ", style = EDSTextStyle.H2Reg(
+                            EDSColors.gray
+
+                        )
+                    )
+                    Text(
+                        text = "$tax đ",
+                        style = EDSTextStyle.H1MedBold(
+                        )
+                    )
+                }
+            }
+            item {
+                Divider(modifier = Modifier.padding(horizontal = 8.dp), color = EDSColors.grayX3)
 
             }
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                OtpInputField(
-                    modifier = Modifier
-                        .padding(top = 12.dp)
-                        .focusRequester(focusRequester),
-                    otpText = otpValue.value,
-                    shouldCursorBlink = false,
-                    onOtpModified = { value, otpFilled ->
-                        otpValue.value = value
-                        isOtpFilled.value = otpFilled
-                        if (otpFilled) {
-                            keyboardController?.hide()
-                        }
-                    }
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Total amount: ", style = EDSTextStyle.H2Reg(
+                            EDSColors.gray
+
+                        )
+                    )
+                    Text(
+                        text = "${fee + tax} đ",
+                        style = EDSTextStyle.H1MedBold(
+                        )
+                    )
+                }
+            }
+            item {
+                Text(
+                    text = "After transferring money, please fill in the Registration Code in a box below. Registration Code is:",
+                    style = EDSTextStyle.H2Reg()
                 )
             }
-            ElevatedButton(
-                onClick = { onButtonClick() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.elevatedButtonColors(
-                    containerColor = EDSColors.primaryColor,
-                )
-            ) {
-                Text("Send request", style = EDSTextStyle.H2Reg(EDSColors.white))
+           item {
+               Box(
+                   contentAlignment = Alignment.Center,
+                   modifier = Modifier.fillMaxWidth()
+               ) {
+                   Row(
+                       horizontalArrangement = Arrangement.spacedBy(4.dp)
+                   ) {
+                       code.forEach { digit ->
+                           Text(
+                               text = digit.toString(),
+                               style = EDSTextStyle.H1Large(
+                                   EDSColors.primaryColor
+                               )
+                           )
+                       }
+                   }
+
+               }
+           }
+            item {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OtpInputField(
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .focusRequester(focusRequester),
+                        otpText = otpValue.value,
+                        shouldCursorBlink = false,
+                        onOtpModified = { value, otpFilled ->
+                            otpValue.value = value
+                            isOtpFilled.value = otpFilled
+                            if (otpFilled) {
+                                keyboardController?.hide()
+                            }
+                        }
+                    )
+                }
+            }
+            item {
+                ElevatedButton(
+                    onClick = { onButtonClick() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = EDSColors.primaryColor,
+                    )
+                ) {
+                    Text("Send request", style = EDSTextStyle.H2Reg(EDSColors.white))
+                }
             }
         }
     }

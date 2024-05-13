@@ -250,8 +250,10 @@ fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
             AsyncImage(
                 model = tutor.image,
                 contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.clip(
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(
                     RoundedCornerShape(
                         topStart = 20.dp,
                         topEnd = 20.dp
