@@ -73,6 +73,7 @@ import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
+import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
@@ -343,11 +344,11 @@ fun HomeScreen(
                             {
                                 navController.navigate("${
                                     Screens.InApp.Home.SearchResult.route
-                                }/Swimming")                            }
+                                }/Swimming  ")                            }
                         }
                     }
                     Text(
-                        "Courses",
+                        "Popular Courses",
                         style = EDSTextStyle.H2Bold()
                     )
                 }
@@ -355,14 +356,24 @@ fun HomeScreen(
             state.apply {
                 when {
                     this.isLoading -> item {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.fillMaxSize()
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            CircularProgressIndicator(
-                                color = EDSColors.primaryColor
-                            )
+                            ShimmerCourse()
+                            ShimmerCourse()
+                            ShimmerCourse()
+                            ShimmerCourse()
+                            ShimmerCourse()
+
                         }
+//                        Box(
+//                            contentAlignment = Alignment.Center,
+//                            modifier = Modifier.fillMaxSize()
+//                        ) {
+//                            CircularProgressIndicator(
+//                                color = EDSColors.primaryColor
+//                            )
+//                        }
                     }
 
                     this.data.isNotEmpty() ->
@@ -381,6 +392,23 @@ fun HomeScreen(
                         }
                 }
             }
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun PreviewShimmerCourses(){
+    Surface {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            ShimmerCourse()
+            ShimmerCourse()
+            ShimmerCourse()
+            ShimmerCourse()
+            ShimmerCourse()
+
         }
     }
 }

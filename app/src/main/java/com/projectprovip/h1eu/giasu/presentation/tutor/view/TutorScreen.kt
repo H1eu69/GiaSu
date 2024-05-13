@@ -138,19 +138,32 @@ fun TutorScreen(
     val context = LocalContext.current
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Tutors",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.white,
-                    titleContentColor = EDSColors.primaryColor
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Text(
+                    text = "Tutors",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = EDSColors.primaryColor
                 )
-            )
+                SearchTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    onTap = {
+                        navController.navigate(Screens.InApp.Tutor.SearchSuggest.route)
+                    })
+            }
+//            CenterAlignedTopAppBar(
+//                title = {
+//
+//                },
+//                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+//                    containerColor = EDSColors.white,
+//                    titleContentColor = EDSColors.primaryColor
+//                )
+//            )
         },
     ) {
         Column(
@@ -175,13 +188,6 @@ fun TutorScreen(
                 }
 
                 state.value.data.isNotEmpty() -> {
-                    SearchTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        onTap = {
-                            navController.navigate(Screens.InApp.Tutor.SearchSuggest.route)
-                        })
                     InfiniteStaggeredList(state.value.data,
                         modifier = Modifier.padding(it),
                         onItemClick = { tutorId ->

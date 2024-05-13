@@ -94,7 +94,7 @@ fun ClassManagementScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(title = {
-                AppBarTitle(text = "Courses")
+                AppBarTitle(text = "Requested Courses")
             })
         }
     ) {

@@ -68,6 +68,7 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
+
         fun H1Reg(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
 
@@ -172,12 +173,14 @@ class EDSTextStyle {
             val fontName = GoogleFont("Montserrat")
 
             val font = FontFamily(
-                Font(googleFont = fontName, fontProvider = provider)
+                Font(
+                    googleFont = fontName, fontProvider = provider,
+                    weight = FontWeight.Bold
+                )
             )
 
             return TextStyle(
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
                 color = color,
                 fontFamily = font
             )
@@ -197,8 +200,9 @@ class EDSTextStyle {
         }
     }
 }
+
 object CodeGenerator {
-    fun generate(codeLength: Int = 6) : String{
+    fun generate(codeLength: Int = 6): String {
         val stringBuilder = StringBuilder()
 
         repeat(codeLength) {
