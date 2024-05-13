@@ -68,6 +68,19 @@ class EDSTextStyle {
                 fontFamily = font
             )
         }
+        fun H1Reg(color: Color = Color.Black): TextStyle {
+            val fontName = GoogleFont("Inter")
+
+            val font = FontFamily(
+                Font(googleFont = fontName, fontProvider = provider)
+            )
+
+            return TextStyle(
+                fontSize = 18.sp,
+                color = color,
+                fontFamily = font
+            )
+        }
 
         fun H1Med(color: Color = Color.Black): TextStyle {
             val fontName = GoogleFont("Inter")
@@ -156,14 +169,14 @@ class EDSTextStyle {
         }
 
         fun H2Bold(color: Color = Color.Black): TextStyle {
-            val fontName = GoogleFont("Inter")
+            val fontName = GoogleFont("Montserrat")
 
             val font = FontFamily(
                 Font(googleFont = fontName, fontProvider = provider)
             )
 
             return TextStyle(
-                fontSize = 15.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = color,
                 fontFamily = font

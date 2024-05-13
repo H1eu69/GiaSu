@@ -104,7 +104,7 @@ class CourseDetailViewModel @Inject constructor(
                 }
 
                 is EDSResult.Success -> {
-                    val coursesName = result.data!!
+                    val coursesName = result.data!!.data
                     Log.d("getRecommendedCoursesName success", coursesName.toString())
                     recommendedCourseNameState.value = coursesName
                 }

@@ -1,19 +1,25 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -44,18 +50,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.DateFormat
@@ -93,13 +103,28 @@ fun PreviewHomeScreen() {
 @Composable
 fun HomeScreen(
     navController: NavController, state: HomeState,
-    onLoadMore: () -> Unit = {}
-) {
+    onLoadMore: () -> Unit = {},
+
+    ) {
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
+    val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
+
     val userName = remember {
+        mutableStateOf("D Hieu")
+    }
+    val userImage = remember {
         mutableStateOf("")
+    }
+
+    LaunchedEffect(key1 = "") {
+        coroutine.launch {
+            context.dataStore.data.collect {
+                userName.value = it[usernameKey].toString()
+                userImage.value = it[userImageKey].toString()
+            }
+        }
     }
     LaunchedEffect(key1 = "") {
         coroutine.launch {
@@ -124,12 +149,27 @@ fun HomeScreen(
                         .padding(top = 8.dp, start = 8.dp),
                     horizontalAlignment = Alignment.Start,
                 ) {
-                    Text(
-                        text = "EDUSMART",
-                        style = EDSTextStyle.Logo(
-                            EDSColors.primaryColor
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AsyncImage(
+                            userImage.value,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clip(CircleShape)
+                                .clickable {
+
+                                })
+                        Text(text = "Hello, ", style = EDSTextStyle.H1Reg())
+                        Text(
+                            text = userName.value,
+                            style = EDSTextStyle.H1MedBold()
                         )
-                    )
+                    }
+
 //                    Row(
 //                        horizontalArrangement = Arrangement.spacedBy(4.dp)
 //                    ) {
@@ -179,35 +219,154 @@ fun HomeScreen(
             }
         }
     ) {
-        state.apply {
-            when {
-                this.isLoading -> {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
+        LazyColumn(
+            modifier = Modifier
+                .padding(it)
+                .background(
+                    EDSColors.white
+                )
+                .padding(top = 8.dp)
+                .fillMaxSize()
+                .background(
+                    EDSColors.white,
+                )
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.discover),
+                        contentDescription = null,
+                    )
+                    Text(
+                        "Categories",
+                        style = EDSTextStyle.H2Bold()
+                    )
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        CircularProgressIndicator(
-                            color = EDSColors.primaryColor
-                        )
-                    }
-                }
+                        item {
+                            CategoryItem(
+                                R.drawable.it,
+                                "IT"
+                            ) {
+                                navController.navigate("${
+                                    Screens.InApp.Home.SearchResult.route
+                                }/IT")
+                            }
+                        }
 
-                this.data.isNotEmpty() -> {
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(it)
-                            .background(
-                                EDSColors.white
+                        item {
+                            CategoryItem(
+                                R.drawable.calculating,
+                                "Math"
+                            ) {
+                                navController.navigate("${
+                                    Screens.InApp.Home.SearchResult.route
+                                }/Math")                            }
+                        }
+
+                        item {
+                            CategoryItem(
+                                R.drawable.chess,
+                                "Chess"
                             )
-                            .padding(top = 8.dp)
-                            .fillMaxSize()
-                            .background(
-                                EDSColors.white,
+                            {
+                                navController.navigate("${
+                                    Screens.InApp.Home.SearchResult.route
+                                }/Chess")                            }
+                        }
+
+                        item {
+                            CategoryItem(
+                                R.drawable.economic,
+                                "Economy"
                             )
-                            .padding(horizontal = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
+                            {
+                                navController.navigate("${
+                                    Screens.InApp.Home.SearchResult.route
+                                }/Economy")                            }
+                        }
+
+                        item {
+                            CategoryItem(
+                                R.drawable.history,
+                                "History"
+                            )
+                            {
+                                navController.navigate("${
+                                    Screens.InApp.Home.SearchResult.route
+                                }/History")                            }
+                        }
+
+                        item {
+                            CategoryItem(
+                                R.drawable.math,
+                                "Advanced Math"
+                            )
+                            {
+                                navController.navigate("${
+                                    Screens.InApp.Home.SearchResult.route
+                                }/Advanced Math")                            }
+                        }
+
+                        item {
+                            CategoryItem(
+                                R.drawable.music,
+                                "Music"
+                            )
+                            {
+                                navController.navigate("${
+                                    Screens.InApp.Home.SearchResult.route
+                                }/Music")                            }
+                        }
+
+                        item {
+                            CategoryItem(
+                                R.drawable.politics,
+                                "Politics"
+                            ) {
+                                navController.navigate("${
+                                    Screens.InApp.Home.SearchResult.route
+                                }/Politics")                            }
+                        }
+
+                        item {
+                            CategoryItem(
+                                R.drawable.swimmer,
+                                "Swimming"
+                            )
+                            {
+                                navController.navigate("${
+                                    Screens.InApp.Home.SearchResult.route
+                                }/Swimming")                            }
+                        }
+                    }
+                    Text(
+                        "Courses",
+                        style = EDSTextStyle.H2Bold()
+                    )
+                }
+            }
+            state.apply {
+                when {
+                    this.isLoading -> item {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            CircularProgressIndicator(
+                                color = EDSColors.primaryColor
+                            )
+                        }
+                    }
+
+                    this.data.isNotEmpty() ->
+
                         items(state.data.count()) { index ->
                             CourseItem(
                                 onClick = {
@@ -220,10 +379,6 @@ fun HomeScreen(
                                 onLoadMore()
                             }
                         }
-
-
-                    }
-
                 }
             }
         }
@@ -448,7 +603,7 @@ fun PreviewCourseItem() {
                 )
             CourseItem(
                 CourseDetail(), onClick = {},
-                )
+            )
         }
     }
 }
@@ -546,8 +701,10 @@ fun IconAndText(imageVector: ImageVector, text: String) {
 }
 
 @Composable
-fun BottomContent(fee: Double, createdDate: String,
-                  modifier: Modifier = Modifier) {
+fun BottomContent(
+    fee: Double, createdDate: String,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -564,5 +721,120 @@ fun BottomContent(fee: Double, createdDate: String,
     }
 }
 
+@Preview
+@Composable
+fun PreviewRowCategoryItems() {
+    Surface {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                CategoryItem(
+                    R.drawable.it,
+                    "IT", {}
+                )
+            }
+
+            item {
+                CategoryItem(
+                    R.drawable.calculating,
+                    "Math", {}
+                )
+            }
+
+            item {
+                CategoryItem(
+                    R.drawable.chess,
+                    "Chess", {}
+                )
+            }
+
+            item {
+                CategoryItem(
+                    R.drawable.economic,
+                    "Economy", {}
+                )
+            }
+
+            item {
+                CategoryItem(
+                    R.drawable.history,
+                    "History", {}
+                )
+            }
+
+            item {
+                CategoryItem(
+                    R.drawable.math,
+                    "Advanced Math", {}
+                )
+            }
+
+            item {
+                CategoryItem(
+                    R.drawable.music,
+                    "Music", {}
+                )
+            }
+
+            item {
+                CategoryItem(
+                    R.drawable.politics,
+                    "Politics", {}
+                )
+            }
+
+            item {
+                CategoryItem(
+                    R.drawable.swimmer,
+                    "Swimming", {}
+                )
+            }
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun PreviewCategoryItem() {
+    Surface {
+        CategoryItem(
+            R.drawable.it,
+            "IT", {}
+        )
+    }
+}
+
+@Composable
+private fun CategoryItem(resourceId: Int, text: String, onClick: () -> Unit) {
+    val mutableInteractionSource = remember {
+        MutableInteractionSource()
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable(
+            interactionSource = mutableInteractionSource,
+            indication = null
+        ) {
+            onClick()
+        }
+    ) {
+        Image(
+            painter = painterResource(resourceId),
+            contentDescription = null,
+            modifier = Modifier.size(30.dp)
+        )
+        Text(
+            text = text,
+            maxLines = 2,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.widthIn(
+                min = 30.dp,
+                max = 70.dp
+            ),
+        )
+    }
+
+}
 
 

@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.home.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -39,7 +40,7 @@ class HomeViewModel @Inject constructor(
                 }
                 is EDSResult.Error -> {
                     _homeState.value = HomeState(error = it.message)
-
+                    Log.e("Error HomeVM", it.message!!)
                 }
 
                 is EDSResult.Success -> {
