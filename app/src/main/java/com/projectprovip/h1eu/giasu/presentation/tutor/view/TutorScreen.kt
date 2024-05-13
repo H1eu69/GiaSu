@@ -52,6 +52,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.domain.tutor.model.Tutor
+import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerTutorList
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.view.SearchTextField
@@ -173,13 +174,7 @@ fun TutorScreen(
 
             when {
                 state.value.isLoading -> {
-                    Box(
-                        modifier = Modifier
-                            .padding(it)
-                            .fillMaxSize()
-                    ) {
-                        CircularProgressIndicator(Modifier.align(Alignment.Center))
-                    }
+                    ShimmerTutorList()
 
                 }
 

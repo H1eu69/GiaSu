@@ -255,9 +255,11 @@ fun HomeScreen(
                                 R.drawable.it,
                                 "IT"
                             ) {
-                                navController.navigate("${
-                                    Screens.InApp.Home.SearchResult.route
-                                }/IT")
+                                navController.navigate(
+                                    "${
+                                        Screens.InApp.Home.SearchResult.route
+                                    }/IT"
+                                )
                             }
                         }
 
@@ -266,9 +268,12 @@ fun HomeScreen(
                                 R.drawable.calculating,
                                 "Math"
                             ) {
-                                navController.navigate("${
-                                    Screens.InApp.Home.SearchResult.route
-                                }/Math")                            }
+                                navController.navigate(
+                                    "${
+                                        Screens.InApp.Home.SearchResult.route
+                                    }/Math"
+                                )
+                            }
                         }
 
                         item {
@@ -277,9 +282,12 @@ fun HomeScreen(
                                 "Chess"
                             )
                             {
-                                navController.navigate("${
-                                    Screens.InApp.Home.SearchResult.route
-                                }/Chess")                            }
+                                navController.navigate(
+                                    "${
+                                        Screens.InApp.Home.SearchResult.route
+                                    }/Chess"
+                                )
+                            }
                         }
 
                         item {
@@ -288,9 +296,12 @@ fun HomeScreen(
                                 "Economy"
                             )
                             {
-                                navController.navigate("${
-                                    Screens.InApp.Home.SearchResult.route
-                                }/Economy")                            }
+                                navController.navigate(
+                                    "${
+                                        Screens.InApp.Home.SearchResult.route
+                                    }/Economy"
+                                )
+                            }
                         }
 
                         item {
@@ -299,9 +310,12 @@ fun HomeScreen(
                                 "History"
                             )
                             {
-                                navController.navigate("${
-                                    Screens.InApp.Home.SearchResult.route
-                                }/History")                            }
+                                navController.navigate(
+                                    "${
+                                        Screens.InApp.Home.SearchResult.route
+                                    }/History"
+                                )
+                            }
                         }
 
                         item {
@@ -310,9 +324,12 @@ fun HomeScreen(
                                 "Advanced Math"
                             )
                             {
-                                navController.navigate("${
-                                    Screens.InApp.Home.SearchResult.route
-                                }/Advanced Math")                            }
+                                navController.navigate(
+                                    "${
+                                        Screens.InApp.Home.SearchResult.route
+                                    }/Advanced Math"
+                                )
+                            }
                         }
 
                         item {
@@ -321,9 +338,12 @@ fun HomeScreen(
                                 "Music"
                             )
                             {
-                                navController.navigate("${
-                                    Screens.InApp.Home.SearchResult.route
-                                }/Music")                            }
+                                navController.navigate(
+                                    "${
+                                        Screens.InApp.Home.SearchResult.route
+                                    }/Music"
+                                )
+                            }
                         }
 
                         item {
@@ -331,9 +351,12 @@ fun HomeScreen(
                                 R.drawable.politics,
                                 "Politics"
                             ) {
-                                navController.navigate("${
-                                    Screens.InApp.Home.SearchResult.route
-                                }/Politics")                            }
+                                navController.navigate(
+                                    "${
+                                        Screens.InApp.Home.SearchResult.route
+                                    }/Politics"
+                                )
+                            }
                         }
 
                         item {
@@ -342,9 +365,12 @@ fun HomeScreen(
                                 "Swimming"
                             )
                             {
-                                navController.navigate("${
-                                    Screens.InApp.Home.SearchResult.route
-                                }/Swimming  ")                            }
+                                navController.navigate(
+                                    "${
+                                        Screens.InApp.Home.SearchResult.route
+                                    }/Swimming  "
+                                )
+                            }
                         }
                     }
                     Text(
@@ -398,7 +424,7 @@ fun HomeScreen(
 
 @Composable
 @Preview
-private fun PreviewShimmerCourses(){
+private fun PreviewShimmerCourses() {
     Surface {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
