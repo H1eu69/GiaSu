@@ -175,10 +175,13 @@ fun LearningCourseScreen(
         else if (state.data.isNotEmpty()) {
             LazyColumn {
                 state.data.forEach { learningCourse ->
+                    val newLearningCourse = learningCourse.copy(
+                        status = learningCourse.status.replace("On","")
+                    )
                     item {
-                        CourseItem(data = learningCourse,
+                        CourseItem(data = newLearningCourse,
                             onClick = {
-                                val bundle = LearningCourseBundle(learningCourse.id)
+                                val bundle = LearningCourseBundle(newLearningCourse.id)
                                 onCourseItemClick(bundle)
                             })
                     }

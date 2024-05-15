@@ -135,6 +135,12 @@ fun TutorReviewScreen(
                 }
 
                 this.data != LearningCourseDetail() -> {
+                    val formattedStatus = learningCourseDetailState.data.status.replace("On", "")
+                    val newLearningCourseDetailState = learningCourseDetailState.copy(
+                        data = learningCourseDetailState.data.copy(
+                            status = formattedStatus
+                        )
+                    )
                     Column(
                         horizontalAlignment = Alignment.Start,
                         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -170,16 +176,16 @@ fun TutorReviewScreen(
                         var statusBackgroundColor = EDSColors.waitingBackgroundColor
                         var statusTextColor = EDSColors.waitingTextColor
 
-                        if (learningCourseDetailState.data.status == "Available" || learningCourseDetailState.data.status == "Confirmed") {
+                        if (newLearningCourseDetailState.data.status == "Available" || newLearningCourseDetailState.data.status == "Confirmed") {
                             statusBackgroundColor = EDSColors.teachingBackgroundColor
                             statusTextColor = EDSColors.teachingTextColor
-                        } else if(learningCourseDetailState.data.status == "Canceled") {
+                        } else if (newLearningCourseDetailState.data.status == "Canceled") {
                             statusBackgroundColor = EDSColors.notScheduleBackgroundColor
                             statusTextColor = EDSColors.notScheduleTextColor
                         }
 
                         androidx.compose.material.Text(
-                            text = learningCourseDetailState.data.title,
+                            text = newLearningCourseDetailState.data.title,
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 color = Color.Black,
@@ -191,19 +197,19 @@ fun TutorReviewScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = learningCourseDetailState.data.status,
+                                text = newLearningCourseDetailState.data.status,
                                 style = TextStyle(
                                     fontWeight = FontWeight.Medium,
                                     color = statusTextColor
                                 ),
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(8.dp))
-                                    .background(EDSColors.greenBackground)
+                                    .background(statusBackgroundColor)
                                     .padding(vertical = 8.dp, horizontal = 16.dp)
                             )
 
                             androidx.compose.material3.Text(
-                                text = learningCourseDetailState.data.learningMode,
+                                text = newLearningCourseDetailState.data.learningMode,
                                 style = TextStyle(
                                     fontWeight = FontWeight.Medium,
                                     color = EDSColors.purpleText
@@ -215,12 +221,12 @@ fun TutorReviewScreen(
                             )
                         }
                         SessionSection(
-                            dayAWeek = learningCourseDetailState.data.sessionPerWeek,
-                            minPerDay = learningCourseDetailState.data.sessionDuration
+                            dayAWeek = newLearningCourseDetailState.data.sessionPerWeek,
+                            minPerDay = newLearningCourseDetailState.data.sessionDuration
                         )
 
                         androidx.compose.material.Text(
-                            text = learningCourseDetailState.data.description,
+                            text = newLearningCourseDetailState.data.description,
                             style = TextStyle(
                                 fontWeight = FontWeight.Medium,
                                 color = EDSColors.myBlackColor,
@@ -235,87 +241,90 @@ fun TutorReviewScreen(
                                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                         )
                         BottomContent(
-                            fee = learningCourseDetailState.data.chargeFee,
-                            createdDate = learningCourseDetailState.data.creationTime
+                            fee = newLearningCourseDetailState.data.chargeFee,
+                            createdDate = newLearningCourseDetailState.data.creationTime
                         )
 
                         DetailIconAndText(
                             Icons.Outlined.Info,
-                            "Subject: ", learningCourseDetailState.data.subjectName
+                            "Subject: ", newLearningCourseDetailState.data.subjectName
                         )
 
 
                         DetailIconAndText(
                             Icons.Outlined.Person,
-                            "Tutor name: ", learningCourseDetailState.data.tutorName
+                            "Tutor name: ", newLearningCourseDetailState.data.tutorName
                         )
 
                         DetailIconAndText(
                             Icons.Outlined.Email,
-                            "Tutor email: ", learningCourseDetailState.data.tutorEmail
+                            "Tutor email: ", newLearningCourseDetailState.data.tutorEmail
                         )
 
                         DetailIconAndText(
                             Icons.Outlined.Place,
-                            "Address: ", learningCourseDetailState.data.address
+                            "Address: ", newLearningCourseDetailState.data.address
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
-                        Row {
-                            Icon(
-                                Icons.Outlined.Reviews, null,
-                                tint = EDSColors.primaryColor
+
+                        if (newLearningCourseDetailState.data.status == "Confirmed") {
+                            Row {
+                                Icon(
+                                    Icons.Outlined.Reviews, null,
+                                    tint = EDSColors.primaryColor
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                androidx.compose.material.Text(
+                                    text = "How do you feel about this course?",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
+                            }
+                            RatingBar(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                rate = rate.intValue,
+                                onRateChange = { rates ->
+                                    rate.intValue = rates
+                                })
+                            OutlinedTextField(
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp),
+                                label = {
+                                    Text(text = "Your review")
+                                },
+                                keyboardActions = KeyboardActions(),
+                                maxLines = 4,
+                                shape = RoundedCornerShape(12.dp),
+                                onValueChange = { value ->
+                                    reviewDescription.value = value
+                                },
+                                value = reviewDescription.value,
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    focusedBorderColor = EDSColors.primaryColor,
+                                    focusedLabelColor = EDSColors.primaryColor,
+                                    cursorColor = EDSColors.primaryColor,
+                                ),
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            androidx.compose.material.Text(
-                                text = "How do you feel about this course?",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
+                            Spacer(modifier = Modifier.weight(1.0f)) // fill height with spacer
+                            EduSmartButton(
+                                text = "Review", onClick = {
+                                    onReviewButtonClick(
+                                        ReviewTutorInput(
+                                            rate = rate.intValue,
+                                            detail = reviewDescription.value
+                                        )
+                                    )
+                                },
+                                isLoading = reviewState.isLoading,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
                             )
                         }
-                        RatingBar(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            rate = rate.intValue,
-                            onRateChange = { rates ->
-                                rate.intValue = rates
-                            })
-                        OutlinedTextField(
-                            modifier = Modifier
-                                .height(100.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp),
-                            label = {
-                                Text(text = "Your review")
-                            },
-                            keyboardActions = KeyboardActions(),
-                            maxLines = 4,
-                            shape = RoundedCornerShape(12.dp),
-                            onValueChange = { value ->
-                                reviewDescription.value = value
-                            },
-                            value = reviewDescription.value,
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = EDSColors.primaryColor,
-                                focusedLabelColor = EDSColors.primaryColor,
-                                cursorColor = EDSColors.primaryColor,
-                            ),
-                        )
-                        Spacer(modifier = Modifier.weight(1.0f)) // fill height with spacer
-                        EduSmartButton(
-                            text = "Review", onClick = {
-                                onReviewButtonClick(
-                                    ReviewTutorInput(
-                                        rate = rate.intValue,
-                                        detail = reviewDescription.value
-                                    )
-                                )
-                            },
-                            isLoading = reviewState.isLoading,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        )
                     }
                     Spacer(modifier = Modifier.height(50.dp))
                 }

@@ -7,7 +7,7 @@ import java.time.format.DateTimeParseException
 object DateFormat {
     fun DD_MM_YYYY_ISO(date: String): String {
         return try {
-            val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+            val formatter = DateTimeFormatter.ISO_DATE_TIME
             val dateTime = LocalDateTime.parse(date, formatter)
             dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
         } catch (e: DateTimeParseException) {
