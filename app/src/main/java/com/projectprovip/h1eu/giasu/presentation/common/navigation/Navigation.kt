@@ -3,24 +3,50 @@
 package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -35,7 +61,7 @@ import com.projectprovip.h1eu.giasu.presentation.authentication.view.LoginScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.SignUpScreen
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.LoginViewModel
 import com.projectprovip.h1eu.giasu.presentation.authentication.viewmodel.SignUpViewModel
-import com.projectprovip.h1eu.giasu.presentation.common.composes.BottomBar
+import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.course_management.view.ClassManagementScreen
 import com.projectprovip.h1eu.giasu.presentation.course_management.view.RequestedCourseDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.course_management.viewmodel.CourseManagementViewModel
@@ -130,21 +156,69 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InAppScreen(navController: NavHostController = rememberNavController()) {
+    val homeListState = rememberLazyListState()
+    val homeTriggerScrollToTop = remember {
+        mutableStateOf(false)
+    }
+    val tutorListState = LazyGridState()
+    val tutorTriggerScrollToTop = remember {
+        mutableStateOf(false)
+    }
+    val courseListState = rememberLazyListState()
+    val courseTriggerScrollToTop = remember {
+        mutableStateOf(false)
+    }
+
+
+    LaunchedEffect(homeTriggerScrollToTop.value) {
+        Log.d("scroll to top", "trigger")
+        homeListState.animateScrollToItem(0)
+    }
+    LaunchedEffect(tutorTriggerScrollToTop.value) {
+        Log.d("scroll to top", "trigger")
+        tutorListState.animateScrollToItem(0)
+    }
+    LaunchedEffect(courseTriggerScrollToTop.value) {
+        Log.d("scroll to top", "trigger")
+        courseListState.animateScrollToItem(0)
+    }
+
     Scaffold(bottomBar = {
-        BottomBar(navController)
+        BottomBar(navController, onSelectedClick = {
+            when (it) {
+                Screens.InApp.Home -> homeTriggerScrollToTop.value = !homeTriggerScrollToTop.value
+                Screens.InApp.Tutor -> tutorTriggerScrollToTop.value =
+                    !tutorTriggerScrollToTop.value
+
+                Screens.InApp.Courses -> courseTriggerScrollToTop.value =
+                    !courseTriggerScrollToTop.value
+
+                Screens.InApp.Profile -> {}
+            }
+        })
     }) {
-        InAppNavGraph(Modifier.padding(it), navController)
+        InAppNavGraph(
+            Modifier.padding(it), navController,
+            homeListState, tutorListState, courseListState
+        )
     }
 }
 
 @Composable
-fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
+fun InAppNavGraph(
+    modifier: Modifier,
+    navController: NavHostController,
+    homeListState: LazyListState = rememberLazyListState(),
+    tutorListState: LazyGridState = rememberLazyGridState(),
+    courseListState: LazyListState = rememberLazyListState()
+) {
     val homeViewModel = hiltViewModel<HomeViewModel>()
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val token = remember { mutableStateOf("") }
     val avatar = remember { mutableStateOf("") }
     val role = remember { mutableStateOf("") }
+
     LaunchedEffect(key1 = "") {
         coroutine.launch {
             context.dataStore.data.collect { preference ->
@@ -162,10 +236,16 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
         modifier = modifier,
     ) {
         composable(Screens.InApp.Home.route) {
-            HomeScreen(navController, homeViewModel.homeState.value,
+
+            HomeScreen(
+                navController, homeViewModel.homeState.value,
                 onLoadMore = {
+                    homeViewModel.getCoursesAndIncreaseIndex()
+                },
+                onRefresh = {
                     homeViewModel.getCourses()
-                })
+                }, lazyListState = homeListState
+            )
         }
         composable(
             Screens.InApp.Home.SearchSuggest.route,
@@ -212,8 +292,8 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                 courseDetailViewModel.getCourseById(courseId!!)
             }
             LaunchedEffect(courseDetailViewModel.courseDetailState.value.data.subjectId) {
-                if(courseDetailViewModel.courseDetailState.value.data.subjectId > 0)
-                courseDetailViewModel.getRecommendedCoursesName(courseDetailViewModel.courseDetailState.value.data.subjectId.toString())
+                if (courseDetailViewModel.courseDetailState.value.data.subjectId > 0)
+                    courseDetailViewModel.getRecommendedCoursesName(courseDetailViewModel.courseDetailState.value.data.subjectId.toString())
             }
             LaunchedEffect(courseDetailViewModel.recommendedCourseNameState.value) {
                 courseDetailViewModel.getRecommendedCourses()
@@ -237,6 +317,7 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                     vm.loadMore()
                 },
                 navController = navController,
+                lazyListState = tutorListState,
             )
         }
 
@@ -282,7 +363,8 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
 //                },
                 getListByFilter = {
                     vm.getListByFilter(it)
-                })
+                },
+                lazyListState = courseListState)
         }
 
         composable(
@@ -442,5 +524,93 @@ fun InAppNavGraph(modifier: Modifier, navController: NavHostController) {
                 })
         }
         authenticationGraph(navController)
+    }
+}
+
+@Composable
+fun BottomBar(navController: NavHostController, onSelectedClick: (BottomBarScreens) -> Unit) {
+    val screens = listOf(
+        Screens.InApp.Home,
+        Screens.InApp.Tutor,
+        Screens.InApp.Courses,
+        Screens.InApp.Profile
+    )
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
+    //Do this so bottom bar will hide when navigate to any screen doesn't need it
+    val bottomBarDestination = screens.any {
+        it.route == currentDestination?.route
+    }
+    val modifier = Modifier
+        .fillMaxWidth()
+        .requiredHeight(72.dp)
+        .shadow(1.dp)
+    if (bottomBarDestination) {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            screens.forEach { screen ->
+                val selected = currentDestination?.route == screen.route
+                CustomBottomNavItem(
+                    modifier.weight(1f), selected, screen,
+                    onSelectedClick,
+                    navController
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CustomBottomNavItem(
+    modifier: Modifier,
+    selected: Boolean,
+    screen: BottomBarScreens,
+    onSelectedClick: (BottomBarScreens) -> Unit,
+    navController: NavController
+) {
+    val background = if (selected) EDSColors.primaryColor else Color.Transparent
+    val contentColor = if (selected) EDSColors.primaryColor else Color.LightGray
+    val selectedIconColor = if (selected) Color.White else Color.LightGray
+
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .clickable {
+                if (selected) onSelectedClick(screen)
+                navController.navigate(screen.route) {
+                    // Pop up to the start destination of the graph to
+                    // avoid building up a large stack of destinations
+                    // on the back stack as users select items
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    // Avoid multiple copies of the same destination when
+                    // re selecting the same item
+                    launchSingleTop = true
+                    // Restore state when reselecting a previously selected item
+                    restoreState = true
+                }
+            }
+            .padding(8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = screen.icon, contentDescription = null,
+                tint = selectedIconColor,
+                modifier = Modifier
+                    .background(background, shape = CircleShape)
+                    .padding(4.dp)
+            )
+            AnimatedVisibility(visible = selected) {
+                Text(text = screen.title, color = contentColor)
+            }
+        }
     }
 }

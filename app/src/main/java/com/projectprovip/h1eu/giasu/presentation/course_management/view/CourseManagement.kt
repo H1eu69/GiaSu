@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -61,6 +63,7 @@ import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.DateFormat
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
+import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.course_management.model.RequestedCourseState
@@ -68,9 +71,12 @@ import com.projectprovip.h1eu.giasu.presentation.course_management.model.Request
 @Preview
 @Composable
 fun PreviewClassManagementScreen() {
-    ClassManagementScreen(navController = rememberNavController(),
+    ClassManagementScreen(
+        navController = rememberNavController(),
         state = RequestedCourseState(),
-        getListByFilter = {s ->})
+        getListByFilter = { s -> },
+        lazyListState = rememberLazyListState()
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,14 +86,15 @@ fun ClassManagementScreen(
     state: RequestedCourseState,
     callback: () -> Unit = {},
     getListByFilter: (String) -> Unit,
+    lazyListState: LazyListState
 ) {
     val tabSelectedIndex = remember {
         mutableIntStateOf(0)
     }
-    val list = listOf("All","Success", "Canceled", "Verifying")
+    val list = listOf("All", "Success", "Canceled", "Verifying")
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = "",) {
+    LaunchedEffect(key1 = "") {
         callback()
     }
 
@@ -106,7 +113,8 @@ fun ClassManagementScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 list.forEachIndexed { index, item ->
-                    Tab(text = { Text(item) },
+                    Tab(
+                        text = { Text(item) },
 
                         selected = tabSelectedIndex.intValue == index,
                         unselectedContentColor = Color.LightGray,
@@ -117,87 +125,87 @@ fun ClassManagementScreen(
                     )
                 }
             }
-            UIBasedOnState(state, context, navController = navController)
-        }
-    }
-}
+            val openDialog = remember { mutableStateOf(true) }
 
-@Composable
-fun UIBasedOnState(
-    state: RequestedCourseState,
-    context: Context,
-    modifier: Modifier = Modifier,
-    navController: NavController
-) {
-    val openDialog = remember { mutableStateOf(true) }
-
-    when {
-        state.message.isNotEmpty() -> {
-            if (state.message == "HTTP 403 Forbidden") {
-                TutorRegisterAlertDialog(open = openDialog.value,
-                    onDismissRequest = {
-                        openDialog.value = false
-                        navController.popBackStack()
-                    }, onConfirmation = {
-                        openDialog.value = false
-                        navController.popBackStack()
-                        navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
-                    })
-            } else
-                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
-        }
-
-        state.isLoading -> {
-            showLoading(modifier = modifier.fillMaxSize())
-        }
-
-        state.data.isNotEmpty() -> {
-            if (state.filteredData.isNotEmpty()) {
-                Log.d("state.filteredData", state.filteredData.toString())
-                ListCourses(
-                    modifier,
-                    data = state.filteredData,
-                    navController
-                )
-            } else {
-                Log.d("state.filteredData", state.filteredData.toString())
-                Box(modifier = Modifier.fillMaxSize()) {
-                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_box),
-                        onRetry = {
-                                failCount, exception ->
-                            Log.d("LottieAnimation", failCount.toString())
-                            Log.d("LottieAnimation", exception.toString())
-                            // Continue retrying. Return false to stop trying.
-                            false
-                        })
-
-                    LottieAnimation(
-                        composition = composition,
-                        iterations = LottieConstants.IterateForever,
-                    )
-
+            when {
+                state.message.isNotEmpty() -> {
+                    if (state.message == "HTTP 403 Forbidden") {
+                        TutorRegisterAlertDialog(open = openDialog.value,
+                            onDismissRequest = {
+                                openDialog.value = false
+                                navController.popBackStack()
+                            }, onConfirmation = {
+                                openDialog.value = false
+                                navController.popBackStack()
+                                navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
+                            })
+                    } else
+                        Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
                 }
 
+                state.isLoading -> {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ShimmerCourse()
+                        ShimmerCourse()
+                        ShimmerCourse()
+                        ShimmerCourse()
+                        ShimmerCourse()
+
+                    }
+                }
+
+                state.data.isNotEmpty() -> {
+                    if (state.filteredData.isNotEmpty()) {
+                        Log.d("state.filteredData", state.filteredData.toString())
+                        ListCourses(
+                            data = state.filteredData,
+                            navController = navController,
+                            lazyListState = lazyListState
+                        )
+                    } else {
+                        Log.d("state.filteredData", state.filteredData.toString())
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(
+                                R.raw.empty_box
+                            ),
+                                onRetry = { failCount, exception ->
+                                    Log.d("LottieAnimation", failCount.toString())
+                                    Log.d("LottieAnimation", exception.toString())
+                                    // Continue retrying. Return false to stop trying.
+                                    false
+                                })
+
+                            LottieAnimation(
+                                composition = composition,
+                                iterations = LottieConstants.IterateForever,
+                            )
+
+                        }
+
+                    }
+                }
+
+                state.data.isEmpty() -> {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_box),
+                            onRetry = { failCount, exception ->
+                                Log.d("LottieAnimation", failCount.toString())
+                                Log.d("LottieAnimation", exception.toString())
+                                // Continue retrying. Return false to stop trying.
+                                false
+                            })
+
+                        LottieAnimation(
+                            composition = composition,
+                            iterations = LottieConstants.IterateForever,
+                        )
+
+                    }
+
+                }
             }
-        }
-        state.data.isEmpty() -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_box),
-                    onRetry = {
-                            failCount, exception ->
-                        Log.d("LottieAnimation", failCount.toString())
-                        Log.d("LottieAnimation", exception.toString())
-                        // Continue retrying. Return false to stop trying.
-                        false
-                    })
-
-                LottieAnimation(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever,
-                )
-
-            }
-
         }
     }
 }
@@ -252,12 +260,14 @@ fun showLoading(modifier: Modifier = Modifier) {
 fun ListCourses(
     modifier: Modifier = Modifier,
     data: List<RequestedCourse>,
-    navController: NavController
+    navController: NavController,
+    lazyListState: LazyListState
 ) {
     LazyColumn(
         modifier,
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        state = lazyListState
     ) {
         data.forEach {
             item {

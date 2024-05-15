@@ -13,9 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -135,13 +139,14 @@ fun TutorScreen(
     state: State<TutorListState>,
     navController: NavController,
     loadMore: (() -> Unit),
+    lazyListState: LazyGridState = rememberLazyGridState()
 ) {
     val context = LocalContext.current
     Scaffold(
         topBar = {
-            Column (
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 Text(
                     text = "Tutors",
                     fontWeight = FontWeight.Bold,
@@ -167,31 +172,28 @@ fun TutorScreen(
 //            )
         },
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
 
+        when {
+            state.value.isLoading ->  {
+                ShimmerTutorList()
+            }
 
-            when {
-                state.value.isLoading -> {
-                    ShimmerTutorList()
+            state.value.error.isNotEmpty() -> {
+                Toast.makeText(context, state.value.error, Toast.LENGTH_SHORT).show()
+            }
 
-                }
-
-                state.value.error.isNotEmpty() -> {
-                    Toast.makeText(context, state.value.error, Toast.LENGTH_SHORT).show()
-                }
-
-                state.value.data.isNotEmpty() -> {
-                    InfiniteStaggeredList(state.value.data,
-                        modifier = Modifier.padding(it),
-                        onItemClick = { tutorId ->
-                            navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$tutorId")
-                        },
-                        onLoadMore = {
-                            loadMore()
-                        })
-                }
+            state.value.data.isNotEmpty() ->  {
+                InfiniteStaggeredList(state.value.data,
+                    modifier = Modifier
+                        .padding(it)
+                        .fillMaxSize(),
+                    onItemClick = { tutorId ->
+                        navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$tutorId")
+                    },
+                    listState = lazyListState,
+                    onLoadMore = {
+                        loadMore()
+                    })
             }
         }
 
@@ -203,9 +205,9 @@ fun InfiniteStaggeredList(
     data: List<Tutor>,
     modifier: Modifier,
     onItemClick: (String) -> Unit,
+    listState: LazyGridState,
     onLoadMore: (() -> Unit)
 ) {
-    val listState = rememberLazyGridState()
     val listCount = data.count()
     LazyVerticalGrid(
         state = listState,
@@ -254,11 +256,11 @@ fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(
-                    RoundedCornerShape(
-                        topStart = 20.dp,
-                        topEnd = 20.dp
+                        RoundedCornerShape(
+                            topStart = 20.dp,
+                            topEnd = 20.dp
+                        )
                     )
-                )
 
             )
             IconAndText(

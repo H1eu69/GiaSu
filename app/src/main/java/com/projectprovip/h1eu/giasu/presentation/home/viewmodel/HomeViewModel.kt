@@ -25,10 +25,32 @@ class HomeViewModel @Inject constructor(
     var _showLoading = true
 
     init {
-        getCourses()
+        getCoursesAndIncreaseIndex()
     }
 
     fun getCourses() {
+        _currentPageIndex = 1
+        getCourseUseCase(_currentPageIndex).onEach {
+            when (it) {
+                is EDSResult.Loading -> {
+                    if (_showLoading) {
+                        _homeState.value = HomeState(isLoading = true)
+                        _showLoading = false
+                    }
+                }
+                is EDSResult.Error -> {
+                    _homeState.value = HomeState(error = it.message)
+                    Log.e("Error HomeVM", it.message!!)
+                }
+
+                is EDSResult.Success -> {
+                    _homeState.value = HomeState(data = it.data!!.shuffled())
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun getCoursesAndIncreaseIndex() {
         val currentData = _homeState.value.data.toMutableList()
         getCourseUseCase(_currentPageIndex).onEach {
             when (it) {

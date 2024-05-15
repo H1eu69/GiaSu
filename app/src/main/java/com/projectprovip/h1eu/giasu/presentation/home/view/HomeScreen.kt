@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
+import androidx.compose.animation.core.animate
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,16 +20,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -52,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -59,6 +67,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,6 +86,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Preview
@@ -96,17 +106,20 @@ fun PreviewHomeScreen() {
                 CourseDetail(),
                 CourseDetail(),
             )
-        )
+        ),
+        onLoadMore = {},
+        onRefresh = {},
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     navController: NavController, state: HomeState,
     onLoadMore: () -> Unit = {},
-
-    ) {
+    onRefresh: () -> Unit,
+    lazyListState: LazyListState = rememberLazyListState(),
+) {
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     val usernameKey = stringPreferencesKey(Constant.USERNAME_STRING)
@@ -118,6 +131,50 @@ fun HomeScreen(
     val userImage = remember {
         mutableStateOf("")
     }
+    val refreshScope = rememberCoroutineScope()
+    val threshold = with(LocalDensity.current) { 160.dp.toPx() }
+
+    val refreshing = remember { mutableStateOf(false) }
+    val itemCount = remember { mutableStateOf(15) }
+    val currentDistance = remember { mutableStateOf(0f) }
+
+    fun refresh() = refreshScope.launch {
+        refreshing.value = true
+        onRefresh()
+        delay(1500)
+        itemCount.value += 5
+        refreshing.value = false
+    }
+
+    fun onPull(pullDelta: Float): Float = when {
+        refreshing.value -> 0f
+        else -> {
+            val newOffset = (currentDistance.value + pullDelta).coerceAtLeast(0f)
+            val dragConsumed = newOffset - currentDistance.value
+            currentDistance.value = newOffset
+            dragConsumed
+        }
+    }
+
+    fun onRelease(velocity: Float): Float {
+        if (refreshing.value) return 0f // Already refreshing - don't call refresh again.
+        if (currentDistance.value > threshold) refresh()
+
+        refreshScope.launch {
+            animate(initialValue = currentDistance.value, targetValue = 0f) { value, _ ->
+                currentDistance.value = value
+            }
+        }
+        // Only consume if the fling is downwards and the indicator is visible
+        return if (velocity > 0f && currentDistance.value > 0f) {
+            velocity
+        } else {
+            0f
+        }
+    }
+
+    val pullRefreshState = rememberPullRefreshState(refreshing.value, ::refresh)
+
 
     LaunchedEffect(key1 = "") {
         coroutine.launch {
@@ -170,23 +227,6 @@ fun HomeScreen(
                             style = EDSTextStyle.H1MedBold()
                         )
                     }
-
-//                    Row(
-//                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-//                    ) {
-//                        Text(
-//                            text = "Hello",
-//                            style = EDSTextStyle.H2Reg(
-//                                EDSColors.primaryColor
-//                            )
-//                        )
-//                        Text(
-//                            text = userName.value,
-//                            style = EDSTextStyle.H2Bold(
-//                                EDSColors.primaryColor
-//                            )
-//                        )
-//                    }
                 }
                 Row {
                     IconButton(onClick = {
@@ -220,8 +260,8 @@ fun HomeScreen(
             }
         }
     ) {
-        LazyColumn(
-            modifier = Modifier
+        Box(
+            Modifier
                 .padding(it)
                 .background(
                     EDSColors.white
@@ -231,167 +271,171 @@ fun HomeScreen(
                 .background(
                     EDSColors.white,
                 )
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(horizontal = 16.dp)
+                .pullRefresh(::onPull, ::onRelease)
         ) {
-            item {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.discover),
-                        contentDescription = null,
-                    )
-                    Text(
-                        "Categories",
-                        style = EDSTextStyle.H2Bold()
-                    )
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+            LazyColumn(
+                state = lazyListState,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        item {
-                            CategoryItem(
-                                R.drawable.it,
-                                "IT"
-                            ) {
-                                navController.navigate(
-                                    "${
-                                        Screens.InApp.Home.SearchResult.route
-                                    }/IT"
-                                )
-                            }
-                        }
-
-                        item {
-                            CategoryItem(
-                                R.drawable.calculating,
-                                "Math"
-                            ) {
-                                navController.navigate(
-                                    "${
-                                        Screens.InApp.Home.SearchResult.route
-                                    }/Math"
-                                )
-                            }
-                        }
-
-                        item {
-                            CategoryItem(
-                                R.drawable.chess,
-                                "Chess"
-                            )
-                            {
-                                navController.navigate(
-                                    "${
-                                        Screens.InApp.Home.SearchResult.route
-                                    }/Chess"
-                                )
-                            }
-                        }
-
-                        item {
-                            CategoryItem(
-                                R.drawable.economic,
-                                "Economy"
-                            )
-                            {
-                                navController.navigate(
-                                    "${
-                                        Screens.InApp.Home.SearchResult.route
-                                    }/Economy"
-                                )
-                            }
-                        }
-
-                        item {
-                            CategoryItem(
-                                R.drawable.history,
-                                "History"
-                            )
-                            {
-                                navController.navigate(
-                                    "${
-                                        Screens.InApp.Home.SearchResult.route
-                                    }/History"
-                                )
-                            }
-                        }
-
-                        item {
-                            CategoryItem(
-                                R.drawable.math,
-                                "Advanced Math"
-                            )
-                            {
-                                navController.navigate(
-                                    "${
-                                        Screens.InApp.Home.SearchResult.route
-                                    }/Advanced Math"
-                                )
-                            }
-                        }
-
-                        item {
-                            CategoryItem(
-                                R.drawable.music,
-                                "Music"
-                            )
-                            {
-                                navController.navigate(
-                                    "${
-                                        Screens.InApp.Home.SearchResult.route
-                                    }/Music"
-                                )
-                            }
-                        }
-
-                        item {
-                            CategoryItem(
-                                R.drawable.politics,
-                                "Politics"
-                            ) {
-                                navController.navigate(
-                                    "${
-                                        Screens.InApp.Home.SearchResult.route
-                                    }/Politics"
-                                )
-                            }
-                        }
-
-                        item {
-                            CategoryItem(
-                                R.drawable.swimmer,
-                                "Swimming"
-                            )
-                            {
-                                navController.navigate(
-                                    "${
-                                        Screens.InApp.Home.SearchResult.route
-                                    }/Swimming  "
-                                )
-                            }
-                        }
-                    }
-                    Text(
-                        "Popular Courses",
-                        style = EDSTextStyle.H2Bold()
-                    )
-                }
-            }
-            state.apply {
-                when {
-                    this.isLoading -> item {
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        Image(
+                            painter = painterResource(id = R.drawable.discover),
+                            contentDescription = null,
+                        )
+                        Text(
+                            "Categories",
+                            style = EDSTextStyle.H2Bold()
+                        )
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            ShimmerCourse()
-                            ShimmerCourse()
-                            ShimmerCourse()
-                            ShimmerCourse()
-                            ShimmerCourse()
+                            item {
+                                CategoryItem(
+                                    R.drawable.it,
+                                    "IT"
+                                ) {
+                                    navController.navigate(
+                                        "${
+                                            Screens.InApp.Home.SearchResult.route
+                                        }/IT"
+                                    )
+                                }
+                            }
 
+                            item {
+                                CategoryItem(
+                                    R.drawable.calculating,
+                                    "Math"
+                                ) {
+                                    navController.navigate(
+                                        "${
+                                            Screens.InApp.Home.SearchResult.route
+                                        }/Math"
+                                    )
+                                }
+                            }
+
+                            item {
+                                CategoryItem(
+                                    R.drawable.chess,
+                                    "Chess"
+                                )
+                                {
+                                    navController.navigate(
+                                        "${
+                                            Screens.InApp.Home.SearchResult.route
+                                        }/Chess"
+                                    )
+                                }
+                            }
+
+                            item {
+                                CategoryItem(
+                                    R.drawable.economic,
+                                    "Economy"
+                                )
+                                {
+                                    navController.navigate(
+                                        "${
+                                            Screens.InApp.Home.SearchResult.route
+                                        }/Economy"
+                                    )
+                                }
+                            }
+
+                            item {
+                                CategoryItem(
+                                    R.drawable.history,
+                                    "History"
+                                )
+                                {
+                                    navController.navigate(
+                                        "${
+                                            Screens.InApp.Home.SearchResult.route
+                                        }/History"
+                                    )
+                                }
+                            }
+
+                            item {
+                                CategoryItem(
+                                    R.drawable.math,
+                                    "Advanced Math"
+                                )
+                                {
+                                    navController.navigate(
+                                        "${
+                                            Screens.InApp.Home.SearchResult.route
+                                        }/Advanced Math"
+                                    )
+                                }
+                            }
+
+                            item {
+                                CategoryItem(
+                                    R.drawable.music,
+                                    "Music"
+                                )
+                                {
+                                    navController.navigate(
+                                        "${
+                                            Screens.InApp.Home.SearchResult.route
+                                        }/Music"
+                                    )
+                                }
+                            }
+
+                            item {
+                                CategoryItem(
+                                    R.drawable.politics,
+                                    "Politics"
+                                ) {
+                                    navController.navigate(
+                                        "${
+                                            Screens.InApp.Home.SearchResult.route
+                                        }/Politics"
+                                    )
+                                }
+                            }
+
+                            item {
+                                CategoryItem(
+                                    R.drawable.swimmer,
+                                    "Swimming"
+                                )
+                                {
+                                    navController.navigate(
+                                        "${
+                                            Screens.InApp.Home.SearchResult.route
+                                        }/Swimming  "
+                                    )
+                                }
+                            }
                         }
+                        Text(
+                            "Popular Courses",
+                            style = EDSTextStyle.H2Bold()
+                        )
+                    }
+                }
+                state.apply {
+                    when {
+                        this.isLoading -> item {
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                ShimmerCourse()
+                                ShimmerCourse()
+                                ShimmerCourse()
+                                ShimmerCourse()
+                                ShimmerCourse()
+
+                            }
 //                        Box(
 //                            contentAlignment = Alignment.Center,
 //                            modifier = Modifier.fillMaxSize()
@@ -400,25 +444,42 @@ fun HomeScreen(
 //                                color = EDSColors.primaryColor
 //                            )
 //                        }
-                    }
+                        }
 
-                    this.data.isNotEmpty() ->
+                        this.data.isNotEmpty() ->
 
-                        items(state.data.count()) { index ->
-                            CourseItem(
-                                onClick = {
-                                    navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${state.data[index].id}")
-                                },
-                                data = state.data[index],
-                                modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
-                            )
-                            if (index == state.data.count() - 2) {
-                                onLoadMore()
+                            items(state.data.count()) { index ->
+                                CourseItem(
+                                    onClick = {
+                                        navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${state.data[index].id}")
+                                    },
+                                    data = state.data[index],
+                                    modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
+                                )
+                                if (index == state.data.count() - 2) {
+                                    onLoadMore()
+                                }
+                            }
+
+                        this.data.isEmpty() -> {
+                            items(20) { index ->
+                                CourseItem(data = CourseDetail()) {
+
+                                }
                             }
                         }
+                    }
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing.value,
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter),
+                contentColor = EDSColors.primaryColor
+            )
         }
+
     }
 }
 
@@ -479,81 +540,10 @@ fun BodyContent(
                             modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
                         )
                     }
-//        item {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                Column(
-//                    modifier = Modifier
-//                        .padding(top = 8.dp, start = 8.dp),
-//                    horizontalAlignment = Alignment.Start,
-//                ) {
-//                    Text(
-//                        text = "Hello",
-//                        style = TextStyle(
-//                            fontSize = 18.sp,
-//                            color = Color.White,
-//                            fontFamily = FontFamily.SansSerif
-//                        )
-//                    )
-//                    Text(
-//                        text = name,
-//                        style = TextStyle(
-//                            fontWeight = FontWeight.Bold,
-//                            color = Color.White,
-//                            fontSize = 20.sp,
-//                            fontFamily = FontFamily.SansSerif
-//                        )
-//                    )
-//                }
-//
-//                IconButton(onClick = { /*TODO*/ }) {
-//                    Icon(Icons.Default.Search, null,
-//                        tint = EDSColors.white)
-//                }
-//            }
-//
-//        }
-//        item {
-//            SearchTextField(onTap = {
-//                navController.navigate(Screens.InApp.Home.SearchSuggest.route)
-//            })
-//        }
-
-//        item {
-//            Column(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(
-//                        Color.White,
-//                        RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp)
-//                    )
-//                    .padding(16.dp),
-//                horizontalAlignment = Alignment.CenterHorizontally,
-//                verticalArrangement = Arrangement.spacedBy(16.dp)
-//
-//            ) {
-////                RowTitle(
-////                    modifier = Modifier.padding(
-////                        start = 10.dp,
-////                        top = 8.dp,
-////                        bottom = 15.dp,
-////                        end = 10.dp
-////                    ),
-////                    title1 = "Newest Courses",
-////                    title2 = "View all"
-////                )
-//
-//            }
-//        }
-
                 }
-
             }
         }
     }
-
 }
 
 @Composable
@@ -880,7 +870,8 @@ private fun CategoryItem(resourceId: Int, text: String, onClick: () -> Unit) {
         )
         Text(
             text = text,
-            maxLines = 2,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
             modifier = Modifier.widthIn(
                 min = 30.dp,
