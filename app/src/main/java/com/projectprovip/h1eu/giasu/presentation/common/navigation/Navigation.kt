@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -36,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,6 +52,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.common.toEDSIntGender
@@ -350,7 +353,8 @@ fun InAppNavGraph(
         composable(Screens.InApp.Courses.route) {
             val vm = hiltViewModel<CourseManagementViewModel>()
 
-            ClassManagementScreen(navController,
+            ClassManagementScreen(
+                navController,
                 state = vm.state.value,
                 callback = {
                     vm.getCourses(token.value)
@@ -364,7 +368,8 @@ fun InAppNavGraph(
                 getListByFilter = {
                     vm.getListByFilter(it)
                 },
-                lazyListState = courseListState)
+                lazyListState = courseListState
+            )
         }
 
         composable(
@@ -480,7 +485,9 @@ fun InAppNavGraph(
                     vm.getWard(it)
                 })
         }
-        composable(Screens.InApp.Profile.LearningCourses.route) {
+        composable(Screens.InApp.Profile.LearningCourses.route,
+            deepLinks = listOf(navDeepLink { uriPattern = "eds://learning_courses" }, )
+            ) {
             val vm = hiltViewModel<LearningCoursesViewModel>()
             LearningCourseScreen(vm.state.value,
                 getLearningCourseCallback = {
@@ -527,6 +534,25 @@ fun InAppNavGraph(
     }
 }
 
+@Preview(
+    widthDp = 360,
+    heightDp = 720,)
+@Composable
+private fun BottomBarPreview() {
+    Scaffold(
+        bottomBar = {
+            BottomBar(
+                rememberNavController(),
+                {
+
+                }
+            )
+        }
+    ) {
+
+    }
+}
+
 @Composable
 fun BottomBar(navController: NavHostController, onSelectedClick: (BottomBarScreens) -> Unit) {
     val screens = listOf(
@@ -542,20 +568,21 @@ fun BottomBar(navController: NavHostController, onSelectedClick: (BottomBarScree
     val bottomBarDestination = screens.any {
         it.route == currentDestination?.route
     }
-    val modifier = Modifier
-        .fillMaxWidth()
-        .requiredHeight(72.dp)
-        .shadow(1.dp)
     if (bottomBarDestination) {
         Row(
-            modifier = modifier,
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
             screens.forEach { screen ->
                 val selected = currentDestination?.route == screen.route
                 CustomBottomNavItem(
-                    modifier.weight(1f), selected, screen,
+                    Modifier
+                        .fillMaxWidth()
+                        .shadow(1.dp)
+                        .weight(1f), selected, screen,
                     onSelectedClick,
                     navController
                 )

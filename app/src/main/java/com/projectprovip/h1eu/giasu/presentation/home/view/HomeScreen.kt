@@ -662,7 +662,7 @@ fun CourseItem(
         colors = CardDefaults.elevatedCardColors(
             containerColor = Color.Blue
         ),
-        border = BorderStroke(2.dp, Color.LightGray),
+        border = BorderStroke(1.dp, Color.LightGray),
         elevation = CardDefaults.outlinedCardElevation(3.dp),
         modifier = modifier
             .fillMaxWidth()
