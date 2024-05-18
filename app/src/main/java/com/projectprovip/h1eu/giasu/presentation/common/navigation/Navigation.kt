@@ -2,7 +2,9 @@
 
 package com.projectprovip.h1eu.giasu.presentation.common.navigation
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -99,11 +101,14 @@ import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorDetailView
 import com.projectprovip.h1eu.giasu.presentation.tutor.viewmodel.TutorViewModel
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Navigation() {
+fun Navigation(skipSplash: Boolean = false) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screens.Splash.route) {
+    val startDes = if(skipSplash) Screens.InApp.route else Screens.Splash.route
+
+    NavHost(navController = navController, startDestination = startDes) {
         composable(Screens.Splash.route) {
             SplashScreen(navController)
         }
@@ -156,6 +161,7 @@ fun NavGraphBuilder.authenticationGraph(navController: NavController) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InAppScreen(navController: NavHostController = rememberNavController()) {
@@ -207,6 +213,7 @@ fun InAppScreen(navController: NavHostController = rememberNavController()) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun InAppNavGraph(
     modifier: Modifier,

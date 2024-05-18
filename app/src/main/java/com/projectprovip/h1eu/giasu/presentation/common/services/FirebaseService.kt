@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -36,6 +37,10 @@ class FirebaseService : FirebaseMessagingService() {
         }
 
 
+        val bundle = Bundle().apply {
+            putBoolean("skipSplash", true)
+        }
+
         val deepLinkIntent = Intent(
             Intent.ACTION_VIEW,
             "eds://learning_courses".toUri(),
@@ -43,16 +48,13 @@ class FirebaseService : FirebaseMessagingService() {
             MainActivity::class.java
         )
 
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-
-
-        val pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_IMMUTABLE)
+        deepLinkIntent.putExtras(bundle)
 
         val deepLinkPendingIntent: PendingIntent? = TaskStackBuilder.create(this).run {
             addNextIntentWithParentStack(deepLinkIntent)
-            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
+            getPendingIntent(0, PendingIntent.FLAG_MUTABLE)
         }
+
 
         val notification = NotificationCompat.Builder(context, "tutor_request_channel")
             .setContentTitle(remoteMessage.notification!!.title)

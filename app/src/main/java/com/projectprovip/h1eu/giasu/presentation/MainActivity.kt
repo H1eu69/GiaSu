@@ -1,11 +1,14 @@
 package com.projectprovip.h1eu.giasu.presentation
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -21,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.light(
@@ -36,19 +40,27 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-                            if (!task.isSuccessful) {
-                                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                                return@OnCompleteListener
-                            }
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                            return@OnCompleteListener
+                        }
 
-                            // Get new FCM registration token
-                            val token = task.result
+                        // Get new FCM registration token
+                        val token = task.result
 
-                            // Log and toast
-                            Log.d(TAG, token)
-                        })
-                    Navigation()
+                        // Log and toast
+                        Log.d(TAG, token)
+                    })
+                    val bundle = intent?.extras
+                    var skipSplash = false
+                    if (bundle != null) {
+                        // Handle other key-value pairs as needed
+                        skipSplash = bundle.getBoolean("skipSplash")
+                    }
+                    Log.d("MainActivity", "skipSplash: $skipSplash")
+
+                    Navigation(skipSplash)
                 }
             }
         }
