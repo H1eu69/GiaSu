@@ -54,6 +54,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -78,13 +79,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.tutor.model.TutorDetail
+import com.projectprovip.h1eu.giasu.domain.tutor.usecase.RequestTutorParams
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
 import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
+import com.projectprovip.h1eu.giasu.presentation.tutor.model.RequestTutorState
 import com.projectprovip.h1eu.giasu.presentation.tutor.model.TutorDetailState
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -94,15 +99,21 @@ fun PreviewTutorDetailScreen() {
     val dummyData = TutorDetailState(
         data = TutorDetail()
     )
-    TutorDetailScreen(dummyData)
+    TutorDetailScreen(
+        state = dummyData,
+        requestState = RequestTutorState(),
+        onSendRequestBtnClick = {}
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun TutorDetailScreen(
+    navController: NavController = rememberNavController(),
     state: TutorDetailState,
-    onNavigateIconClick: () -> Unit = {}
+    requestState: RequestTutorState,
+    onSendRequestBtnClick: (RequestTutorParams) -> Unit,
 ) {
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -120,6 +131,20 @@ fun TutorDetailScreen(
         mutableStateOf("")
     }
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = requestState) {
+        requestState.apply {
+            when {
+                this.isSuccess -> {
+                    Toast.makeText(context, "Request sent, we will contact you shortly", Toast.LENGTH_SHORT).show()
+                    showBottomSheet.value = false
+                }
+                this.error.isNotEmpty() -> {
+                    Log.e("RequestTutor", this.error)
+                }
+            }
+        }
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(title = { },
@@ -129,7 +154,7 @@ fun TutorDetailScreen(
                 ),
                 navigationIcon = {
                     IconButton(onClick = {
-                        onNavigateIconClick()
+                        navController.popBackStack()
                     }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -148,6 +173,14 @@ fun TutorDetailScreen(
                 text = dialogText.value,
                 onTextChange = {
                     dialogText.value = it
+                },
+                onButtonClick = {
+                    onSendRequestBtnClick(
+                        RequestTutorParams(
+                            state.data.id,
+                            dialogText.value
+                        )
+                    )
                 }
             )
         state.apply {

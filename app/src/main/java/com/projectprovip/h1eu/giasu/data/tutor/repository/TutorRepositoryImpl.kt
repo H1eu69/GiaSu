@@ -1,11 +1,14 @@
 package com.projectprovip.h1eu.giasu.data.tutor.repository
 
 import com.projectprovip.h1eu.giasu.data.tutor.api.TutorApi
+import com.projectprovip.h1eu.giasu.data.tutor.api.TutorRequestBody
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDetailDto.TutorDetailDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDto.TutorDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRegisterDto.TutorRegisterDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRequestDto.TutorRequestDto
 import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
 import com.projectprovip.h1eu.giasu.domain.tutor.repository.TutorRepository
+import com.projectprovip.h1eu.giasu.domain.tutor.usecase.RequestTutorParams
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -25,5 +28,16 @@ class TutorRepositoryImpl @Inject constructor(
         tutorRegisterInput: TutorRegisterInput
     ): TutorRegisterDto {
         return api.registerTutor(auth, tutorRegisterInput)
+    }
+
+    override suspend fun requestTutor(
+        auth: String,
+        requestTutorParams: RequestTutorParams
+    ): TutorRequestDto {
+        return api.requestTutor(
+            auth,
+            requestTutorParams.tutorId,
+            TutorRequestBody(requestTutorParams.requestMessage)
+        )
     }
 }

@@ -257,6 +257,7 @@ fun InAppNavGraph(
                 },
                 onRefresh = {
                     homeViewModel.getCourses()
+                    homeViewModel.getTutors()
                 }, lazyListState = homeListState
             )
         }
@@ -354,9 +355,10 @@ fun InAppNavGraph(
             LaunchedEffect(key1 = vm.state) {
                 vm.getTutorDetail(tutorId!!)
             }
-            TutorDetailScreen(state = vm.state.value,
-                onNavigateIconClick = {
-                    navController.popBackStack()
+            TutorDetailScreen(navController,state = vm.state.value,
+                requestState = vm.requestState.value,
+                onSendRequestBtnClick = { params ->
+                    vm.sendRequestTutor(token.value, params)
                 })
         }
 
