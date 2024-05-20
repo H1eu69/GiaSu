@@ -82,7 +82,7 @@ class CourseManagementViewModel @Inject constructor(
             _state.value.copy(filteredData = _state.value.data)
         } else {
             _state.value.copy(filteredData = _state.value.data.filter {
-                it.status == status
+                it.requestStatus == status
             })
         }
 

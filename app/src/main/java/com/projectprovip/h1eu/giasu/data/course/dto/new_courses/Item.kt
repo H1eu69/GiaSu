@@ -43,5 +43,4 @@ fun Item.toNewCourse() = CourseDetail(
     subjectId,
     subjectName,
     title,
-    contactNumber,
 )

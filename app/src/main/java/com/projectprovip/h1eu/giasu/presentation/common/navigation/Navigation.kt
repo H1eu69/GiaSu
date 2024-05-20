@@ -246,9 +246,12 @@ fun InAppNavGraph(
         modifier = modifier,
     ) {
         composable(Screens.InApp.Home.route) {
-
+            LaunchedEffect(homeViewModel.tutorState) {
+                homeViewModel.getTutors()
+            }
             HomeScreen(
                 navController, homeViewModel.homeState.value,
+                homeViewModel.tutorState.value,
                 onLoadMore = {
                     homeViewModel.getCoursesAndIncreaseIndex()
                 },

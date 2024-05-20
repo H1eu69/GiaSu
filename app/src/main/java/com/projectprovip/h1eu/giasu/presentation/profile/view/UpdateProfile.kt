@@ -358,7 +358,7 @@ fun UpdateProfile(
         }
         updateProfileState.apply {
             when {
-                this.data != MiniProfile() -> {
+                this.isUpdateSuccess -> {
                     val userAvatar = this.data.avatar
                     val fullName = this.data.fullName
                     val email = this.data.email

@@ -8,7 +8,9 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,28 +32,45 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Cake
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,6 +82,7 @@ import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.tutor.model.TutorDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
+import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
 import com.projectprovip.h1eu.giasu.presentation.tutor.model.TutorDetailState
@@ -95,7 +115,10 @@ fun TutorDetailScreen(
                 Log.d("ExampleScreen", "PERMISSION DENIED")
             }
         }
-
+    val showBottomSheet = remember { mutableStateOf(false) }
+    val dialogText = remember {
+        mutableStateOf("")
+    }
     val context = LocalContext.current
     Scaffold(
         topBar = {
@@ -119,6 +142,14 @@ fun TutorDetailScreen(
         containerColor = EDSColors.white
 
     ) {
+        if (showBottomSheet.value)
+            CourseRegisterPaymentBottomSheet(
+                onDismissRequest = { showBottomSheet.value = false },
+                text = dialogText.value,
+                onTextChange = {
+                    dialogText.value = it
+                }
+            )
         state.apply {
             when {
                 this.isLoading -> {
@@ -281,6 +312,7 @@ fun TutorDetailScreen(
                                         Manifest.permission.POST_NOTIFICATIONS
                                     ) -> {
                                         // Some works that require permission
+                                        showBottomSheet.value = true
                                         Log.d("ExampleScreen", "Code requires permission")
                                     }
 
@@ -420,4 +452,91 @@ fun ReviewItem(rate: Int, reviewer: String, review: String) {
             Text(text = review)
         }
     }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CourseRegisterPaymentBottomSheet(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    sheetState: SheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    ),
+    text: String,
+    onTextChange: (String) -> Unit,
+    onButtonClick: () -> Unit = {},
+
+    ) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+
+    ModalBottomSheet(
+        sheetState = sheetState, onDismissRequest = { onDismissRequest() },
+        containerColor = EDSColors.white
+    ) {
+        LazyColumn(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            item {
+                Text(
+                    text = "Enter your message",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = EDSTextStyle.H2Bold()
+                )
+            }
+            item {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = text,
+                        onValueChange = {
+                            onTextChange(it)
+                        },
+                        modifier = Modifier
+                            .height(100.dp)
+                            .fillMaxWidth()
+                            .padding(top = 12.dp)
+                            .padding(horizontal = 20.dp),
+                        label = {
+                            Text(
+                                text = "Message",
+                            )
+                        },
+                        maxLines = 4,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            cursorColor = EDSColors.primaryColor,
+                            focusedBorderColor = EDSColors.primaryColor,
+                            focusedLabelColor = EDSColors.primaryColor,
+                        ),
+                    )
+                }
+            }
+            item {
+                ElevatedButton(
+                    onClick = { onButtonClick() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = EDSColors.primaryColor,
+                    )
+                ) {
+                    androidx.compose.material.Text(
+                        "Send request",
+                        style = EDSTextStyle.H2Reg(EDSColors.white)
+                    )
+                }
+            }
+        }
+    }
+
 }

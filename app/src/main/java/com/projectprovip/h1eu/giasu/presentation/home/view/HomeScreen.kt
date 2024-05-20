@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
+import android.util.Log
 import androidx.compose.animation.core.animate
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
@@ -30,9 +32,13 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Cake
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.School
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -81,11 +87,13 @@ import com.projectprovip.h1eu.giasu.common.DateFormat
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
+import com.projectprovip.h1eu.giasu.domain.tutor.model.Tutor
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
+import com.projectprovip.h1eu.giasu.presentation.home.model.TutorState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -93,7 +101,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun PreviewHomeScreen() {
     HomeScreen(
-        rememberNavController(), HomeState(
+        rememberNavController(),
+        HomeState(
             data = listOf(
                 CourseDetail(),
                 CourseDetail(),
@@ -107,6 +116,20 @@ fun PreviewHomeScreen() {
                 CourseDetail(),
             )
         ),
+        tutorState = TutorState(
+            data = listOf(
+                Tutor(),
+                Tutor(),
+                Tutor(),
+                Tutor(),
+                Tutor(),
+                Tutor(),
+                Tutor(),
+                Tutor(),
+                Tutor(),
+                Tutor(),
+            )
+        ),
         onLoadMore = {},
         onRefresh = {},
     )
@@ -116,6 +139,7 @@ fun PreviewHomeScreen() {
 @Composable
 fun HomeScreen(
     navController: NavController, state: HomeState,
+    tutorState: TutorState,
     onLoadMore: () -> Unit = {},
     onRefresh: () -> Unit,
     lazyListState: LazyListState = rememberLazyListState(),
@@ -417,6 +441,27 @@ fun HomeScreen(
                                 }
                             }
                         }
+                        Text(
+                            "Tutors pick for you",
+                            style = EDSTextStyle.H2Bold()
+                        )
+                        tutorState.apply {
+                            when {
+                                this.isLoading -> {}
+                                this.data.isNotEmpty() -> {
+                                    LazyRow {
+                                        items(tutorState.data.count()) { index ->
+                                            TutorItem(tutor = tutorState.data[index]) {
+                                                navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$it")
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
                         Text(
                             "Popular Courses",
                             style = EDSTextStyle.H2Bold()
@@ -878,6 +923,95 @@ private fun CategoryItem(resourceId: Int, text: String, onClick: () -> Unit) {
                 max = 70.dp
             ),
         )
+    }
+}
+
+@Composable
+private fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
+    Card(shape = RoundedCornerShape(10),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = EDSColors.white
+        ),
+        border = BorderStroke(1.dp, EDSColors.gray),
+        elevation = CardDefaults.outlinedCardElevation(3.dp),
+        modifier = Modifier
+            .padding(8.dp)
+            .width(150.dp)
+            .clip(
+                RoundedCornerShape(10)
+            )
+            .clickable {
+                onItemClick(tutor.id)
+                Log.d("Test tutor id clicked", tutor.id)
+                //navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${data.id}")
+            }) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+
+
+        ) {
+            AsyncImage(
+                model = tutor.image,
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .height(150.dp)
+//                    .clip(
+//                        RoundedCornerShape(
+//                            topStart = 20.dp,
+//                            topEnd = 20.dp
+//                        )
+//                    )
+            )
+            Box(
+
+            ) {
+                com.projectprovip.h1eu.giasu.presentation.tutor.view.IconAndText(
+                    Icons.Outlined.Person,
+                    "${tutor.firstName} ${tutor.lastName}",
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .widthIn(max = 138.dp)
+                )
+            }
+            Box {
+                com.projectprovip.h1eu.giasu.presentation.tutor.view.IconAndText(
+                    Icons.Outlined.Info,
+                    tutor.academicLevel,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                )
+            }
+            Box {
+                com.projectprovip.h1eu.giasu.presentation.tutor.view.IconAndText(
+                    Icons.Outlined.Cake,
+                    tutor.birthYear.toString(),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                )
+            }
+            Box {
+                com.projectprovip.h1eu.giasu.presentation.tutor.view.IconAndText(
+                    Icons.Outlined.School,
+                    tutor.university,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                )
+            }
+            Box {
+                com.projectprovip.h1eu.giasu.presentation.tutor.view.IconAndText(
+                    Icons.Outlined.Star, "${tutor.rate.toDouble()} /5.0",
+                    tint = EDSColors.yellowStar,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .padding(bottom = 20.dp)
+                )
+            }
+        }
     }
 
 }

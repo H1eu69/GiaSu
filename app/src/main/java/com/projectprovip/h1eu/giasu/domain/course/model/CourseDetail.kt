@@ -18,5 +18,4 @@ data class CourseDetail(
     val subjectId: Int = -1,
     val subjectName: String = "Dummy subjectName",
     val title: String = "Toan ly hoa dai cuong can ban",
-    val contactNumber: String = "-0967075340",
     )

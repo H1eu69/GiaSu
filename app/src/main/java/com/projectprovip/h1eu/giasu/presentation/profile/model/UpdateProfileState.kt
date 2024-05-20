@@ -15,6 +15,7 @@ data class GetTutorInfoState(
 )
 data class UpdateProfileState(
     val isLoading: Boolean = false,
+    val isUpdateSuccess: Boolean = false,
     val data: MiniProfile = MiniProfile(),
     val error: String = ""
 )

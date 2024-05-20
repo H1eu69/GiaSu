@@ -7,7 +7,7 @@ import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
 import retrofit2.Response
 
 interface TutorRepository {
-    suspend fun getAllTutor(pageIndex: Int) : TutorDto
+    suspend fun getAllTutor(pageIndex: Int, subject: String?) : TutorDto
     suspend fun getTutorDetail(tutorId: String) : TutorDetailDto
     suspend fun registerTutor(auth: String, tutorRegisterInput: TutorRegisterInput) : TutorRegisterDto
 }

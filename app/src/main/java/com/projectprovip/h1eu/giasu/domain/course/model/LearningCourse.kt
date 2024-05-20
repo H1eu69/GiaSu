@@ -39,5 +39,6 @@ data class LearningCourse(
 )
 
 fun LearningCourse.toRequestedCourse() = RequestedCourse(
-    creationTime,id, lastModificationTime, status, subjectName, title, learningMode
+    creationTime,id, lastModificationTime, status, subjectName, title,
+//    learningMode
 )

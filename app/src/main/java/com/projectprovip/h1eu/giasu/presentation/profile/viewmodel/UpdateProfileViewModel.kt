@@ -147,7 +147,8 @@ class UpdateProfileViewModel @Inject constructor(
                                 avatar = result.data!!.value.user.avatar,
                                 fullName = result.data.value.user.fullName,
                                 email = result.data.value.user.email
-                            )
+                            ),
+                            isUpdateSuccess = true
                         )
                         Log.d("Test update profile", result.data.toString())
                     }
@@ -193,7 +194,9 @@ class UpdateProfileViewModel @Inject constructor(
                 }
 
                 is EDSResult.Success -> {
-                    _updateProfileState.value = UpdateProfileState()
+                    _updateProfileState.value = UpdateProfileState(
+                        isUpdateSuccess = true
+                    )
                     Log.d("Test update tutor", result.data.toString())
 
                 }

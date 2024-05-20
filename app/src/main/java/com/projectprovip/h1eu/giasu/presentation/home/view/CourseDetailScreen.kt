@@ -347,20 +347,6 @@ fun CourseDetailBody(
 
         item {
             DetailIconAndText(
-                Icons.Outlined.Phone,
-                "Contact number: ", course.contactNumber,
-                textColor = EDSColors.costTextColor,
-                modifier = modifier
-                    .padding(horizontal = 20.dp)
-                    .clickable {
-                        val uri = Uri.parse("tel: ${course.contactNumber}")
-                        val dialIntent = Intent(Intent.ACTION_DIAL, uri)
-                        context.startActivity(dialIntent)
-                    }
-            )
-        }
-        item {
-            DetailIconAndText(
                 Icons.Outlined.Person,
                 "Tutor gender: ", course.genderRequirement,
                 modifier = modifier

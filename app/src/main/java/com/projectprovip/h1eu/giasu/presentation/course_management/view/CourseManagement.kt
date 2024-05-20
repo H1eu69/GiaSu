@@ -303,7 +303,7 @@ fun ClassItem(data: RequestedCourse, navController: NavController) {
                 .padding(20.dp)
         ) {
             AppBarTitle(text = data.title)
-            SubTitle(data.id, data.status)
+            SubTitle(data.id, data.requestStatus)
             MiddleContent(data.subjectName, data.creationTime)
         }
     }

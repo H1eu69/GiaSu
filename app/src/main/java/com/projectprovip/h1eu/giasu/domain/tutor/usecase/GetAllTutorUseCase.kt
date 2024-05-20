@@ -12,10 +12,10 @@ import javax.inject.Inject
 class GetAllTutorUseCase @Inject constructor(
     private val tutorRepository: TutorRepository
 ) {
-    operator fun invoke(pageIndex : Int = 1) = flow<EDSResult<List<Tutor>>> {
+    operator fun invoke(pageIndex : Int = 1, subject: String? = null) = flow<EDSResult<List<Tutor>>> {
         try {
             emit(EDSResult.Loading())
-            val data = tutorRepository.getAllTutor(pageIndex).value.items.map {
+            val data = tutorRepository.getAllTutor(pageIndex, subject).value.items.map {
                 it.toTutor()
             }
             emit(EDSResult.Success(data))

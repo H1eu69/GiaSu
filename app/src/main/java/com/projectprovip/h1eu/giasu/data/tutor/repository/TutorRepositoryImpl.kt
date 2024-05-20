@@ -12,8 +12,8 @@ import javax.inject.Inject
 class TutorRepositoryImpl @Inject constructor(
     private val api: TutorApi
 ) : TutorRepository {
-    override suspend fun getAllTutor(pageIndex: Int): TutorDto {
-        return api.getAllTutor(pageIndex)
+    override suspend fun getAllTutor(pageIndex: Int, subject: String?): TutorDto {
+        return api.getAllTutor(pageIndex, subject)
     }
 
     override suspend fun getTutorDetail(tutorId: String): TutorDetailDto {

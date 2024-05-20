@@ -14,7 +14,7 @@ import retrofit2.http.Query
 
 interface TutorApi {
     @GET("tutor")
-    suspend fun getAllTutor(@Query("PageIndex") index: Int) : TutorDto
+    suspend fun getAllTutor(@Query("PageIndex") index: Int, @Query("Subject") subject: String?) : TutorDto
     @GET("tutor/{id}")
     suspend fun getTutorDetail(@Path("id") tutorId: String) : TutorDetailDto
     @POST("tutor/register")

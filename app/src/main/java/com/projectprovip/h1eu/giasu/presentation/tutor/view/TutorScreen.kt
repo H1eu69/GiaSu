@@ -34,6 +34,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -118,19 +119,21 @@ fun TutorPreview() {
 @Preview
 @Composable
 fun TutorItemPreview() {
-    TutorItem(
-        tutor = Tutor(
-            "he",
-            2022,
-            "desdasdasas",
-            "hehe",
-            "4",
-            "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
-            "last",
-            3.0,
-            "UIT"
+    Surface {
+        TutorItem(
+            tutor = Tutor(
+                "he",
+                2022,
+                "desdasdasas",
+                "hehe",
+                "4",
+                "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
+                "last",
+                3.0,
+                "UIT"
+            )
         )
-    )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -234,7 +237,6 @@ fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
         elevation = CardDefaults.outlinedCardElevation(3.dp),
         modifier = Modifier
             .padding(8.dp)
-            .fillMaxWidth()
             .clip(
                 RoundedCornerShape(10)
             )
@@ -246,7 +248,6 @@ fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
 
         ) {
             AsyncImage(
@@ -254,14 +255,8 @@ fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 20.dp,
-                            topEnd = 20.dp
-                        )
-                    )
-
             )
             IconAndText(
                 Icons.Outlined.Person,
