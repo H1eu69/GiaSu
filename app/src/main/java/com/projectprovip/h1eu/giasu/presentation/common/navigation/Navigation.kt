@@ -6,24 +6,20 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -57,7 +53,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.common.toEDSIntGender
+import com.projectprovip.h1eu.giasu.presentation.common.toEDSIntGender
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateProfileParams
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.UpdateTutorInfoParams
@@ -304,6 +300,7 @@ fun InAppNavGraph(
             val courseId = backStackEntry.arguments?.getString("courseId")
             LaunchedEffect(Unit) {
                 courseDetailViewModel.getCourseById(courseId!!)
+                courseDetailViewModel.getBank()
             }
             LaunchedEffect(courseDetailViewModel.courseDetailState.value.data.subjectId) {
                 if (courseDetailViewModel.courseDetailState.value.data.subjectId > 0)

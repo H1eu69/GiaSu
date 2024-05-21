@@ -1,6 +1,8 @@
 package com.projectprovip.h1eu.giasu.di
 
 import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.data.bank.api.BankDeeplinkApi
+import com.projectprovip.h1eu.giasu.data.bank.repository.BankDeeplinkRepositoryImpl
 import com.projectprovip.h1eu.giasu.data.course.api.CourseApi
 import com.projectprovip.h1eu.giasu.data.course.api.RecommendCourseApi
 import com.projectprovip.h1eu.giasu.data.course.repository.CourseRepositoryImpl
@@ -16,6 +18,7 @@ import com.projectprovip.h1eu.giasu.data.tutor.repository.TutorRepositoryImpl
 import com.projectprovip.h1eu.giasu.data.user.api.UserAuthApi
 import com.projectprovip.h1eu.giasu.data.user.repository.UserRepositoryImpl
 import com.projectprovip.h1eu.giasu.domain.authentication.repository.UserRepository
+import com.projectprovip.h1eu.giasu.domain.bank_deeplink.repository.BankDeeplinkRepository
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import com.projectprovip.h1eu.giasu.domain.course.repository.RecommendCourseRepository
 import com.projectprovip.h1eu.giasu.domain.location.repository.LocationRepository
@@ -61,6 +64,16 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(TutorApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBankApi() : BankDeeplinkApi {
+        return Retrofit.Builder()
+            .baseUrl(Constant.DEEPLINK_BANK_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(BankDeeplinkApi::class.java)
     }
 
     @Provides
@@ -143,5 +156,11 @@ object AppModule {
     @Singleton
     fun provideRecommendCoursesRepository(api : RecommendCourseApi) : RecommendCourseRepository {
         return RecommendCoursesRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBankDeeplinkRepository(api : BankDeeplinkApi) : BankDeeplinkRepository {
+        return BankDeeplinkRepositoryImpl(api)
     }
 }

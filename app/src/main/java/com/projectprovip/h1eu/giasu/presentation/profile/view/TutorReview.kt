@@ -27,10 +27,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Reviews
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -53,7 +51,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -62,8 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.common.DateFormat
+import com.projectprovip.h1eu.giasu.presentation.common.DateFormat
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton

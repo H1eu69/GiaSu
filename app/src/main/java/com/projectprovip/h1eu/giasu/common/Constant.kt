@@ -20,6 +20,7 @@ object Constant {
     const val API_BASE_URL = "http://homelab-quy.duckdns.org:8080/api/"
     const val LOCATION_API_BASE_URL = "https://vapi.vnappmob.com"
     const val RECOMMEND_API_BASE_URL = "https://recommendapis.azurewebsites.net"
+    const val DEEPLINK_BANK_BASE_URL = "https://api.vietqr.io/v2/"
     const val TOKEN_STRING = "token"
     const val USERNAME_STRING = "username"
     const val USERID_STRING = "userid"

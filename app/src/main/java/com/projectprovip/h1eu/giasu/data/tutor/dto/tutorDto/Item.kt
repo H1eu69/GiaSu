@@ -1,6 +1,6 @@
 package com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDto
 
-import com.projectprovip.h1eu.giasu.common.keepFirstDecimalDouble
+import com.projectprovip.h1eu.giasu.presentation.common.keepFirstDecimalDouble
 import com.projectprovip.h1eu.giasu.domain.tutor.model.Tutor
 
 data class Item(

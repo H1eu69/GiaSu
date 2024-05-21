@@ -627,3 +627,19 @@ private fun ShimmerTutor() {
     }
 
 }
+
+@Preview
+@Composable
+private fun test() {
+    Surface {
+        test2()
+    }
+}
+
+@Composable
+private fun test2() {
+    AsyncImage(
+        model = "https://img.vietqr.io/image/vietinbank-107867236970-compact2.jpg?amount=790000&addInfo=Register%20ES%201000&accountName=HieuPro",
+        contentDescription =null
+    )
+}

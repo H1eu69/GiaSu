@@ -58,7 +58,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -90,7 +89,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.common.toEDSStringGender
+import com.projectprovip.h1eu.giasu.presentation.common.toEDSStringGender
 import com.projectprovip.h1eu.giasu.data.profile.dto.tutorInfoDto.Major
 import com.projectprovip.h1eu.giasu.data.profile.dto.tutorInfoDto.toSubjectItem
 import com.projectprovip.h1eu.giasu.presentation.authentication.view.NumberPickerDialog
@@ -102,7 +101,6 @@ import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.GetProfileState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.GetTutorInfoState
-import com.projectprovip.h1eu.giasu.presentation.profile.model.MiniProfile
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectItem
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.UpdateProfileState

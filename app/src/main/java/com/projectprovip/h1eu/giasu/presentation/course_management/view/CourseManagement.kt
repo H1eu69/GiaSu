@@ -1,6 +1,5 @@
 package com.projectprovip.h1eu.giasu.presentation.course_management.view
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -25,7 +24,6 @@ import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Subject
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -34,7 +32,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -60,7 +57,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.common.DateFormat
+import com.projectprovip.h1eu.giasu.presentation.common.DateFormat
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
@@ -145,7 +142,8 @@ fun ClassManagementScreen(
 
                 state.isLoading -> {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.padding(8.dp)
                     ) {
                         ShimmerCourse()
                         ShimmerCourse()

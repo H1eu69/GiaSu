@@ -1,11 +1,9 @@
 package com.projectprovip.h1eu.giasu.presentation.home.view
 
 import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
@@ -29,11 +26,9 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -57,17 +52,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -75,17 +64,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.CodeGenerator
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
-import com.projectprovip.h1eu.giasu.presentation.common.composes.OtpInputField
 import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
+import com.projectprovip.h1eu.giasu.presentation.common.Instants
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.common.toVndFormat
+import com.projectprovip.h1eu.giasu.presentation.common.usdToVnd
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
 import com.projectprovip.h1eu.giasu.presentation.home.model.RecommendCoursesState
@@ -172,8 +166,8 @@ fun CourseDetailScreen(
                                 onRegisterClicked()
                             },
                             code = code.value,
-                            fee = course.fee,
-                            tax = course.chargeFee
+                            fee = course.fee.usdToVnd(),
+                            tax = course.chargeFee.usdToVnd()
                         )
                     }
                     Box(
@@ -601,14 +595,12 @@ fun CourseRegisterPaymentBottomSheet(
     tax: Double = 200.00
 ) {
     val context = LocalContext.current
-    val otpValue = remember { mutableStateOf("") }
-    val isOtpFilled = remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
 
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
-
-    ModalBottomSheet(sheetState = sheetState, onDismissRequest = { onDismissRequest() }) {
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = { onDismissRequest() },
+        containerColor = EDSColors.white
+    ) {
         LazyColumn(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -620,91 +612,18 @@ fun CourseRegisterPaymentBottomSheet(
                 )
             }
             item {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
+                Box(
+                    contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(
-                        text = "Vietinbank (VTB): ", style = EDSTextStyle.H2Thin(
-                            EDSColors.gray
-                        )
+                    AsyncImage(
+                        model = Instants.getVietQrImage(
+                            addInfo = "Register ES $code",
+                            amount = (fee + tax).toBigDecimal().toPlainString()
+                        ),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
                     )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.clickable {
-                            clipboardManager.setText(AnnotatedString(("107867236970")))
-                            Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show()
-
-                        }
-                    ) {
-                        Image(
-                            imageVector = Icons.Default.ContentCopy, contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            colorFilter = ColorFilter.tint(
-                                EDSColors.gray
-                            )
-                        )
-                        Text(
-                            text = "107867236970",
-                            style = EDSTextStyle.H2Reg(
-                                EDSColors.primaryColor
-                            )
-                        )
-
-                    }
-                }
-            }
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Account Owner: ", style = EDSTextStyle.H2Thin(
-                            EDSColors.gray
-                        )
-                    )
-                    Text(
-                        text = "Huỳnh Trung Hiếu",
-                        style = EDSTextStyle.H2Reg(
-                            EDSColors.primaryColor
-                        )
-                    )
-                }
-            }
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Content: ", style = EDSTextStyle.H2Thin(
-                            EDSColors.gray
-                        )
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Image(
-                            imageVector = Icons.Default.ContentCopy, contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            colorFilter = ColorFilter.tint(
-                                EDSColors.gray
-                            )
-                        )
-                        Text(
-                            text = "Register ES $code",
-                            style = EDSTextStyle.H2Reg(
-                                EDSColors.primaryColor
-                            )
-                        )
-
-                    }
                 }
             }
             item {
@@ -720,7 +639,7 @@ fun CourseRegisterPaymentBottomSheet(
                         )
                     )
                     Text(
-                        text = "$fee đ",
+                        text = "${fee.toBigDecimal().toPlainString().toVndFormat()}",
                         style = EDSTextStyle.H1MedBold(
                         )
                     )
@@ -739,7 +658,7 @@ fun CourseRegisterPaymentBottomSheet(
                         )
                     )
                     Text(
-                        text = "$tax đ",
+                        text = "${tax.toBigDecimal().toPlainString().toVndFormat()}",
                         style = EDSTextStyle.H1MedBold(
                         )
                     )
@@ -762,62 +681,25 @@ fun CourseRegisterPaymentBottomSheet(
                         )
                     )
                     Text(
-                        text = "${fee + tax} đ",
+                        text = "${(fee + tax).toBigDecimal().toPlainString().toVndFormat()}",
                         style = EDSTextStyle.H1MedBold(
                         )
                     )
                 }
             }
-            item {
-                Text(
-                    text = "After transferring money, please fill in the Registration Code in a box below. Registration Code is:",
-                    style = EDSTextStyle.H2Reg()
-                )
-            }
-           item {
-               Box(
-                   contentAlignment = Alignment.Center,
-                   modifier = Modifier.fillMaxWidth()
-               ) {
-                   Row(
-                       horizontalArrangement = Arrangement.spacedBy(4.dp)
-                   ) {
-                       code.forEach { digit ->
-                           Text(
-                               text = digit.toString(),
-                               style = EDSTextStyle.H1Large(
-                                   EDSColors.primaryColor
-                               )
-                           )
-                       }
-                   }
 
-               }
-           }
-            item {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    OtpInputField(
-                        modifier = Modifier
-                            .padding(top = 12.dp)
-                            .focusRequester(focusRequester),
-                        otpText = otpValue.value,
-                        shouldCursorBlink = false,
-                        onOtpModified = { value, otpFilled ->
-                            otpValue.value = value
-                            isOtpFilled.value = otpFilled
-                            if (otpFilled) {
-                                keyboardController?.hide()
-                            }
-                        }
-                    )
-                }
-            }
             item {
                 ElevatedButton(
-                    onClick = { onButtonClick() },
+                    onClick = {
+                        onButtonClick()
+                        val deepLinkIntent = Intent(
+                            Intent.ACTION_VIEW,
+                            "https://dl.vietqr.io/pay?app=icb"
+                                .toUri(),
+                        )
+                        startActivity(context, deepLinkIntent, null)
+
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),

@@ -93,8 +93,6 @@ import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.FilterSelect
 import com.projectprovip.h1eu.giasu.presentation.home.model.SearchResultState
-import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Preview

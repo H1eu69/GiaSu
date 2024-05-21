@@ -57,9 +57,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.common.toEDSIntAcademicLevel
-import com.projectprovip.h1eu.giasu.common.toEDSIntGender
-import com.projectprovip.h1eu.giasu.common.toEDSIntLearningMode
+import com.projectprovip.h1eu.giasu.presentation.common.toEDSIntAcademicLevel
+import com.projectprovip.h1eu.giasu.presentation.common.toEDSIntGender
+import com.projectprovip.h1eu.giasu.presentation.common.toEDSIntLearningMode
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton

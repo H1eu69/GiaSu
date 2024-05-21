@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.common.isLink
+import com.projectprovip.h1eu.giasu.presentation.common.isLink
 import com.projectprovip.h1eu.giasu.domain.profile.model.Profile
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.GetTutorInfoUseCase
 import com.projectprovip.h1eu.giasu.domain.profile.usecase.GetUserProfileUseCase

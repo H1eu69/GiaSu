@@ -1,21 +1,24 @@
-package com.projectprovip.h1eu.giasu.common
+package com.projectprovip.h1eu.giasu.presentation.common
 
+import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.Locale
 
-object DateFormat {
-    fun DD_MM_YYYY_ISO(date: String): String {
-        return try {
-            val formatter = DateTimeFormatter.ISO_DATE_TIME
-            val dateTime = LocalDateTime.parse(date, formatter)
-            dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-        } catch (e: DateTimeParseException) {
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-            val dateTime = LocalDateTime.parse(date, formatter)
-            dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-        }
-    }
+fun Double.usdToVnd(): Double {
+    val vnd = this * 23000
+    return Math.round(vnd * 100.0) / 100.0
+}
+
+fun Double.vndToUsd(): Double {
+    val vnd = this / 23000
+    return Math.round(vnd * 100.0) / 100.0}
+
+fun String.toVndFormat(): String {
+    val number = this.toDoubleOrNull() ?: return "Invalid number"
+    val numberFormat = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+    return numberFormat.format(number)
 }
 
 fun String.alphaNumericOnly(): String {

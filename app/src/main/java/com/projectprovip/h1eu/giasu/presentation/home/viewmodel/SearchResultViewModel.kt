@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.EDSResult
 import com.projectprovip.h1eu.giasu.domain.course.usecase.GetCourseUseCase
-import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
 import com.projectprovip.h1eu.giasu.presentation.home.model.SearchResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn

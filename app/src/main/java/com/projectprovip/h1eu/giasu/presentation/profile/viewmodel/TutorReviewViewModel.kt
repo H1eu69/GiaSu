@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.common.alphaNumericOnly
+import com.projectprovip.h1eu.giasu.presentation.common.alphaNumericOnly
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import com.projectprovip.h1eu.giasu.domain.course.usecase.GetLearningCourseDetailUseCase
 import com.projectprovip.h1eu.giasu.domain.tutor.usecase.ReviewTutorUseCase

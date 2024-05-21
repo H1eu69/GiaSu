@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.projectprovip.h1eu.giasu.common.Constant
-import com.projectprovip.h1eu.giasu.common.DateFormat
+import com.projectprovip.h1eu.giasu.presentation.common.DateFormat
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle

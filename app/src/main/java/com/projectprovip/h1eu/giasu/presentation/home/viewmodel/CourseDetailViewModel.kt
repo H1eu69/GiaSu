@@ -6,14 +6,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.common.alphaNumericOnly
+import com.projectprovip.h1eu.giasu.presentation.common.alphaNumericOnly
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.toCourseDetail
+import com.projectprovip.h1eu.giasu.domain.bank_deeplink.usecase.GetBankDeeplinkUseCase
 import com.projectprovip.h1eu.giasu.domain.course.usecase.GetCourseByIdUseCase
 import com.projectprovip.h1eu.giasu.domain.course.usecase.GetCourseUseCase
 import com.projectprovip.h1eu.giasu.domain.course.usecase.GetRecommendedCoursesNameUseCase
 import com.projectprovip.h1eu.giasu.domain.course.usecase.RegisterCourseUseCase
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
+import com.projectprovip.h1eu.giasu.presentation.home.model.GetBankState
 import com.projectprovip.h1eu.giasu.presentation.home.model.RecommendCoursesState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -27,6 +29,7 @@ class CourseDetailViewModel @Inject constructor(
     private val getCourseByIdUseCase: GetCourseByIdUseCase,
     private val getCoursesUseCase: GetCourseUseCase,
     private val getRecommendedCoursesNameUseCase: GetRecommendedCoursesNameUseCase,
+    private val getBankDeeplinkUseCase: GetBankDeeplinkUseCase,
 ) : ViewModel() {
 
     private var _courseRegisterState = mutableStateOf(CourseRegisterState())
@@ -37,6 +40,9 @@ class CourseDetailViewModel @Inject constructor(
 
     private var _recommendedCourseState = mutableStateOf(RecommendCoursesState())
     val recommendedCourseState: State<RecommendCoursesState> = _recommendedCourseState
+
+    private var _bankState = mutableStateOf(GetBankState())
+    val bankState: State<GetBankState> = _bankState
 
     val recommendedCourseNameState = mutableStateOf(emptyList<String>())
 
@@ -137,6 +143,27 @@ class CourseDetailViewModel @Inject constructor(
                 }.launchIn(this)
             }
         }
+    }
 
+    fun getBank() {
+        viewModelScope.launch {
+            getBankDeeplinkUseCase().onEach { result ->
+                when (result) {
+                    is EDSResult.Loading -> {
+                        _bankState.value = GetBankState(isLoading = true)
+                    }
+
+                    is EDSResult.Error -> {
+                        _bankState.value =
+                            GetBankState(error = result.message)
+                        Log.d("get bank error", result.message.toString())
+                    }
+
+                    is EDSResult.Success -> {
+                        _bankState.value = GetBankState(data = result.data!!)
+                    }
+                }
+            }.launchIn(this)
+        }
     }
 }
