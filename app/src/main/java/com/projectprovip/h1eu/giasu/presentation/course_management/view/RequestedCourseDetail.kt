@@ -30,6 +30,8 @@ import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -107,6 +110,7 @@ fun RequestedCourseDetailScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RequestedCourseDetailBody(
     modifier: Modifier = Modifier,
@@ -114,6 +118,14 @@ fun RequestedCourseDetailBody(
     course: RequestedCourseDetail
 ) {
     val context = LocalContext.current
+    var statusTextColor = EDSColors.notScheduleTextColor
+
+    if (course.requestStatus == "Done") {
+        statusTextColor = EDSColors.teachingTextColor
+    } else if (course.requestStatus == "Verifying") {
+        statusTextColor = EDSColors.waitingBackgroundColor
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -128,6 +140,36 @@ fun RequestedCourseDetailBody(
                     fontWeight = FontWeight.Bold
                 )
             )
+        }
+        item {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = modifier
+            ) {
+                androidx.compose.material3.Text(
+                    text = course.requestStatus,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Medium,
+                        color = statusTextColor
+                    ),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(EDSColors.greenBackground)
+                        .padding(vertical = 8.dp, horizontal = 16.dp)
+                )
+
+//                androidx.compose.material3.Text(
+//                    text = course.lea,
+//                    style = TextStyle(
+//                        fontWeight = FontWeight.Medium,
+//                        color = EDSColors.purpleText
+//                    ),
+//                    modifier = Modifier
+//                        .clip(RoundedCornerShape(8.dp))
+//                        .background(EDSColors.purpleBackground)
+//                        .padding(vertical = 8.dp, horizontal = 16.dp)
+//                )
+            }
         }
         item {
             Text(
@@ -147,28 +189,34 @@ fun RequestedCourseDetailBody(
             )
         }
         item {
-            DetailIconAndText(
-                imageVector = Icons.Outlined.Subject,
-                boldedText = "Subject: ",
-                contentText = {
-                    Text(
-                        text = course.subjectName,
-                        fontSize = 16.sp
+            FilterChip(
+                selected = true,
+                onClick = { /*TODO*/ },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = EDSColors.primaryColor,
+                    selectedLabelColor = EDSColors.white,
+                    selectedTrailingIconColor = EDSColors.white
+                ),
+                label = {
+                    androidx.compose.material3.Text(
+                        course.subjectName,
+                        fontWeight = FontWeight.W300
                     )
                 }
             )
         }
-        item {
-            DetailIconAndText(
-                imageVector = Icons.Outlined.Info,
-                boldedText = "Status: ", contentText = {
-                    Text(
-                        text = course.requestStatus,
-                        fontSize = 16.sp
-                    )
-                }
-            )
-        }
+//        item {
+//            DetailIconAndText(
+//                imageVector = Icons.Outlined.Subject,
+//                boldedText = "Subject: ",
+//                contentText = {
+//                    Text(
+//                        text = course.subjectName,
+//                        fontSize = 16.sp
+//                    )
+//                }
+//            )
+//        }
         item {
             DetailIconAndText(
                 imageVector = Icons.Outlined.Phone,
@@ -198,34 +246,34 @@ fun RequestedCourseDetailBody(
                 }
             )
         }
-        item {
-            DetailIconAndText(
-                imageVector = Icons.Outlined.Face5,
-                boldedText = "Tutor name: ", contentText = {
-                    Text(
-                        text = course.tutorName,
-                        fontSize = 16.sp
-                    )
-                }
-            )
-        }
-        item {
-            DetailIconAndText(
-                imageVector = Icons.Outlined.Phone,
-                boldedText = "Tutor phone: ", contentText = {
-                    Text(
-                        text = course.tutorPhone,
-                        fontSize = 16.sp,
-                        color = EDSColors.costTextColor,
-                        modifier = Modifier.clickable {
-                            val uri = Uri.parse("tel: ${course.tutorPhone}")
-                            val dialIntent = Intent(Intent.ACTION_DIAL, uri)
-                            context.startActivity(dialIntent)
-                        }
-                    )
-                }
-            )
-        }
+//        item {
+//            DetailIconAndText(
+//                imageVector = Icons.Outlined.Face5,
+//                boldedText = "Tutor name: ", contentText = {
+//                    Text(
+//                        text = course.tutorName,
+//                        fontSize = 16.sp
+//                    )
+//                }
+//            )
+//        }
+//        item {
+//            DetailIconAndText(
+//                imageVector = Icons.Outlined.Phone,
+//                boldedText = "Tutor phone: ", contentText = {
+//                    Text(
+//                        text = course.tutorPhone,
+//                        fontSize = 16.sp,
+//                        color = EDSColors.costTextColor,
+//                        modifier = Modifier.clickable {
+//                            val uri = Uri.parse("tel: ${course.tutorPhone}")
+//                            val dialIntent = Intent(Intent.ACTION_DIAL, uri)
+//                            context.startActivity(dialIntent)
+//                        }
+//                    )
+//                }
+//            )
+//        }
         //        item {
         //            DetailIconAndText(
         //                Icons.Outlined.Person,

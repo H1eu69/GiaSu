@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -312,7 +313,7 @@ fun SubTitle(subTitle: String, status: String) {
     var backgroundColor = EDSColors.notScheduleBackgroundColor
     var textColor = EDSColors.notScheduleTextColor
 
-    if (status == "Success") {
+    if (status == "Done") {
         backgroundColor = EDSColors.teachingBackgroundColor
         textColor = EDSColors.teachingTextColor
     } else if (status == "Verifying") {
@@ -328,6 +329,8 @@ fun SubTitle(subTitle: String, status: String) {
     ) {
         Text(
             text = "ID: $subTitle",
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             style = TextStyle(
                 fontWeight = FontWeight.Medium,
                 color = EDSColors.myBlackColor,
@@ -339,6 +342,7 @@ fun SubTitle(subTitle: String, status: String) {
                     RoundedCornerShape(30)
                 )
                 .padding(all = 4.dp)
+                .weight(.9f)
         )
         Text(
             text = status,

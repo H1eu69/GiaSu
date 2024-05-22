@@ -102,7 +102,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Navigation(skipSplash: Boolean = false) {
     val navController = rememberNavController()
-    val startDes = if(skipSplash) Screens.InApp.route else Screens.Splash.route
+    val startDes = if (skipSplash) Screens.InApp.route else Screens.Splash.route
 
     NavHost(navController = navController, startDestination = startDes) {
         composable(Screens.Splash.route) {
@@ -224,6 +224,7 @@ fun InAppNavGraph(
     val token = remember { mutableStateOf("") }
     val avatar = remember { mutableStateOf("") }
     val role = remember { mutableStateOf("") }
+    val userId = remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = "") {
         coroutine.launch {
@@ -231,6 +232,7 @@ fun InAppNavGraph(
                 token.value = "Bearer ${preference[stringPreferencesKey(Constant.TOKEN_STRING)]}"
                 avatar.value = "${preference[stringPreferencesKey(Constant.USER_IMAGE_STRING)]}"
                 role.value = "${preference[stringPreferencesKey(Constant.USER_ROLE_STRING)]}"
+                userId.value = "${preference[stringPreferencesKey(Constant.USERID_STRING)]}"
             }
         }
     }
@@ -244,6 +246,9 @@ fun InAppNavGraph(
         composable(Screens.InApp.Home.route) {
             LaunchedEffect(homeViewModel.tutorState) {
                 homeViewModel.getTutors()
+            }
+            LaunchedEffect(Unit) {
+                homeViewModel.getRecommendedCoursesAndTutors(userId = userId.value)
             }
             HomeScreen(
                 navController, homeViewModel.homeState.value,
@@ -352,7 +357,7 @@ fun InAppNavGraph(
             LaunchedEffect(key1 = vm.state) {
                 vm.getTutorDetail(tutorId!!)
             }
-            TutorDetailScreen(navController,state = vm.state.value,
+            TutorDetailScreen(navController, state = vm.state.value,
                 requestState = vm.requestState.value,
                 onSendRequestBtnClick = { params ->
                     vm.sendRequestTutor(token.value, params)
@@ -384,7 +389,7 @@ fun InAppNavGraph(
         composable(
             "${Screens.InApp.Courses.CourseDetail.route}/{courseId}",
             arguments = listOf(navArgument("courseId") {
-                type = NavType.IntType
+                type = NavType.StringType
             })
         ) { backStackEntry ->
             val courseDetailViewModel = hiltViewModel<CourseManagementDetailViewModel>()
@@ -494,9 +499,10 @@ fun InAppNavGraph(
                     vm.getWard(it)
                 })
         }
-        composable(Screens.InApp.Profile.LearningCourses.route,
-            deepLinks = listOf(navDeepLink { uriPattern = "eds://learning_courses" }, )
-            ) {
+        composable(
+            Screens.InApp.Profile.LearningCourses.route,
+            deepLinks = listOf(navDeepLink { uriPattern = "eds://learning_courses" })
+        ) {
             val vm = hiltViewModel<LearningCoursesViewModel>()
             LearningCourseScreen(vm.state.value,
                 getLearningCourseCallback = {
@@ -543,25 +549,6 @@ fun InAppNavGraph(
     }
 }
 
-@Preview(
-    widthDp = 360,
-    heightDp = 720,)
-@Composable
-private fun BottomBarPreview() {
-    Scaffold(
-        bottomBar = {
-            BottomBar(
-                rememberNavController(),
-                {
-
-                }
-            )
-        }
-    ) {
-
-    }
-}
-
 @Composable
 fun BottomBar(navController: NavHostController, onSelectedClick: (BottomBarScreens) -> Unit) {
     val screens = listOf(
@@ -581,6 +568,7 @@ fun BottomBar(navController: NavHostController, onSelectedClick: (BottomBarScree
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(EDSColors.white)
                 .shadow(1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically

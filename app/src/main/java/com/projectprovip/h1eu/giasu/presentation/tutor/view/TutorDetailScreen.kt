@@ -115,17 +115,7 @@ fun TutorDetailScreen(
     requestState: RequestTutorState,
     onSendRequestBtnClick: (RequestTutorParams) -> Unit,
 ) {
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission Accepted: Do something
-                Log.d("ExampleScreen", "PERMISSION GRANTED")
 
-            } else {
-                // Permission Denied: Do something
-                Log.d("ExampleScreen", "PERMISSION DENIED")
-            }
-        }
     val showBottomSheet = remember { mutableStateOf(false) }
     val dialogText = remember {
         mutableStateOf("")
@@ -140,17 +130,31 @@ fun TutorDetailScreen(
                     showBottomSheet.value = false
                 }
                 this.error.isNotEmpty() -> {
+                    Toast.makeText(context, "Unexpected error, please try again later", Toast.LENGTH_SHORT).show()
+                    showBottomSheet.value = false
                     Log.e("RequestTutor", this.error)
                 }
             }
         }
     }
+
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                showBottomSheet.value = true
+                Log.d("ExampleScreen", "PERMISSION GRANTED")
+
+            } else {
+                // Permission Denied: Do something
+                Log.d("ExampleScreen", "PERMISSION DENIED")
+            }
+        }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(title = { },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = EDSColors.white
-
                 ),
                 navigationIcon = {
                     IconButton(onClick = {
@@ -168,7 +172,7 @@ fun TutorDetailScreen(
 
     ) {
         if (showBottomSheet.value)
-            CourseRegisterPaymentBottomSheet(
+            RequestTutorBottomSheet(
                 onDismissRequest = { showBottomSheet.value = false },
                 text = dialogText.value,
                 onTextChange = {
@@ -490,7 +494,7 @@ fun ReviewItem(rate: Int, reviewer: String, review: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CourseRegisterPaymentBottomSheet(
+private fun RequestTutorBottomSheet(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     sheetState: SheetState = rememberModalBottomSheetState(

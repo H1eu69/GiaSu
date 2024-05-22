@@ -284,7 +284,6 @@ fun HomeScreen(
     ) {
         Box(
             Modifier
-                .padding(it)
                 .background(
                     EDSColors.white
                 )

@@ -2,7 +2,7 @@ package com.projectprovip.h1eu.giasu.domain.course.model
 
 data class RequestedCourseDetail(
     val courseId: String = "-1",
-    val creationTime: String = "2023-12-26T22:56:45",
+//    val creationTime: String = "2023-12-26T22:56:45",
     val description: String = "dummy description",
     val id: String = "-1",
     val learnerContact: String= "dummy description",

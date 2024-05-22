@@ -235,10 +235,10 @@ fun CourseDetailBody(
     recommendedCourseState: RecommendCoursesState,
     course: CourseDetail
 ) {
-    var statusTextColor = EDSColors.notScheduleTextColor
     val pagerState = rememberPagerState(pageCount = {
         recommendedCourseState.data.size
     })
+    var statusTextColor = EDSColors.notScheduleTextColor
 
     if (course.status == "Available") {
         statusTextColor = EDSColors.teachingTextColor
@@ -687,17 +687,23 @@ fun CourseRegisterPaymentBottomSheet(
                     )
                 }
             }
-
+            item {
+                Text(
+                    text = "Done payment? Notify us by clicking button below",
+                    modifier = Modifier.padding(top = 8.dp),
+                    style = EDSTextStyle.H2Reg()
+                )
+            }
             item {
                 ElevatedButton(
                     onClick = {
-                        onButtonClick()
-                        val deepLinkIntent = Intent(
-                            Intent.ACTION_VIEW,
-                            "https://dl.vietqr.io/pay?app=icb"
-                                .toUri(),
-                        )
-                        startActivity(context, deepLinkIntent, null)
+//                        onButtonClick()
+//                        val deepLinkIntent = Intent(
+//                            Intent.ACTION_VIEW,
+//                            "https://www.bidvsmartbanking.vn"
+//                                .toUri(),
+//                        )
+//                        startActivity(context, deepLinkIntent, null)
 
                     },
                     modifier = Modifier
@@ -708,7 +714,7 @@ fun CourseRegisterPaymentBottomSheet(
                         containerColor = EDSColors.primaryColor,
                     )
                 ) {
-                    Text("Send request", style = EDSTextStyle.H2Reg(EDSColors.white))
+                    Text("Notify payment", style = EDSTextStyle.H2Reg(EDSColors.white))
                 }
             }
         }
