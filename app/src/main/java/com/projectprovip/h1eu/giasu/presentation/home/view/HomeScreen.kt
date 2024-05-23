@@ -92,6 +92,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
 import com.projectprovip.h1eu.giasu.presentation.home.model.TutorState
+import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -214,316 +215,380 @@ fun HomeScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
+    when (state.isLoading || tutorState.isLoading) {
+        true -> ShimmerLoading()
+        false -> Scaffold(
+            topBar = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            EDSColors.white
+                        ),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 8.dp, start = 8.dp),
+                        horizontalAlignment = Alignment.Start,
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AsyncImage(
+                                userImage.value,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+
+                                    })
+                            Text(text = "Hello, ", style = EDSTextStyle.H1Reg())
+                            Text(
+                                text = userName.value,
+                                style = EDSTextStyle.H1MedBold()
+                            )
+                        }
+                    }
+                    Row {
+                        IconButton(onClick = {
+                            navController.navigate(Screens.InApp.Profile.RequestClass.route)
+                        }) {
+
+                            Icon(
+                                Icons.Filled.Add, null,
+                                tint = EDSColors.blackColor,
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .background(EDSColors.grayX4, CircleShape)
+                                    .padding(4.dp)
+                            )
+                        }
+                        IconButton(onClick = {
+                            navController.navigate(Screens.InApp.Home.SearchSuggest.route)
+                        }) {
+
+                            Icon(
+                                Icons.Filled.Search, null,
+                                tint = EDSColors.blackColor,
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .background(EDSColors.grayX4, CircleShape)
+                                    .padding(4.dp)
+                            )
+                        }
+                    }
+
+                }
+            }
+        ) {
+            Box(
+                Modifier
                     .background(
                         EDSColors.white
-                    ),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    )
+                    .padding(top = 8.dp)
+                    .fillMaxSize()
+                    .background(
+                        EDSColors.white,
+                    )
+                    .padding(horizontal = 16.dp)
+                    .pullRefresh(::onPull, ::onRelease)
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(top = 8.dp, start = 8.dp),
-                    horizontalAlignment = Alignment.Start,
+                LazyColumn(
+                    state = lazyListState,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AsyncImage(
-                            userImage.value,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(30.dp)
-                                .clip(CircleShape)
-                                .clickable {
-
-                                })
-                        Text(text = "Hello, ", style = EDSTextStyle.H1Reg())
-                        Text(
-                            text = userName.value,
-                            style = EDSTextStyle.H1MedBold()
-                        )
-                    }
-                }
-                Row {
-                    IconButton(onClick = {
-                        navController.navigate(Screens.InApp.Profile.RequestClass.route)
-                    }) {
-
-                        Icon(
-                            Icons.Filled.Add, null,
-                            tint = EDSColors.blackColor,
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .background(EDSColors.grayX4, CircleShape)
-                                .padding(4.dp)
-                        )
-                    }
-                    IconButton(onClick = {
-                        navController.navigate(Screens.InApp.Home.SearchSuggest.route)
-                    }) {
-
-                        Icon(
-                            Icons.Filled.Search, null,
-                            tint = EDSColors.blackColor,
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .background(EDSColors.grayX4, CircleShape)
-                                .padding(4.dp)
-                        )
-                    }
-                }
-
-            }
-        }
-    ) {
-        Box(
-            Modifier
-                .background(
-                    EDSColors.white
-                )
-                .padding(top = 8.dp)
-                .fillMaxSize()
-                .background(
-                    EDSColors.white,
-                )
-                .padding(horizontal = 16.dp)
-                .pullRefresh(::onPull, ::onRelease)
-        ) {
-            LazyColumn(
-                state = lazyListState,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.discover),
-                            contentDescription = null,
-                        )
-                        Text(
-                            "Categories",
-                            style = EDSTextStyle.H2Bold()
-                        )
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    item {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            item {
-                                CategoryItem(
-                                    R.drawable.it,
-                                    "IT"
-                                ) {
-                                    navController.navigate(
-                                        "${
-                                            Screens.InApp.Home.SearchResult.route
-                                        }/IT"
-                                    )
+                            Image(
+                                painter = painterResource(id = R.drawable.discover),
+                                contentDescription = null,
+                            )
+                            Text(
+                                "Categories",
+                                style = EDSTextStyle.H2Bold()
+                            )
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                item {
+                                    CategoryItem(
+                                        R.drawable.it,
+                                        "IT"
+                                    ) {
+                                        navController.navigate(
+                                            "${
+                                                Screens.InApp.Home.SearchResult.route
+                                            }/IT"
+                                        )
+                                    }
                                 }
-                            }
 
-                            item {
-                                CategoryItem(
-                                    R.drawable.calculating,
-                                    "Math"
-                                ) {
-                                    navController.navigate(
-                                        "${
-                                            Screens.InApp.Home.SearchResult.route
-                                        }/Math"
-                                    )
+                                item {
+                                    CategoryItem(
+                                        R.drawable.calculating,
+                                        "Math"
+                                    ) {
+                                        navController.navigate(
+                                            "${
+                                                Screens.InApp.Home.SearchResult.route
+                                            }/Math"
+                                        )
+                                    }
                                 }
-                            }
 
-                            item {
-                                CategoryItem(
-                                    R.drawable.chess,
-                                    "Chess"
-                                )
-                                {
-                                    navController.navigate(
-                                        "${
-                                            Screens.InApp.Home.SearchResult.route
-                                        }/Chess"
+                                item {
+                                    CategoryItem(
+                                        R.drawable.chess,
+                                        "Chess"
                                     )
+                                    {
+                                        navController.navigate(
+                                            "${
+                                                Screens.InApp.Home.SearchResult.route
+                                            }/Chess"
+                                        )
+                                    }
                                 }
-                            }
 
-                            item {
-                                CategoryItem(
-                                    R.drawable.economic,
-                                    "Economy"
-                                )
-                                {
-                                    navController.navigate(
-                                        "${
-                                            Screens.InApp.Home.SearchResult.route
-                                        }/Economy"
+                                item {
+                                    CategoryItem(
+                                        R.drawable.economic,
+                                        "Economy"
                                     )
+                                    {
+                                        navController.navigate(
+                                            "${
+                                                Screens.InApp.Home.SearchResult.route
+                                            }/Economy"
+                                        )
+                                    }
                                 }
-                            }
 
-                            item {
-                                CategoryItem(
-                                    R.drawable.history,
-                                    "History"
-                                )
-                                {
-                                    navController.navigate(
-                                        "${
-                                            Screens.InApp.Home.SearchResult.route
-                                        }/History"
+                                item {
+                                    CategoryItem(
+                                        R.drawable.history,
+                                        "History"
                                     )
+                                    {
+                                        navController.navigate(
+                                            "${
+                                                Screens.InApp.Home.SearchResult.route
+                                            }/History"
+                                        )
+                                    }
                                 }
-                            }
 
-                            item {
-                                CategoryItem(
-                                    R.drawable.math,
-                                    "Advanced Math"
-                                )
-                                {
-                                    navController.navigate(
-                                        "${
-                                            Screens.InApp.Home.SearchResult.route
-                                        }/Advanced Math"
+                                item {
+                                    CategoryItem(
+                                        R.drawable.math,
+                                        "Advanced Math"
                                     )
+                                    {
+                                        navController.navigate(
+                                            "${
+                                                Screens.InApp.Home.SearchResult.route
+                                            }/Advanced Math"
+                                        )
+                                    }
                                 }
-                            }
 
-                            item {
-                                CategoryItem(
-                                    R.drawable.music,
-                                    "Music"
-                                )
-                                {
-                                    navController.navigate(
-                                        "${
-                                            Screens.InApp.Home.SearchResult.route
-                                        }/Music"
+                                item {
+                                    CategoryItem(
+                                        R.drawable.music,
+                                        "Music"
                                     )
+                                    {
+                                        navController.navigate(
+                                            "${
+                                                Screens.InApp.Home.SearchResult.route
+                                            }/Music"
+                                        )
+                                    }
                                 }
-                            }
 
-                            item {
-                                CategoryItem(
-                                    R.drawable.politics,
-                                    "Politics"
-                                ) {
-                                    navController.navigate(
-                                        "${
-                                            Screens.InApp.Home.SearchResult.route
-                                        }/Politics"
+                                item {
+                                    CategoryItem(
+                                        R.drawable.politics,
+                                        "Politics"
+                                    ) {
+                                        navController.navigate(
+                                            "${
+                                                Screens.InApp.Home.SearchResult.route
+                                            }/Politics"
+                                        )
+                                    }
+                                }
+
+                                item {
+                                    CategoryItem(
+                                        R.drawable.swimmer,
+                                        "Swimming"
                                     )
-                                }
-                            }
-
-                            item {
-                                CategoryItem(
-                                    R.drawable.swimmer,
-                                    "Swimming"
-                                )
-                                {
-                                    navController.navigate(
-                                        "${
-                                            Screens.InApp.Home.SearchResult.route
-                                        }/Swimming  "
-                                    )
-                                }
-                            }
-                        }
-                        Text(
-                            "Tutors pick for you",
-                            style = EDSTextStyle.H2Bold()
-                        )
-                        tutorState.apply {
-                            when {
-                                this.isLoading -> {}
-                                this.data.isNotEmpty() -> {
-                                    LazyRow {
-                                        items(tutorState.data.count()) { index ->
-                                            TutorItem(tutor = tutorState.data[index]) {
-                                                navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$it")
-
-                                            }
-                                        }
+                                    {
+                                        navController.navigate(
+                                            "${
+                                                Screens.InApp.Home.SearchResult.route
+                                            }/Swimming  "
+                                        )
                                     }
                                 }
                             }
+                            Text(
+                                "Tutors pick for you",
+                                style = EDSTextStyle.H2Bold()
+                            )
+                            LazyRow {
+                                items(tutorState.data.count()) { index ->
+                                    TutorItem(tutor = tutorState.data[index]) {
+                                        navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$it")
+
+                                    }
+                                }
+                            }
+
+
+                            Text(
+                                "Popular Courses",
+                                style = EDSTextStyle.H2Bold()
+                            )
                         }
-
-
-                        Text(
-                            "Popular Courses",
-                            style = EDSTextStyle.H2Bold()
+                    }
+                    items(state.data.count()) { index ->
+                        CourseItem(
+                            onClick = {
+                                navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${state.data[index].id}")
+                            },
+                            data = state.data[index],
+                            modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
                         )
+                        if (index == state.data.count() - 2) {
+                            onLoadMore()
+                        }
                     }
-                }
-                state.apply {
-                    when {
-                        this.isLoading -> item {
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                ShimmerCourse()
-                                ShimmerCourse()
-                                ShimmerCourse()
-                                ShimmerCourse()
-                                ShimmerCourse()
-
-                            }
-//                        Box(
-//                            contentAlignment = Alignment.Center,
-//                            modifier = Modifier.fillMaxSize()
-//                        ) {
-//                            CircularProgressIndicator(
-//                                color = EDSColors.primaryColor
-//                            )
+//                state.apply {
+//                    when {
+//
+//                        state.data.isNotEmpty() ->
+//
+//                            items(state.data.count()) { index ->
+//                                CourseItem(
+//                                    onClick = {
+//                                        navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${state.data[index].id}")
+//                                    },
+//                                    data = state.data[index],
+//                                    modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
+//                                )
+//                                if (index == state.data.count() - 2) {
+//                                    onLoadMore()
+//                                }
+//                            }
+//
+//                        this.data.isEmpty() -> {
+//                            items(20) { index ->
+//                                CourseItem(data = CourseDetail()) {
+//
+//                                }
+//                            }
 //                        }
-                        }
-
-                        this.data.isNotEmpty() ->
-
-                            items(state.data.count()) { index ->
-                                CourseItem(
-                                    onClick = {
-                                        navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${state.data[index].id}")
-                                    },
-                                    data = state.data[index],
-                                    modifier = Modifier.padding(top = if (index == 0) 16.dp else 0.dp)
-                                )
-                                if (index == state.data.count() - 2) {
-                                    onLoadMore()
-                                }
-                            }
-
-                        this.data.isEmpty() -> {
-                            items(20) { index ->
-                                CourseItem(data = CourseDetail()) {
-
-                                }
-                            }
-                        }
-                    }
+//                    }
+//                }
                 }
+
+                PullRefreshIndicator(
+                    refreshing.value,
+                    pullRefreshState,
+                    Modifier.align(Alignment.TopCenter),
+                    contentColor = EDSColors.primaryColor
+                )
             }
 
-            PullRefreshIndicator(
-                refreshing.value,
-                pullRefreshState,
-                Modifier.align(Alignment.TopCenter),
-                contentColor = EDSColors.primaryColor
-            )
         }
-
     }
 }
+
+@Preview
+@Composable
+private fun PreviewShimmerLoading() {
+    Surface {
+        ShimmerLoading()
+    }
+}
+
+@Composable
+private fun ShimmerLoading() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .height(19.dp)
+                    .width(100.dp)
+
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                CategoryShimmer()
+                CategoryShimmer()
+                CategoryShimmer()
+                CategoryShimmer()
+                CategoryShimmer()
+                CategoryShimmer()
+                CategoryShimmer()
+                CategoryShimmer()
+            }
+            Box(
+                modifier = Modifier
+                    .height(19.dp)
+                    .width(100.dp)
+
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                TutorShimmer()
+                TutorShimmer()
+                TutorShimmer()
+                TutorShimmer()
+                TutorShimmer()
+            }
+
+
+            Box(
+                modifier = Modifier
+                    .height(19.dp)
+                    .width(100.dp)
+
+            )
+        }
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            ShimmerCourse()
+            ShimmerCourse()
+            ShimmerCourse()
+            ShimmerCourse()
+            ShimmerCourse()
+
+        }
+    }
+
+}
+
 
 @Composable
 @Preview
@@ -891,6 +956,37 @@ private fun PreviewCategoryItem() {
     }
 }
 
+@Preview
+@Composable
+private fun PreviewCategoryShimmer() {
+    Surface {
+        CategoryShimmer()
+    }
+}
+
+@Composable
+private fun CategoryShimmer() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier.shimmer()
+    ) {
+        Box(
+            modifier = Modifier
+                .size(30.dp)
+                .background(EDSColors.grayX3)
+
+        )
+
+        Box(
+            modifier = Modifier
+                .height(19.dp)
+                .width(30.dp)
+                .background(EDSColors.grayX3)
+        )
+    }
+}
+
 @Composable
 private fun CategoryItem(resourceId: Int, text: String, onClick: () -> Unit) {
     val mutableInteractionSource = remember {
@@ -920,6 +1016,82 @@ private fun CategoryItem(resourceId: Int, text: String, onClick: () -> Unit) {
                 max = 70.dp
             ),
         )
+    }
+}
+
+@Composable
+private fun TutorShimmer() {
+    Card(
+        shape = RoundedCornerShape(10),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = EDSColors.white
+        ),
+        border = BorderStroke(1.dp, EDSColors.gray),
+        elevation = CardDefaults.outlinedCardElevation(3.dp),
+        modifier = Modifier
+            .padding(8.dp)
+            .width(150.dp)
+            .clip(
+                RoundedCornerShape(10)
+            )
+            .shimmer()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+
+                    .background(EDSColors.grayX2)
+
+            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(20.dp)
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+
+                        .background(EDSColors.grayX2)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+
+                        .background(EDSColors.grayX2)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+
+                        .background(EDSColors.grayX2)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+
+                        .background(EDSColors.grayX2)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+
+                        .background(EDSColors.grayX2)
+                )
+            }
+        }
     }
 }
 

@@ -247,7 +247,7 @@ fun InAppNavGraph(
             LaunchedEffect(homeViewModel.tutorState) {
                 homeViewModel.getTutors()
             }
-            LaunchedEffect(Unit) {
+            LaunchedEffect(userId.value) {
                 homeViewModel.getRecommendedCoursesAndTutors(userId = userId.value)
             }
             HomeScreen(

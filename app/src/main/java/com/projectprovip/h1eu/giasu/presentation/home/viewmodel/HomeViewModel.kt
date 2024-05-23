@@ -45,6 +45,8 @@ class HomeViewModel @Inject constructor(
 
     fun getRecommendedCoursesAndTutors(userId: String) {
         Log.d("getRecommendedCoursesAndTutors", "userId: $userId")
+        if(userId.isEmpty()) return //Prevent calling api for the first name because userId is always empty at the first time
+
         viewModelScope.launch {
             getRecommendCoursesByUserIdUseCase(userId).onEach {
                 when (it) {
@@ -62,7 +64,6 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             }.launchIn(this)
-
 
             getRecommendTutorsByUserIdUseCase(userId).onEach {
                 when (it) {

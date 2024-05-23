@@ -1,7 +1,5 @@
 package com.projectprovip.h1eu.giasu.presentation.common.composes
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -26,12 +24,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Cake
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.School
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -62,13 +54,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -86,14 +74,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
-import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
-import com.projectprovip.h1eu.giasu.domain.tutor.model.Tutor
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import com.projectprovip.h1eu.giasu.presentation.home.view.BottomContent
-import com.projectprovip.h1eu.giasu.presentation.home.view.CourseItem
-import com.projectprovip.h1eu.giasu.presentation.home.view.MiddleContent
-import com.projectprovip.h1eu.giasu.presentation.tutor.view.IconAndText
-import com.projectprovip.h1eu.giasu.presentation.tutor.view.TutorItem
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.delay
 
@@ -535,13 +516,13 @@ fun ShimmerTutorList() {
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(count = listCount) { index ->
-            ShimmerTutor()
+            TutorShimmer()
         }
     }
 }
 
 @Composable
-private fun ShimmerTutor() {
+fun TutorShimmer() {
     Card(
         shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
