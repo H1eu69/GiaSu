@@ -2,6 +2,8 @@ package com.projectprovip.h1eu.giasu.presentation.tutor.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -69,6 +71,7 @@ fun SearchResultTutorScreenPreview() {
 @Composable
 fun SearchResultTutorScreen(
     navController: NavController,
+    searchText: String = "",
     state: TutorListState = TutorListState(
         data = listOf(
             Tutor(),
@@ -90,7 +93,10 @@ fun SearchResultTutorScreen(
 ) {
     val focusManager = LocalFocusManager.current
     val searchTextField = remember {
-        mutableStateOf("Lap trinh java Ho Chi Minh")
+        mutableStateOf(searchText)
+    }
+    val interactionSource = remember {
+        MutableInteractionSource()
     }
 
     Scaffold(
@@ -134,7 +140,13 @@ fun SearchResultTutorScreen(
                                 RoundedCornerShape(50)
                             )
                             .height(IntrinsicSize.Max)
-                            .fillMaxWidth(.85f),
+                            .fillMaxWidth(.85f)
+                            .clickable(
+                                interactionSource,
+                                null
+                            ) {
+                                navController.popBackStack()
+                            },
                     ) {
                         Box(
                             contentAlignment = Alignment.CenterStart,
@@ -209,7 +221,7 @@ fun SearchResultTutorScreen(
                                                 append("Result for")
                                             }
                                             append(" ")
-                                            append("Lap trinh Java Ho Chi Mnh")
+                                            append(searchText)
                                         }
                                     )
                                 },

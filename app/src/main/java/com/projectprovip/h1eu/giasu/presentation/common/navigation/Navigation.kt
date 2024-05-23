@@ -336,12 +336,25 @@ fun InAppNavGraph(
                 lazyListState = tutorListState,
             )
         }
-
-        composable(Screens.InApp.Tutor.SearchSuggest.route) {
+        composable(
+            Screens.InApp.Tutor.SearchSuggest.route,
+        ) {
             SearchSuggestTutorScreen(navController)
         }
-        composable(Screens.InApp.Tutor.SearchResult.route) {
-            SearchResultTutorScreen(navController)
+        composable(
+            "${Screens.InApp.Tutor.SearchSuggest.route}/{searchText}",
+            arguments = listOf(navArgument("searchText") { type = NavType.StringType })
+        ) {
+            val searchText = it.arguments?.getString("searchText")
+            SearchSuggestTutorScreen(navController, searchText = searchText ?: "")
+        }
+        composable(
+            "${Screens.InApp.Tutor.SearchResult.route}/{searchText}",
+            arguments = listOf(navArgument("searchText") { type = NavType.StringType })
+        ) {
+            val searchText = it.arguments?.getString("searchText")
+
+            SearchResultTutorScreen(navController, searchText = searchText ?: "")
         }
 
         composable("${Screens.InApp.Tutor.TutorDetail.route}/{tutorId}",

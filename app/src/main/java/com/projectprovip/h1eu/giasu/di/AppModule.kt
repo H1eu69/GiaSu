@@ -29,8 +29,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -38,7 +40,7 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideUserAuthApi() : UserAuthApi {
+    fun provideUserAuthApi(): UserAuthApi {
         return Retrofit.Builder()
             .baseUrl(Constant.API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -48,7 +50,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideClassesApi() : CourseApi {
+    fun provideClassesApi(): CourseApi {
         return Retrofit.Builder()
             .baseUrl(Constant.API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -58,7 +60,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideTutorApi() : TutorApi {
+    fun provideTutorApi(): TutorApi {
         return Retrofit.Builder()
             .baseUrl(Constant.API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -68,7 +70,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideBankApi() : BankDeeplinkApi {
+    fun provideBankApi(): BankDeeplinkApi {
         return Retrofit.Builder()
             .baseUrl(Constant.DEEPLINK_BANK_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -78,7 +80,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLocationApi() : LocationApi {
+    fun provideLocationApi(): LocationApi {
         return Retrofit.Builder()
             .baseUrl(Constant.LOCATION_API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -88,7 +90,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideProfileApi() : ProfileApi {
+    fun provideProfileApi(): ProfileApi {
         return Retrofit.Builder()
             .baseUrl(Constant.API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -98,7 +100,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSubjectApi() : SubjectApi {
+    fun provideSubjectApi(): SubjectApi {
         return Retrofit.Builder()
             .baseUrl(Constant.API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -108,9 +110,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRecommendCourseApi() : RecommendCourseApi {
+    fun provideRecommendCourseApi(): RecommendCourseApi {
+        val okHttpClient = OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS) // 30 seconds connection timeout
+            .readTimeout(15, TimeUnit.SECONDS)    // 30 seconds read timeout
+            .writeTimeout(15, TimeUnit.SECONDS)   // 30 seconds write timeout
+            .build()
+
         return Retrofit.Builder()
             .baseUrl(Constant.RECOMMEND_API_BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(RecommendCourseApi::class.java)
@@ -118,49 +127,50 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(api : UserAuthApi) : UserRepository{
+    fun provideUserRepository(api: UserAuthApi): UserRepository {
         return UserRepositoryImpl(api)
     }
 
     @Provides
     @Singleton
-    fun provideClassesRepository(api : CourseApi) : CoursesRepository {
+    fun provideClassesRepository(api: CourseApi): CoursesRepository {
         return CourseRepositoryImpl(api)
     }
 
 
     @Provides
     @Singleton
-    fun provideTutorsRepository(api : TutorApi) : TutorRepository {
+    fun provideTutorsRepository(api: TutorApi): TutorRepository {
         return TutorRepositoryImpl(api)
     }
 
     @Provides
     @Singleton
-    fun provideProvinceRepository(api : LocationApi) : LocationRepository {
+    fun provideProvinceRepository(api: LocationApi): LocationRepository {
         return LocationRepositoryImpl(api)
     }
 
     @Provides
     @Singleton
-    fun provideProfileRepository(api : ProfileApi) : ProfileRepository {
+    fun provideProfileRepository(api: ProfileApi): ProfileRepository {
         return ProfileRepositoryImpl(api)
     }
 
     @Provides
     @Singleton
-    fun provideSubjectRepository(api : SubjectApi) : SubjectRepository {
+    fun provideSubjectRepository(api: SubjectApi): SubjectRepository {
         return SubjectRepositoryImpl(api)
     }
+
     @Provides
     @Singleton
-    fun provideRecommendCoursesRepository(api : RecommendCourseApi) : RecommendCourseRepository {
+    fun provideRecommendCoursesRepository(api: RecommendCourseApi): RecommendCourseRepository {
         return RecommendCoursesRepositoryImpl(api)
     }
 
     @Provides
     @Singleton
-    fun provideBankDeeplinkRepository(api : BankDeeplinkApi) : BankDeeplinkRepository {
+    fun provideBankDeeplinkRepository(api: BankDeeplinkApi): BankDeeplinkRepository {
         return BankDeeplinkRepositoryImpl(api)
     }
 }

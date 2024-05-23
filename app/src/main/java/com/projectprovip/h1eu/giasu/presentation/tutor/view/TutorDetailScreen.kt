@@ -289,12 +289,13 @@ fun TutorDetailScreen(
                                 }
                             }
                             item {
+                                val academic = if( state.data.academicLevel != "UnderGraduated")  state.data.academicLevel else "Student"
                                 DetailIconAndText(
                                     Icons.Filled.AutoStories,
                                     "Graduation",
                                 ) {
                                     Text(
-                                        text = state.data.academicLevel,
+                                        text = academic,
                                         textAlign = TextAlign.End,
                                         color = EDSColors.costTextColor,
                                         fontWeight = FontWeight.Medium,

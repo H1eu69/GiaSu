@@ -925,6 +925,8 @@ private fun CategoryItem(resourceId: Int, text: String, onClick: () -> Unit) {
 
 @Composable
 private fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
+    val academicLevel =
+        if (tutor.academicLevel != "UnderGraduated") tutor.academicLevel else "Student"
     Card(shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
             containerColor = EDSColors.white
@@ -978,7 +980,7 @@ private fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
             Box {
                 com.projectprovip.h1eu.giasu.presentation.tutor.view.IconAndText(
                     Icons.Outlined.Info,
-                    tutor.academicLevel,
+                    academicLevel,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
                 )

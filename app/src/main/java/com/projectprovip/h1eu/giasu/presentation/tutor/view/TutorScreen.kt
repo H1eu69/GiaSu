@@ -38,6 +38,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -177,15 +178,17 @@ fun TutorScreen(
     ) {
 
         when {
-            state.value.isLoading ->  {
+            state.value.isLoading -> {
                 ShimmerTutorList()
             }
 
             state.value.error.isNotEmpty() -> {
-                Toast.makeText(context, state.value.error, Toast.LENGTH_SHORT).show()
+                LaunchedEffect(key1 = state.value.error) {
+                    Toast.makeText(context, state.value.error, Toast.LENGTH_SHORT).show()
+                }
             }
 
-            state.value.data.isNotEmpty() ->  {
+            state.value.data.isNotEmpty() -> {
                 InfiniteStaggeredList(state.value.data,
                     modifier = Modifier
                         .padding(it)
@@ -229,6 +232,8 @@ fun InfiniteStaggeredList(
 
 @Composable
 fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
+    val academicLevel =
+        if (tutor.academicLevel != "UnderGraduated") tutor.academicLevel else "Student"
     Card(shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
             containerColor = EDSColors.white
@@ -265,7 +270,7 @@ fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
             )
             IconAndText(
                 Icons.Outlined.Info,
-                tutor.academicLevel,
+                academicLevel,
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             IconAndText(
