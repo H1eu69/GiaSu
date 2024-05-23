@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.common.alphaNumericOnly
+import com.projectprovip.h1eu.giasu.presentation.common.alphaNumericOnly
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import com.projectprovip.h1eu.giasu.domain.course.usecase.GetLearningCourseDetailUseCase
 import com.projectprovip.h1eu.giasu.domain.tutor.usecase.ReviewTutorUseCase
@@ -28,17 +28,17 @@ class TutorReviewViewModel @Inject constructor(
     private var _learningCourseDetailState = mutableStateOf(LearningCourseDetailState())
     val learningCourseDetailState: State<LearningCourseDetailState> = _learningCourseDetailState
 
-    fun sendReviewRequest(auth: String, courseId: Int, reviewTutorInput: ReviewTutorInput) {
+    fun sendReviewRequest(auth: String, courseId: String, reviewTutorInput: ReviewTutorInput) {
         reviewTutorUseCase(auth, courseId, reviewTutorInput).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {
                     _reviewTutorState.value = ReviewTutorState(isLoading = true)
-                    Log.d("Test state", "loading")
+                    Log.d("Test state tutor review", "loading")
                 }
 
                 is EDSResult.Error -> {
                     _reviewTutorState.value = ReviewTutorState(message = result.message!!.alphaNumericOnly())
-                    Log.d("Test state", "error")
+                    Log.d("Test state tutor review", "error")
                 }
 
                 is EDSResult.Success -> {
@@ -46,13 +46,14 @@ class TutorReviewViewModel @Inject constructor(
                         success = true,
                         message = "Review successfully"
                     )
-                    Log.d("Test state", "success")
+                    Log.d("Test state tutor review", "success")
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    fun getLearningCourseData(auth: String, courseId: Int) {
+    fun getLearningCourseData(auth: String, courseId: String) {
+        Log.d("Test courseId review tutor", courseId)
         getLearningCourseDetailUseCase(auth, courseId).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {

@@ -6,16 +6,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.common.isEmailFormatted
-import com.projectprovip.h1eu.giasu.common.isPasswordFormatted
-import com.projectprovip.h1eu.giasu.common.isPhoneNumber
-import com.projectprovip.h1eu.giasu.common.isUsername
-import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
+import com.projectprovip.h1eu.giasu.presentation.common.isEmailFormatted
+import com.projectprovip.h1eu.giasu.presentation.common.isPasswordFormatted
+import com.projectprovip.h1eu.giasu.presentation.common.isPhoneNumber
+import com.projectprovip.h1eu.giasu.presentation.common.isUsername
+import com.projectprovip.h1eu.giasu.domain.authentication.model.UserSignUpParams
 import com.projectprovip.h1eu.giasu.domain.authentication.usecase.SignUpUseCase
 import com.projectprovip.h1eu.giasu.domain.location.usecase.GetProvinceUseCase
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.SignUpState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.Validate
+import com.projectprovip.h1eu.giasu.presentation.authentication.model.toProvinceItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -46,8 +47,11 @@ class SignUpViewModel @Inject constructor(
                 }
 
                 is EDSResult.Success -> {
+                    val provinceItem = result.data!!.map {
+                        it.toProvinceItem()
+                    }
                     _provinceState.value = ProvinceState(
-                        province = result.data!!
+                        province = provinceItem
                     )
                     Log.d("SignUpViewModel", _provinceState.value.toString())
 
@@ -56,7 +60,8 @@ class SignUpViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun signUp(input: UserSignUpInput) {
+    fun signUp(input: UserSignUpParams) {
+        Log.d("SignUpViewModel", input.toString())
         signUpUseCase(input).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {

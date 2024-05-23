@@ -1,7 +1,7 @@
 package com.projectprovip.h1eu.giasu.domain.profile.usecase
 
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.profile.dto.toProfile
+import com.projectprovip.h1eu.giasu.data.profile.dto.profileDto.toProfile
 import com.projectprovip.h1eu.giasu.domain.profile.model.Profile
 import com.projectprovip.h1eu.giasu.domain.profile.repository.ProfileRepository
 import kotlinx.coroutines.flow.flow

@@ -95,6 +95,7 @@ fun LoginScreen(
     val useridKey = stringPreferencesKey(Constant.USERID_STRING)
     val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
     val userEmailKey = stringPreferencesKey(Constant.USER_EMAIL_STRING)
+    val userRoleKey = stringPreferencesKey(Constant.USER_ROLE_STRING)
     var passwordVisibility = remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -109,6 +110,7 @@ fun LoginScreen(
                     preferences[useridKey] = state.user.id
                     preferences[userImageKey] = state.user.avatar
                     preferences[userEmailKey] = state.user.email
+                    preferences[userRoleKey] = state.user.role
                 }
                 navController.navigate(Screens.InApp.route) {
                     popUpTo(Screens.Authentication.route) {
