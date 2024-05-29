@@ -75,6 +75,7 @@ import com.projectprovip.h1eu.giasu.presentation.home.view.SearchSuggestHomeScre
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.SearchResultViewModel
+import com.projectprovip.h1eu.giasu.presentation.profile.view.CoursePaymentScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CreateClassScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.LearningCourseScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.LocationPickScreen
@@ -82,6 +83,7 @@ import com.projectprovip.h1eu.giasu.presentation.profile.view.ProfileScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorRegisterScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorReviewScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.UpdateProfile
+import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CoursePaymentViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CreateClassViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCoursesViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LocationPickViewModel
@@ -432,6 +434,16 @@ fun InAppNavGraph(
                 registerTutor = { s1, s2, s3, s4 ->
                     vm.registerTutor(token.value, s1, s2, s3, s4)
                 },
+            )
+        }
+        composable(Screens.InApp.Profile.CoursePayment.route) {
+            val vm = hiltViewModel<CoursePaymentViewModel>()
+            LaunchedEffect(Unit) {
+                vm.getCoursesPayment(token.value)
+            }
+            CoursePaymentScreen(
+                navController,
+                vm.state.value,
             )
         }
 

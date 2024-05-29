@@ -53,6 +53,7 @@ sealed class Screens(val route: String) {
             }
 
             object TutorRegistration : Screens(route = "tutor_registration")
+            object CoursePayment : Screens(route = "course_payment")
             object LearningCourses : Screens(route = "learning_courses") {
                 object TutorReview : Screens(route = "tutor_review")
             }

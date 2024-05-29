@@ -5,6 +5,7 @@ import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCour
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.requested_course_detail.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
+import com.projectprovip.h1eu.giasu.data.course.dto.course_payment.CoursePaymentDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course_detail_dto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
@@ -61,5 +62,9 @@ class CourseRepositoryImpl @Inject constructor(
         input: ReviewTutorInput
     ): ReviewTutorDto {
         return api.reviewTutorOfByCourseId(token, courseId, input)
+    }
+
+    override suspend fun getCoursePayment(token: String): CoursePaymentDto {
+        return api.getCoursesPayment(token)
     }
 }

@@ -89,7 +89,7 @@ fun ClassManagementScreen(
     val tabSelectedIndex = remember {
         mutableIntStateOf(0)
     }
-    val list = listOf("All", "Success", "Canceled", "Verifying")
+    val list = listOf("All", "Done", "Canceled", "Verifying")
     val context = LocalContext.current
 
     LaunchedEffect(key1 = "") {

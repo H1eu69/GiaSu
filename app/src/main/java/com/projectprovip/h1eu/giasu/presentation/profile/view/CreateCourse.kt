@@ -108,19 +108,19 @@ fun CreateClassScreen(
                         Icon(
                             Icons.Rounded.ArrowBack,
                             null,
-                            tint = Color.White
+                            tint = EDSColors.primaryColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.primaryColor
+                    containerColor = EDSColors.white
                 ),
                 title = {
                     Text(
                         text = "Create course",
                         style = TextStyle(
                             fontSize = 18.sp,
-                            color = Color.White,
+                            color = EDSColors.primaryColor,
                             fontFamily = FontFamily.SansSerif,
                             fontWeight = FontWeight.Bold
                         )

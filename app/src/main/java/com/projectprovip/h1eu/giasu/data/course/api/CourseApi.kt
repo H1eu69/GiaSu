@@ -4,6 +4,7 @@ import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCour
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.requested_course_detail.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
+import com.projectprovip.h1eu.giasu.data.course.dto.course_payment.CoursePaymentDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course_detail_dto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
@@ -37,8 +38,8 @@ interface CourseApi {
         @Body input: CreateCourseParams
     ) : Response<Unit>
 
-//    @GET("Course/{id}")
-//    suspend fun getClassById(@Path("id") id: Int) : CourseInformationDtoItem
+    @GET("payment")
+    suspend fun getCoursesPayment(@Header("Authorization") token: String) : CoursePaymentDto
 
     @PUT("Course/{courseId}/RequestCourse")
     suspend fun registerCourse(@Path("courseId") id: String,
@@ -59,4 +60,6 @@ interface CourseApi {
     suspend fun reviewTutorOfByCourseId(@Header("Authorization") token: String,
                                         @Path("courseId") id: String,
                                         @Body input: ReviewTutorInput) : ReviewTutorDto
+
+
 }

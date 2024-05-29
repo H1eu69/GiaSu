@@ -505,7 +505,7 @@ fun HomeScreen(
                 PullRefreshIndicator(
                     refreshing.value,
                     pullRefreshState,
-                    Modifier.align(Alignment.TopCenter),
+                    Modifier.padding(it).align(Alignment.TopCenter),
                     contentColor = EDSColors.primaryColor
                 )
             }

@@ -106,6 +106,7 @@ class CourseDetailViewModel @Inject constructor(
 
                 is EDSResult.Error -> {
                     _recommendedCourseState.value = RecommendCoursesState(error = result.message)
+                    getCourseBySubjectName()
                     Log.e("getRecommendedCoursesName error", result.message.toString())
                 }
 
@@ -113,6 +114,28 @@ class CourseDetailViewModel @Inject constructor(
                     val coursesName = result.data!!.data
                     Log.d("getRecommendedCoursesName success", coursesName.toString())
                     recommendedCourseNameState.value = coursesName
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun getCourseBySubjectName(subject : String? = null) {
+        getCoursesUseCase(1, subjectName = subject).onEach { result ->
+            when (result) {
+                is EDSResult.Loading -> {
+                    _recommendedCourseState.value = RecommendCoursesState(isLoading = true)
+                }
+
+                is EDSResult.Error -> {
+                    _recommendedCourseState.value = RecommendCoursesState(error = result.message)
+                    Log.e("getRecommendedCoursesName error", result.message.toString())
+                }
+
+                is EDSResult.Success -> {
+                    val oldList = _recommendedCourseState.value.data.toMutableList()
+                    oldList.addAll(result.data!!)
+                    Log.d("getRecommendedCourses size", oldList.size.toString())
+                    _recommendedCourseState.value = RecommendCoursesState(data = oldList)
                 }
             }
         }.launchIn(viewModelScope)

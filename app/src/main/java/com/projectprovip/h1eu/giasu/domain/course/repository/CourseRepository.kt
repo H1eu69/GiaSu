@@ -3,6 +3,7 @@ package com.projectprovip.h1eu.giasu.domain.course.repository
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.requested_course_detail.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
+import com.projectprovip.h1eu.giasu.data.course.dto.course_payment.CoursePaymentDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course_detail_dto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
@@ -33,4 +34,6 @@ interface CoursesRepository {
         courseId: String,
         input: ReviewTutorInput
     ): ReviewTutorDto
+
+    suspend fun getCoursePayment(token: String) : CoursePaymentDto
 }

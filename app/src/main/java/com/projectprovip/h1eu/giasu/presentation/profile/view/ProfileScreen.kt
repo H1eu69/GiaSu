@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.AttachMoney
 import androidx.compose.material.icons.rounded.Class
 import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.HowToReg
@@ -147,11 +148,17 @@ fun ProfileScreen(navController: NavController) {
                         onClick = {
                             navController.navigate(Screens.InApp.Profile.RequestClass.route)
                         })
+                    ButtonColumnItem(
+                        Icons.Rounded.AttachMoney, EDSColors.primaryColor,
+                        "Courses Payment", true,
+                        onClick = {
+                            navController.navigate(Screens.InApp.Profile.CoursePayment.route)
+                        })
                     if (!isTutor) {
                         ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
                             "Your courses", true,
                             onClick = {
-                                navController.navigate(Screens.InApp.Profile.LearningCourses.route)
+                                navController.navigate(Screens.InApp.Profile.CoursePayment.route)
                             })
                         ButtonColumnItem(Icons.Rounded.HowToReg, EDSColors.primaryColor,
                             "Enroll as a tutor", true,
