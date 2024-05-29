@@ -61,9 +61,11 @@ import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.common.DateFormat
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CoursePaymentModel
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CoursePaymentState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Preview
@@ -100,7 +102,13 @@ fun CoursePaymentScreen(
     navController: NavController,
     state: CoursePaymentState,
 ) {
-
+    LaunchedEffect(key1 = Unit) {
+        delay(5000)
+        navController.navigate(
+//                                    "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail}/${course.courseId}"
+            "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail.route}/${123}/Completed"
+        )
+    }
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
             title = {
@@ -136,13 +144,16 @@ fun CoursePaymentScreen(
                 ShimmerCourse()
                 ShimmerCourse()
             }
-
         else if (state.courses.isNotEmpty()) {
             LazyColumn {
                 state.courses.forEach { course ->
                     item {
                         CourseItem(data = course,
                             onClick = {
+                                navController.navigate(
+//                                    "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail}/${course.courseId}"
+                                    "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail.route}/${123}/Completed"
+                                )
                             })
                     }
                 }

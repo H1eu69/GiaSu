@@ -437,8 +437,11 @@ fun ShimmerCourse(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(20.dp)
-
+                    .clip(
+                        RoundedCornerShape(16.dp)
+                    )
                     .background(EDSColors.grayX2)
+
             )
             //SubTitle(text = "ID: ${data.id}")
             Column(
@@ -449,21 +452,29 @@ fun ShimmerCourse(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp).clip(
+                            RoundedCornerShape(16.dp)
+                        )
 
                         .background(EDSColors.grayX2)
+
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
-                        .background(EDSColors.grayX2)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
 
@@ -473,7 +484,11 @@ fun ShimmerCourse(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(20.dp)
+                    .clip(
+                        RoundedCornerShape(16.dp)
+                    )
                     .background(EDSColors.grayX2)
+
             )
             Row(
                 modifier.fillMaxWidth(),
@@ -482,14 +497,20 @@ fun ShimmerCourse(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .width(40.dp)
-                        .height(20.dp)
+                        .height(20.dp).clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
+
                 )
                 Box(
                     modifier = Modifier
                         .width(40.dp)
-                        .height(20.dp)
+                        .height(20.dp).clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
+
                 )
             }
         }
@@ -559,7 +580,6 @@ fun TutorShimmer() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
-
                     .background(EDSColors.grayX2)
 
             )
@@ -572,35 +592,45 @@ fun TutorShimmer() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
             }
@@ -621,6 +651,6 @@ private fun test() {
 private fun test2() {
     AsyncImage(
         model = "https://img.vietqr.io/image/vietinbank-107867236970-compact2.jpg?amount=790000&addInfo=Register%20ES%201000&accountName=HieuPro",
-        contentDescription =null
+        contentDescription = null
     )
 }

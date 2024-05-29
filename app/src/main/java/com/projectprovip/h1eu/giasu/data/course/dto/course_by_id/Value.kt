@@ -1,6 +1,7 @@
 package com.projectprovip.h1eu.giasu.data.course.dto.course_by_id
 
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
+import com.projectprovip.h1eu.giasu.presentation.profile.model.CoursePaymentDetailModel
 
 data class Value(
     val academicLevelRequirement: String,
@@ -40,4 +41,18 @@ fun Value.toCourseDetail() = CourseDetail(
     sessionPerWeek,
     status,
     subjectId, subjectName, title
+)
+
+fun Value.toCoursePaymentDetail() = CoursePaymentDetailModel(
+    chargeFee = chargeFee,
+    fee = sectionFee,
+    subjectName = subjectName,
+    title = title,
+    creationTime = creationTime,
+    learningMode = learningMode,
+    description = description,
+    sessionPerWeek = sessionPerWeek,
+    sessionDuration = sessionDuration,
+    numberOfLearner = numberOfLearner,
+    subjectId = subjectId
 )

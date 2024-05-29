@@ -974,6 +974,9 @@ private fun CategoryShimmer() {
         Box(
             modifier = Modifier
                 .size(30.dp)
+                .clip(
+                    RoundedCornerShape(16.dp)
+                )
                 .background(EDSColors.grayX3)
 
         )
@@ -982,6 +985,9 @@ private fun CategoryShimmer() {
             modifier = Modifier
                 .height(19.dp)
                 .width(30.dp)
+                .clip(
+                    RoundedCornerShape(16.dp)
+                )
                 .background(EDSColors.grayX3)
         )
     }
@@ -1059,35 +1065,45 @@ private fun TutorShimmer() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
                         .background(EDSColors.grayX2)
                 )
             }

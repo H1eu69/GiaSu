@@ -75,6 +75,7 @@ import com.projectprovip.h1eu.giasu.presentation.home.view.SearchSuggestHomeScre
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.CourseDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.HomeViewModel
 import com.projectprovip.h1eu.giasu.presentation.home.viewmodel.SearchResultViewModel
+import com.projectprovip.h1eu.giasu.presentation.profile.view.CoursePaymentDetailScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CoursePaymentScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CreateClassScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.LearningCourseScreen
@@ -83,6 +84,7 @@ import com.projectprovip.h1eu.giasu.presentation.profile.view.ProfileScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorRegisterScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.TutorReviewScreen
 import com.projectprovip.h1eu.giasu.presentation.profile.view.UpdateProfile
+import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CoursePaymentDetailViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CoursePaymentViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.CreateClassViewModel
 import com.projectprovip.h1eu.giasu.presentation.profile.viewmodel.LearningCoursesViewModel
@@ -444,6 +446,34 @@ fun InAppNavGraph(
             CoursePaymentScreen(
                 navController,
                 vm.state.value,
+            )
+        }
+
+        composable(
+            "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail.route}/{courseId}/{paymentStatus}",
+            arguments = listOf(
+                navArgument("courseId") {
+                    type = NavType.StringType
+                },
+                navArgument("paymentStatus") {
+                    type = NavType.StringType
+                },
+
+                )
+        ) {
+            val status = it.arguments?.getString("paymentStatus")
+            val courseId = it.arguments?.getString("courseId")
+            Log.d("TestNavigation", status.toString() + courseId)
+            val vm = hiltViewModel<CoursePaymentDetailViewModel>()
+
+            LaunchedEffect(Unit) {
+                vm.getCourseDetail(courseId!!)
+            }
+
+            CoursePaymentDetailScreen(
+                navController,
+                vm.state.value,
+                status ?: ""
             )
         }
 

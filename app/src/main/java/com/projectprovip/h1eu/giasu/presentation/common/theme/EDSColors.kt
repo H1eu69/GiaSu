@@ -20,7 +20,7 @@ class EDSColors {
         val notScheduleBackgroundColor = Color(255, 235, 235, 255)
         val notScheduleTextColor = Color(255, 92, 92, 255)
         val waitingBackgroundColor = Color(255, 249, 224, 255)
-        val waitingTextColor = Color(255, 162, 0, 255)
+        val waitingTextColor = Color(255, 162, 0, 200)
         val teachingTextColor =Color(46,189,124,255)
         val teachingBackgroundColor = Color(239,247,246,255)
         val idClassBackgroundColor = Color(239, 239, 239, 255)
