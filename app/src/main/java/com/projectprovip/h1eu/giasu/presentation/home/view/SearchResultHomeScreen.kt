@@ -404,6 +404,7 @@ fun SearchResultHomeScreen(
                         when {
                             this.isLoading -> {
                                 Column(
+                                    modifier = Modifier.padding(it),
                                     verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     ShimmerCourse()
@@ -411,10 +412,8 @@ fun SearchResultHomeScreen(
                                     ShimmerCourse()
                                     ShimmerCourse()
                                     ShimmerCourse()
-
                                 }
                             }
-
                             filteredList.value.isEmpty() -> {
                                 Box(modifier = Modifier.fillMaxSize()) {
                                     val composition by rememberLottieComposition(

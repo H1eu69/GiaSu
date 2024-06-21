@@ -93,6 +93,7 @@ fun PreviewScreen() {
         recommendCourseState = RecommendCoursesState(),
         courseDetailState = CourseDetailState(),
         courseRegisterState = CourseRegisterState(),
+        false,
         onRegisterClicked = {}
     )
 }
@@ -104,6 +105,7 @@ fun CourseDetailScreen(
     recommendCourseState: RecommendCoursesState,
     courseDetailState: CourseDetailState,
     courseRegisterState: CourseRegisterState,
+    isTutor: Boolean,
     onRegisterClicked: () -> Unit,
 ) {
 
@@ -181,45 +183,46 @@ fun CourseDetailScreen(
                             navController = navController, course = course,
                             recommendedCourseState = recommendCourseState
                         )
-                        Button(
-                            onClick = {
-                                showBottomSheet.value = true
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp)
-                                .align(Alignment.BottomCenter),
-                            colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
-                        ) {
-                            if (courseRegisterState.isLoading) {
-                                CircularProgressIndicator()
-                            } else {
-                                Text(
-                                    text = "Tax: $${course.chargeFee} Register now",
-                                    color = EDSColors.white
-                                )
-                            }
-                            LaunchedEffect(key1 = courseRegisterState) {
-
-                                if (courseRegisterState.error) {
-                                    Toast.makeText(
-                                        context,
-                                        courseRegisterState.message,
-                                        Toast.LENGTH_SHORT
+                        if (isTutor)
+                            Button(
+                                onClick = {
+                                    onRegisterClicked()
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(20.dp)
+                                    .align(Alignment.BottomCenter),
+                                colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
+                            ) {
+                                if (courseRegisterState.isLoading) {
+                                    CircularProgressIndicator()
+                                } else {
+                                    Text(
+                                        text = "Tax: $${course.chargeFee} Register now",
+                                        color = EDSColors.white
                                     )
-                                        .show()
-                                } else if (courseRegisterState.isSuccess) {
-                                    Toast.makeText(
-                                        context,
-                                        courseRegisterState.message,
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                    navController.popBackStack()
                                 }
+                                LaunchedEffect(key1 = courseRegisterState) {
 
+                                    if (courseRegisterState.error) {
+                                        Toast.makeText(
+                                            context,
+                                            courseRegisterState.message,
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    } else if (courseRegisterState.isSuccess) {
+                                        Toast.makeText(
+                                            context,
+                                            courseRegisterState.message,
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                        navController.popBackStack()
+                                    }
+
+                                }
                             }
-                        }
                     }
                 }
             }
@@ -704,7 +707,8 @@ fun CourseRegisterPaymentBottomSheet(
 //                                .toUri(),
 //                        )
 //                        startActivity(context, deepLinkIntent, null)
-
+                        onDismissRequest()
+                        Toast.makeText(context,"Please wait for confirmation" , Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier
                         .fillMaxWidth()

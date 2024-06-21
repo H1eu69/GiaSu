@@ -292,14 +292,14 @@ fun RequestedCourseDetailBody(
 fun CourseDetailAppbar(navController: NavController) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.largeTopAppBarColors(
-            containerColor = EDSColors.primaryColor
+            containerColor = Color.White
         ),
         navigationIcon = {
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
                     Icons.Rounded.ArrowBack,
                     "",
-                    tint = Color.White
+                    tint = EDSColors.primaryColor
                 )
             }
         },
@@ -308,7 +308,7 @@ fun CourseDetailAppbar(navController: NavController) {
                 text = "Course Detail",
                 style = TextStyle(
                     fontSize = 18.sp,
-                    color = Color.White,
+                    color = EDSColors.primaryColor,
                     fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.Bold
                 )

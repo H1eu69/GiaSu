@@ -1,12 +1,14 @@
 package com.projectprovip.h1eu.giasu.data.course.repository
 
 import com.projectprovip.h1eu.giasu.data.course.api.CourseApi
+import com.projectprovip.h1eu.giasu.data.course.dto.RegisterCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.requested_course_detail.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_payment.CoursePaymentDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course_detail_dto.LearningCourseDetailDto
+import com.projectprovip.h1eu.giasu.data.course.dto.notify_course_payment.NotifyCoursePaymentDto
 import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
@@ -30,8 +32,8 @@ class CourseRepositoryImpl @Inject constructor(
         return api.createCourse(token, input)
     }
 
-    override suspend fun registerCourse(id: String, token: String?): RequestCourseDto {
-        return api.registerCourse(id, token!!)
+    override suspend fun registerCourse(id: String, tutorId: String, token: String?): RegisterCourseDto {
+        return api.registerCourse(id,tutorId, token!!)
     }
 
     override suspend fun getRequestedCourse(token: String?): RequestCourseDto {
@@ -66,5 +68,12 @@ class CourseRepositoryImpl @Inject constructor(
 
     override suspend fun getCoursePayment(token: String): CoursePaymentDto {
         return api.getCoursesPayment(token)
+    }
+
+    override suspend fun notifyCoursePayment(
+        courseId: String,
+        token: String
+    ): NotifyCoursePaymentDto {
+        return api.notifyCoursePayment(courseId, token)
     }
 }

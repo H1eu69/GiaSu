@@ -95,6 +95,7 @@ import com.projectprovip.h1eu.giasu.presentation.home.model.TutorState
 import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 
 @Preview
 @Composable
@@ -140,6 +141,7 @@ fun HomeScreen(
     navController: NavController, state: HomeState,
     tutorState: TutorState,
     onLoadMore: () -> Unit = {},
+    onLoadTutorMore: () -> Unit = {},
     onRefresh: () -> Unit,
     lazyListState: LazyListState = rememberLazyListState(),
 ) {
@@ -449,7 +451,9 @@ fun HomeScreen(
                                 items(tutorState.data.count()) { index ->
                                     TutorItem(tutor = tutorState.data[index]) {
                                         navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$it")
-
+                                    }
+                                    if (index == state.data.count() - 2) {
+                                        onLoadTutorMore()
                                     }
                                 }
                             }
@@ -1190,8 +1194,10 @@ private fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
                 )
             }
             Box {
+                val decimalFormat = DecimalFormat("0.0")
+                val formattedRate = decimalFormat.format(tutor.rate)
                 com.projectprovip.h1eu.giasu.presentation.tutor.view.IconAndText(
-                    Icons.Outlined.Star, "${tutor.rate.toDouble()} /5.0",
+                    Icons.Outlined.Star, "$formattedRate /5.0",
                     tint = EDSColors.yellowStar,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)

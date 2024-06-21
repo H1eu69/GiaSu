@@ -70,8 +70,8 @@ class CourseDetailViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun registerCourse(courseId: String, token: String) {
-        registerCourseUseCase(courseId, token).onEach { result ->
+    fun registerCourse(courseId: String, tutorId: String, token: String) {
+        registerCourseUseCase(courseId,tutorId, token).onEach { result ->
             when (result) {
                 is EDSResult.Loading -> {
                     _courseRegisterState.value = CourseRegisterState(isLoading = true)

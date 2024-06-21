@@ -1,11 +1,13 @@
 package com.projectprovip.h1eu.giasu.data.course.api
 
+import com.projectprovip.h1eu.giasu.data.course.dto.RegisterCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
 import com.projectprovip.h1eu.giasu.data.course.dto.requested_course_detail.RequestedCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
 import com.projectprovip.h1eu.giasu.data.course.dto.course_payment.CoursePaymentDto
 import com.projectprovip.h1eu.giasu.data.course.dto.learning_course_detail_dto.LearningCourseDetailDto
+import com.projectprovip.h1eu.giasu.data.course.dto.notify_course_payment.NotifyCoursePaymentDto
 import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
 import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
 import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
@@ -40,10 +42,13 @@ interface CourseApi {
 
     @GET("payment")
     suspend fun getCoursesPayment(@Header("Authorization") token: String) : CoursePaymentDto
+    @PUT("payment/{id}")
+    suspend fun notifyCoursePayment(@Path("id") courseId: String,@Header("Authorization") token: String) : NotifyCoursePaymentDto
 
-    @PUT("Course/{courseId}/RequestCourse")
+    @PUT("Course/{courseId}/request-course")
     suspend fun registerCourse(@Path("courseId") id: String,
-                               @Header("Authorization") token: String) : RequestCourseDto
+                               @Query("tutorId")  tutorId: String,
+        @Header("Authorization") token: String) : RegisterCourseDto
     @GET("Profile/course-requests")
     suspend fun getRequestedCourse(@Header("Authorization") token: String) : RequestCourseDto
 

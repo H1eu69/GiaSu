@@ -77,6 +77,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.Instants
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.common.thangNguBECourseStatus
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.common.toVndFormat
 import com.projectprovip.h1eu.giasu.presentation.common.usdToVnd
@@ -85,6 +86,7 @@ import com.projectprovip.h1eu.giasu.presentation.home.model.CourseRegisterState
 import com.projectprovip.h1eu.giasu.presentation.home.model.RecommendCoursesState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CoursePaymentDetailModel
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CoursePaymentDetailState
+import com.projectprovip.h1eu.giasu.presentation.profile.model.NotifyCoursePaymentState
 import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
 
 @Preview
@@ -94,7 +96,8 @@ private fun PreviewScreen() {
         rememberNavController(),
         courseDetailState = CoursePaymentDetailState(
             courses = CoursePaymentDetailModel()
-        ),
+        ), NotifyCoursePaymentState()
+        ,onRegisterClicked = {}
     )
 }
 
@@ -102,13 +105,46 @@ private fun PreviewScreen() {
 @Composable
 fun CoursePaymentDetailScreen(
     navController: NavController,
-    courseDetailState: CoursePaymentDetailState,
-    status: String = "Completed"
-) {
+    courseDetailState: CoursePaymentDetailState,    notifyState: NotifyCoursePaymentState,
+
+    status: String = "Completed",
+    onRegisterClicked: () -> Unit,
+
+    ) {
 
     val context = LocalContext.current
     val course = courseDetailState.courses
-
+    val showBottomSheet = remember { mutableStateOf(false) }
+    val code = remember {
+        mutableStateOf(CodeGenerator.generate())
+    }
+    if (showBottomSheet.value) {
+        CourseRegisterPaymentBottomSheet(
+            modifier = Modifier.padding(16.dp),
+            onDismissRequest = {
+                showBottomSheet.value = false
+            },
+            onButtonClick = {
+                onRegisterClicked()
+            },
+            code = code.value,
+            fee = course.fee.usdToVnd(),
+            tax = course.chargeFee.usdToVnd()
+        )
+    }
+    LaunchedEffect(key1 = notifyState) {
+        notifyState.apply {
+            when {
+                this.isSuccess -> {
+                    Toast.makeText(context, "We will check and confirm shortly", Toast.LENGTH_SHORT).show()
+                    navController.popBackStack()
+                }
+                this.error.isNotEmpty() -> {
+                    Toast.makeText(context,  this.error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -147,10 +183,6 @@ fun CoursePaymentDetailScreen(
                     )
                 }
 
-                !this.error.isNullOrEmpty() -> {
-
-                }
-
                 else -> {
                     Box(
                         modifier = Modifier
@@ -162,10 +194,43 @@ fun CoursePaymentDetailScreen(
                         CourseDetailBody(
                             navController = navController,
                             course = course,
-                            paymentStatus = status
+                            paymentStatus = status,
                         )
-
-
+                        Button(
+                            onClick = {
+                                showBottomSheet.value = true
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp)
+                                .align(Alignment.BottomCenter),
+                            colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
+                        ) {
+                            Text(
+                                text = "Tax: $${course.chargeFee} Register now",
+                                color = EDSColors.white
+                            )
+//                            LaunchedEffect(key1 = courseRegisterState) {
+//
+//                                if (courseRegisterState.error) {
+//                                    Toast.makeText(
+//                                        context,
+//                                        courseRegisterState.message,
+//                                        Toast.LENGTH_SHORT
+//                                    )
+//                                        .show()
+//                                } else if (courseRegisterState.isSuccess) {
+//                                    Toast.makeText(
+//                                        context,
+//                                        courseRegisterState.message,
+//                                        Toast.LENGTH_SHORT
+//                                    )
+//                                        .show()
+//                                    navController.popBackStack()
+//                                }
+//
+//                            }
+                        }
                     }
                 }
             }
@@ -173,32 +238,34 @@ fun CoursePaymentDetailScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun CourseDetailBody(
     modifier: Modifier = Modifier,
     navController: NavController,
     course: CoursePaymentDetailModel,
     paymentStatus: String
-) {
+    ) {
 
-    var statusTextColor = EDSColors.notScheduleTextColor
-    var backgroundTextColor = EDSColors.notScheduleBackgroundColor
+    var statusTextColor = EDSColors.waitingTextColor
+    var statusBackgroundColor = EDSColors.waitingBackgroundColor
+    val formattedStatus = paymentStatus.thangNguBECourseStatus()
 
-    if (paymentStatus == "Completed") {
+    if (formattedStatus == "Completed" || formattedStatus == "Confirmed") {
+        statusBackgroundColor = EDSColors.teachingBackgroundColor
         statusTextColor = EDSColors.teachingTextColor
-        backgroundTextColor = EDSColors.teachingBackgroundColor
-    } else if (paymentStatus == "Pending") {
-        statusTextColor = EDSColors.waitingTextColor
-        backgroundTextColor = EDSColors.waitingBackgroundColor
+    } else if (formattedStatus == "Canceled" || formattedStatus == "Canceled With Refund") {
+        statusBackgroundColor = EDSColors.notScheduleBackgroundColor
+        statusTextColor = EDSColors.notScheduleTextColor
     }
-
 //    if (learningMode == "Offline") {
 //        learningModeBackgroundColor = EDSColors.learningModeOfflineBackgroundColor
 //        learningModeTextColor = EDSColors.learningModeOfflineTextColor
 //    }
 
     val context = LocalContext.current
+
+
     LazyColumn(
         modifier = modifier
             .fillMaxHeight()
@@ -207,7 +274,7 @@ private fun CourseDetailBody(
     ) {
         item {
             androidx.compose.material3.Text(
-                text = paymentStatus,
+                text = formattedStatus,
                 style = TextStyle(
                     fontWeight = FontWeight.Medium,
                     color = statusTextColor
@@ -215,7 +282,7 @@ private fun CourseDetailBody(
                 modifier = modifier
                     .padding(horizontal = 20.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(backgroundTextColor)
+                    .background(statusBackgroundColor)
                     .padding(vertical = 8.dp, horizontal = 16.dp)
             )
         }
@@ -292,37 +359,145 @@ private fun CourseDetailBody(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailIconAndText(
-    imageVector: ImageVector,
-    boldedText: String,
-    text: String,
-    textColor: Color = EDSColors.blackColor,
-    modifier: Modifier = Modifier
+fun CourseRegisterPaymentBottomSheet(
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    sheetState: SheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    ),
+    onButtonClick: () -> Unit = {},
+    code: String,
+    fee: Double = 1000.00,
+    tax: Double = 200.00
 ) {
-    Row(
-        modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+    val context = LocalContext.current
+
+    ModalBottomSheet(
+        sheetState = sheetState,
+        onDismissRequest = { onDismissRequest() },
+        containerColor = EDSColors.white
     ) {
-        Row {
-            Icon(
-                imageVector, null,
-                tint = EDSColors.primaryColor
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = boldedText,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
+        LazyColumn(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            item {
+                Text(
+                    text = "To complete registration, please transfer money according to content:",
+                    style = EDSTextStyle.H2Reg()
+                )
+            }
+            item {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    AsyncImage(
+                        model = Instants.getVietQrImage(
+                            addInfo = "Register ES $code",
+                            amount = (fee + tax).toBigDecimal().toPlainString()
+                        ),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                    )
+                }
+            }
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Course fee: ", style = EDSTextStyle.H2Reg(
+                            EDSColors.gray
+
+                        )
+                    )
+                    Text(
+                        text = "${fee.toBigDecimal().toPlainString().toVndFormat()}",
+                        style = EDSTextStyle.H1MedBold(
+                        )
+                    )
+                }
+            }
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Tax: ", style = EDSTextStyle.H2Reg(
+                            EDSColors.gray
+
+                        )
+                    )
+                    Text(
+                        text = "${tax.toBigDecimal().toPlainString().toVndFormat()}",
+                        style = EDSTextStyle.H1MedBold(
+                        )
+                    )
+                }
+            }
+            item {
+                Divider(modifier = Modifier.padding(horizontal = 8.dp), color = EDSColors.grayX3)
+
+            }
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Total amount: ", style = EDSTextStyle.H2Reg(
+                            EDSColors.gray
+
+                        )
+                    )
+                    Text(
+                        text = "${(fee + tax).toBigDecimal().toPlainString().toVndFormat()}",
+                        style = EDSTextStyle.H1MedBold(
+                        )
+                    )
+                }
+            }
+            item {
+                Text(
+                    text = "Done payment? Notify us by clicking button below",
+                    modifier = Modifier.padding(top = 8.dp),
+                    style = EDSTextStyle.H2Reg()
+                )
+            }
+            item {
+                ElevatedButton(
+                    onClick = {
+//                        onButtonClick()
+//                        val deepLinkIntent = Intent(
+//                            Intent.ACTION_VIEW,
+//                            "https://www.bidvsmartbanking.vn"
+//                                .toUri(),
+//                        )
+//                        startActivity(context, deepLinkIntent, null)
+                        onButtonClick()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = ButtonDefaults.elevatedButtonColors(
+                        containerColor = EDSColors.primaryColor,
+                    )
+                ) {
+                    Text("Notify payment", style = EDSTextStyle.H2Reg(EDSColors.white))
+                }
+            }
         }
-        Text(
-            text = text,
-            textAlign = TextAlign.End,
-            color = textColor,
-            fontSize = 16.sp,
-        )
     }
+
 }
 
 @Preview

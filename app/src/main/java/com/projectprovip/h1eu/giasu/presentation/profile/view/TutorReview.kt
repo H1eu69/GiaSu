@@ -64,6 +64,7 @@ import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.RatingBar
+import com.projectprovip.h1eu.giasu.presentation.common.thangNguBECourseStatus
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.view.SessionSection
 import com.projectprovip.h1eu.giasu.presentation.profile.model.LearningCourseDetailState
@@ -91,19 +92,19 @@ fun TutorReviewScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text("Review Tutor", color = EDSColors.white)
+                    Text("Review Tutor", color = EDSColors.primaryColor)
                 },
                 navigationIcon = {
                     IconButton(onClick = { onNavigationIconClick() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = null,
-                            tint = EDSColors.white
+                            tint = EDSColors.primaryColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.primaryColor
+                    containerColor = EDSColors.white
                 )
             )
         }
@@ -171,11 +172,12 @@ fun TutorReviewScreen(
                         }
                         var statusBackgroundColor = EDSColors.waitingBackgroundColor
                         var statusTextColor = EDSColors.waitingTextColor
+                        val formattedStatus = newLearningCourseDetailState.data.status.thangNguBECourseStatus()
 
-                        if (newLearningCourseDetailState.data.status == "Available" || newLearningCourseDetailState.data.status == "Confirmed") {
+                        if (formattedStatus == "Available" ||formattedStatus == "Confirmed") {
                             statusBackgroundColor = EDSColors.teachingBackgroundColor
                             statusTextColor = EDSColors.teachingTextColor
-                        } else if (newLearningCourseDetailState.data.status == "Canceled") {
+                        } else if (formattedStatus == "Canceled") {
                             statusBackgroundColor = EDSColors.notScheduleBackgroundColor
                             statusTextColor = EDSColors.notScheduleTextColor
                         }
@@ -193,7 +195,7 @@ fun TutorReviewScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = newLearningCourseDetailState.data.status,
+                                text = formattedStatus,
                                 style = TextStyle(
                                     fontWeight = FontWeight.Medium,
                                     color = statusTextColor
@@ -246,16 +248,16 @@ fun TutorReviewScreen(
                             "Subject: ", newLearningCourseDetailState.data.subjectName
                         )
 
-
-                        DetailIconAndText(
-                            Icons.Outlined.Person,
-                            "Tutor name: ", newLearningCourseDetailState.data.tutorName
-                        )
-
-                        DetailIconAndText(
-                            Icons.Outlined.Email,
-                            "Tutor email: ", newLearningCourseDetailState.data.tutorEmail
-                        )
+                        if (newLearningCourseDetailState.data.tutorName.isNotEmpty())
+                            DetailIconAndText(
+                                Icons.Outlined.Person,
+                                "Tutor name: ", newLearningCourseDetailState.data.tutorName
+                            )
+                        if (newLearningCourseDetailState.data.tutorEmail.isNotEmpty())
+                            DetailIconAndText(
+                                Icons.Outlined.Email,
+                                "Tutor email: ", newLearningCourseDetailState.data.tutorEmail
+                            )
 
                         DetailIconAndText(
                             Icons.Outlined.Place,

@@ -11,9 +11,11 @@ import com.projectprovip.h1eu.giasu.domain.course.usecase.GetRecommendCoursesByU
 import com.projectprovip.h1eu.giasu.domain.course.usecase.GetRecommendTutorsByUserIdUseCase
 import com.projectprovip.h1eu.giasu.domain.course.usecase.RegisterCourseUseCase
 import com.projectprovip.h1eu.giasu.domain.tutor.usecase.GetAllTutorUseCase
+import com.projectprovip.h1eu.giasu.domain.tutor.usecase.GetRecTutorUseCase
 import com.projectprovip.h1eu.giasu.presentation.home.model.HomeState
 import com.projectprovip.h1eu.giasu.presentation.home.model.TutorState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -25,6 +27,7 @@ class HomeViewModel @Inject constructor(
     private val getTutorUseCase: GetAllTutorUseCase,
     private val getRecommendCoursesByUserIdUseCase: GetRecommendCoursesByUserIdUseCase,
     private val getRecommendTutorsByUserIdUseCase: GetRecommendTutorsByUserIdUseCase,
+    private val getRecTutorUseCase: GetRecTutorUseCase,
     private val registerCourseUseCase: RegisterCourseUseCase
 ) : ViewModel() {
     private var _homeState = mutableStateOf(HomeState())
@@ -36,8 +39,9 @@ class HomeViewModel @Inject constructor(
     private var _recommendCoursesId = mutableListOf<String>()
     private var _recommendTutorsId = mutableListOf<String>()
 
-    var _currentPageIndex = 1
-    var _showLoading = true
+    private var _currentCoursePageIndex = 1
+    private var _currentTutorPageIndex = 1
+    private var _showLoading = true;
 
     init {
         getCoursesAndIncreaseIndex()
@@ -60,6 +64,7 @@ class HomeViewModel @Inject constructor(
                     is EDSResult.Success -> {
                         _recommendCoursesId.clear()
                         _recommendCoursesId.addAll(it.data!!)
+
                         Log.d("RecommendCourses", _recommendCoursesId.toString())
                     }
                 }
@@ -77,22 +82,46 @@ class HomeViewModel @Inject constructor(
                     is EDSResult.Success -> {
                         _recommendTutorsId.clear()
                         _recommendTutorsId.addAll(it.data!!)
+                        getRecTutors(_recommendTutorsId)
                         Log.d("RecommendTutors", _recommendTutorsId.toString())
                     }
                 }
             }.launchIn(this)
+
         }
     }
 
-    fun getCourses() {
-        _currentPageIndex = 1
-        getCourseUseCase(_currentPageIndex).onEach {
+    private fun getRecTutors(ids: List<String>) {
+        val currentData = _tutorState.value.data.toMutableList()
+        getRecTutorUseCase(ids).onEach {
             when (it) {
                 is EDSResult.Loading -> {
-                    if (_showLoading) {
-                        _homeState.value = HomeState(isLoading = true)
-                        _showLoading = false
-                    }
+                    if(_showLoading)
+                        _tutorState.value = TutorState(isLoading = true)
+                    _showLoading = false
+                }
+                is EDSResult.Error -> {
+                    _tutorState.value = TutorState(error = it.message)
+                    Log.e("Error getRecTutors HomeVM", it.message!!)
+                }
+
+                is EDSResult.Success -> {
+                    currentData.addAll(it.data!!)
+                    _tutorState.value = TutorState(data = currentData)
+                    _currentTutorPageIndex++
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun getCourses() {
+        _currentCoursePageIndex = 1
+        getCourseUseCase(_currentCoursePageIndex).onEach {
+            when (it) {
+                is EDSResult.Loading -> {
+                    if(_showLoading)
+                    _homeState.value = HomeState(isLoading = true)
+                    _showLoading = false
                 }
                 is EDSResult.Error -> {
                     _homeState.value = HomeState(error = it.message)
@@ -110,10 +139,10 @@ class HomeViewModel @Inject constructor(
         getTutorUseCase(subject = subject).onEach {
             when (it) {
                 is EDSResult.Loading -> {
-                    if (_showLoading) {
-                        _tutorState.value = TutorState(isLoading = true)
-                        _showLoading = false
-                    }
+                    if(_showLoading)
+                    _tutorState.value = TutorState(isLoading = true)
+                    _showLoading = false
+
                 }
                 is EDSResult.Error -> {
                     _tutorState.value = TutorState(error = it.message)
@@ -129,13 +158,13 @@ class HomeViewModel @Inject constructor(
 
     fun getCoursesAndIncreaseIndex() {
         val currentData = _homeState.value.data.toMutableList()
-        getCourseUseCase(_currentPageIndex).onEach {
+        getCourseUseCase(_currentCoursePageIndex).onEach {
             when (it) {
                 is EDSResult.Loading -> {
-                    if (_showLoading) {
-                        _homeState.value = HomeState(isLoading = true)
-                        _showLoading = false
-                    }
+                    if(_showLoading)
+                    _homeState.value = HomeState(isLoading = true)
+                    _showLoading = false
+
                 }
                 is EDSResult.Error -> {
                     _homeState.value = HomeState(error = it.message)
@@ -145,13 +174,32 @@ class HomeViewModel @Inject constructor(
                 is EDSResult.Success -> {
                     currentData.addAll(it.data!!)
                     _homeState.value = HomeState(data = currentData)
-                    _currentPageIndex++
+                    _currentCoursePageIndex++
                 }
             }
         }.launchIn(viewModelScope)
     }
 
-    fun getClassDetailById(id: String) = _homeState.value.data.find {
-        it.id == id
+    fun getTutorsAndIncreaseIndex() {
+        val currentData = _tutorState.value.data.toMutableList()
+        getTutorUseCase(_currentTutorPageIndex).onEach {
+            when (it) {
+                is EDSResult.Loading -> {
+                    if(_showLoading)
+                    _tutorState.value = TutorState(isLoading = true)
+                    _showLoading = false
+                }
+                is EDSResult.Error -> {
+                    _tutorState.value = TutorState(error = it.message)
+                    Log.e("Error HomeVM", it.message!!)
+                }
+
+                is EDSResult.Success -> {
+                    currentData.addAll(it.data!!)
+                    _tutorState.value = TutorState(data = currentData)
+                    _currentTutorPageIndex++
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 }

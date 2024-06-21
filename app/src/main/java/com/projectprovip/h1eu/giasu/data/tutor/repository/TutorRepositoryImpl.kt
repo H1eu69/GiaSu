@@ -4,6 +4,7 @@ import com.projectprovip.h1eu.giasu.data.tutor.api.TutorApi
 import com.projectprovip.h1eu.giasu.data.tutor.api.TutorRequestBody
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDetailDto.TutorDetailDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDto.TutorDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRecDto.TutorRecDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRegisterDto.TutorRegisterDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRequestDto.TutorRequestDto
 import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
@@ -39,5 +40,9 @@ class TutorRepositoryImpl @Inject constructor(
             requestTutorParams.tutorId,
             TutorRequestBody(requestTutorParams.requestMessage)
         )
+    }
+
+    override suspend fun getRecTutor(body: List<String>): TutorRecDto {
+        return api.getRecTutor(body)
     }
 }

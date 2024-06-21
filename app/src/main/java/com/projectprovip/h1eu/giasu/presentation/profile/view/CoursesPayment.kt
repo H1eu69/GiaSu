@@ -62,6 +62,7 @@ import com.projectprovip.h1eu.giasu.presentation.common.DateFormat
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.common.thangNguBECourseStatus
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CoursePaymentModel
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CoursePaymentState
@@ -102,13 +103,13 @@ fun CoursePaymentScreen(
     navController: NavController,
     state: CoursePaymentState,
 ) {
-    LaunchedEffect(key1 = Unit) {
-        delay(5000)
-        navController.navigate(
-//                                    "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail}/${course.courseId}"
-            "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail.route}/${123}/Completed"
-        )
-    }
+//    LaunchedEffect(key1 = Unit) {
+//        delay(5000)
+//        navController.navigate(
+////                                    "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail}/${course.courseId}"
+//            "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail.route}/${123}/Completed"
+//        )
+//    }
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
             title = {
@@ -151,8 +152,9 @@ fun CoursePaymentScreen(
                         CourseItem(data = course,
                             onClick = {
                                 navController.navigate(
-//                                    "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail}/${course.courseId}"
-                                    "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail.route}/${123}/Completed"
+                                    "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail.route}/${
+                                        course.courseId
+                                    }/${course.paymentStatus}/${course.paymentId}"
                                 )
                             })
                     }
@@ -224,11 +226,12 @@ private fun CourseItem(
 private fun SubTitle(subTitle: String, status: String) {
     var statusBackgroundColor = EDSColors.waitingBackgroundColor
     var statusTextColor = EDSColors.waitingTextColor
+    val formattedStatus = status.thangNguBECourseStatus()
 
-    if (status == "Completed" || status == "Confirmed") {
+    if (formattedStatus == "Completed" || formattedStatus == "Confirmed") {
         statusBackgroundColor = EDSColors.teachingBackgroundColor
         statusTextColor = EDSColors.teachingTextColor
-    } else if (status == "Canceled") {
+    } else if (formattedStatus == "Canceled" || formattedStatus == "Canceled With Refund") {
         statusBackgroundColor = EDSColors.notScheduleBackgroundColor
         statusTextColor = EDSColors.notScheduleTextColor
     }
@@ -254,7 +257,7 @@ private fun SubTitle(subTitle: String, status: String) {
                 .padding(8.dp)
         )
         Text(
-            text = status, style = TextStyle(
+            text = formattedStatus, style = TextStyle(
                 fontWeight = FontWeight.Medium, color = statusTextColor
             ), modifier = Modifier
                 .background(

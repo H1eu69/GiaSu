@@ -78,6 +78,20 @@ fun String.toEDSIntAcademicLevel(): Int {
     }
 }
 
+fun String.thangNguBECourseStatus(): String {
+    return when (this) {
+        "PendingApproval" -> "Pending Approval"
+        "Confirmed" -> "Confirmed"
+        "Canceled" -> "Canceled"
+        "OnProgressing" -> "On progress"
+        "Available" -> "Available"
+        "UnverifiedPayment" -> "Unverified Payment"
+        "CanceledWithRefund" -> "Canceled With Refund"
+        "Pending" -> "Pending"
+        else -> "None"
+    }
+}
+
 fun Int.toEDSStringGender(): String {
     return when (this) {
         1 -> "Male"

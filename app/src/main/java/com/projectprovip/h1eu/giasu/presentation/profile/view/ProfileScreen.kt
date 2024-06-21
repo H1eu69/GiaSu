@@ -158,7 +158,7 @@ fun ProfileScreen(navController: NavController) {
                         ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
                             "Your courses", true,
                             onClick = {
-                                navController.navigate(Screens.InApp.Profile.CoursePayment.route)
+                                navController.navigate(Screens.InApp.Profile.LearningCourses.route)
                             })
                         ButtonColumnItem(Icons.Rounded.HowToReg, EDSColors.primaryColor,
                             "Enroll as a tutor", true,

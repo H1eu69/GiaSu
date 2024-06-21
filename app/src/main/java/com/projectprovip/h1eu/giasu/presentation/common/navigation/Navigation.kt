@@ -249,7 +249,7 @@ fun InAppNavGraph(
     ) {
         composable(Screens.InApp.Home.route) {
             LaunchedEffect(homeViewModel.tutorState) {
-                homeViewModel.getTutors()
+                homeViewModel.getTutorsAndIncreaseIndex()
             }
             LaunchedEffect(userId.value) {
                 homeViewModel.getRecommendedCoursesAndTutors(userId = userId.value)
@@ -259,6 +259,9 @@ fun InAppNavGraph(
                 homeViewModel.tutorState.value,
                 onLoadMore = {
                     homeViewModel.getCoursesAndIncreaseIndex()
+                },
+                onLoadTutorMore = {
+                    homeViewModel.getTutorsAndIncreaseIndex()
                 },
                 onRefresh = {
                     homeViewModel.getCourses()
@@ -324,8 +327,9 @@ fun InAppNavGraph(
                 courseDetailState = courseDetailViewModel.courseDetailState.value,
                 courseRegisterState = courseDetailViewModel.courseRegisterState.value,
                 recommendCourseState = courseDetailViewModel.recommendedCourseState.value,
+                isTutor = role.value == "Tutor",
                 onRegisterClicked = {
-                    courseDetailViewModel.registerCourse(courseId!!, token.value)
+                    courseDetailViewModel.registerCourse(courseId!!, userId.value, token.value)
                 }
             )
         }
@@ -450,7 +454,7 @@ fun InAppNavGraph(
         }
 
         composable(
-            "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail.route}/{courseId}/{paymentStatus}",
+            "${Screens.InApp.Profile.CoursePayment.CoursePaymentDetail.route}/{courseId}/{paymentStatus}/{paymentId}",
             arguments = listOf(
                 navArgument("courseId") {
                     type = NavType.StringType
@@ -458,11 +462,15 @@ fun InAppNavGraph(
                 navArgument("paymentStatus") {
                     type = NavType.StringType
                 },
-
+                navArgument("paymentId") {
+                    type = NavType.StringType
+                },
                 )
         ) {
             val status = it.arguments?.getString("paymentStatus")
             val courseId = it.arguments?.getString("courseId")
+            val paymentId = it.arguments?.getString("paymentId")
+
             Log.d("TestNavigation", status.toString() + courseId)
             val vm = hiltViewModel<CoursePaymentDetailViewModel>()
 
@@ -473,8 +481,11 @@ fun InAppNavGraph(
             CoursePaymentDetailScreen(
                 navController,
                 vm.state.value,
+                vm.state2.value,
                 status ?: ""
-            )
+            ) {
+                vm.notifyCoursePayment(paymentId!!, token.value)
+            }
         }
 
         composable(Screens.InApp.Profile.UpdateProfile.route) {

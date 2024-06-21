@@ -65,6 +65,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -86,6 +87,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
+import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectItem
 import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectState
@@ -119,6 +121,11 @@ fun TutorRegisterScreen(
     val tokenKey = stringPreferencesKey(Constant.TOKEN_STRING)
     val token = remember {
         mutableStateOf("")
+    }
+    val academicLevels = listOf("Ungraduated", "Graduated", "Lecturer")
+
+    var (academicLevelSelectedOption, academicOnOptionSelected) = remember {
+        mutableStateOf(academicLevels[0])
     }
 
     LaunchedEffect(key1 = token) {
@@ -219,31 +226,15 @@ fun TutorRegisterScreen(
                 contentPadding = PaddingValues(bottom = 100.dp)
             ) {
                 item {
-                    OutlinedTextField(
+                    CommonRadioButton(
+                        title = "Academic Requirement",
+                        radioOptions = academicLevels,
+                        selectedOption = academicLevelSelectedOption,
+                        onOptionSelected = academicOnOptionSelected,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 12.dp)
-                            .padding(horizontal = 20.dp),
-                        interactionSource = academicInteractionSource,
-                        label = {
-                            if (!academicIsFocused.value)
-                                Text(
-                                    text = "Academic Level", color = EDSColors.grayX2
-                                ) else Text(
-                                text = "Academic Level",
-                            )
-                        },
-                        keyboardActions = KeyboardActions(),
-                        shape = RoundedCornerShape(12.dp),
-                        onValueChange = { value ->
-                            academicText.value = value
-                        },
-                        value = academicText.value,
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = EDSColors.primaryColor,
-                            focusedLabelColor = EDSColors.primaryColor,
-                            cursorColor = EDSColors.primaryColor,
-                        ),
+                            .padding(12.dp)
+                            .background(Color.White)
                     )
                 }
                 item {
@@ -381,7 +372,7 @@ fun TutorRegisterScreen(
             Button(
                 onClick = {
                     registerTutor(
-                        academicText.value,
+                        academicLevelSelectedOption,
                         universityText.value,
                         selectedSubjects.value.map {subject ->
                             subject.id

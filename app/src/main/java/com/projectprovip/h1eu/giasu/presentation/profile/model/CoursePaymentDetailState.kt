@@ -6,6 +6,12 @@ data class CoursePaymentDetailState(
     val error: String = ""
 )
 
+data class NotifyCoursePaymentState(
+    val isSuccess: Boolean = false,    val isLoading: Boolean = false,
+
+    val error: String = ""
+)
+
 data class CoursePaymentDetailModel (
     val chargeFee: Double = -50.0,
     val creationTime: String = "2024-03-19T00:43:19.7047926-05:00",

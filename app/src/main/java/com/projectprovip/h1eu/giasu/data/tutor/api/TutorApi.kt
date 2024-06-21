@@ -2,6 +2,7 @@ package com.projectprovip.h1eu.giasu.data.tutor.api
 
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDetailDto.TutorDetailDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDto.TutorDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRecDto.TutorRecDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRegisterDto.TutorRegisterDto
 import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRequestDto.TutorRequestDto
 import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
@@ -34,6 +35,11 @@ interface TutorApi {
         @Header("Authorization") auth: String, @Path("id") tutorId: String,
         @Body tutorRequestBody: TutorRequestBody
     ): TutorRequestDto
+
+    @POST("tutor/by-ids")
+    suspend fun getRecTutor(
+        @Body body: List<String>
+    ): TutorRecDto
 }
 
 data class TutorRequestBody(

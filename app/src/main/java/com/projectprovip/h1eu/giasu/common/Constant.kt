@@ -17,7 +17,7 @@ import com.projectprovip.h1eu.giasu.R
 import kotlin.random.Random
 
 object Constant {
-    const val API_BASE_URL = "http://homelab-quy.duckdns.org:8080/api/"
+    const val API_BASE_URL = "http://matthomelab.dns.army:8080/api/"
     const val LOCATION_API_BASE_URL = "https://vapi.vnappmob.com"
     const val RECOMMEND_API_BASE_URL = "https://recommendapis.azurewebsites.net"
     const val DEEPLINK_BANK_BASE_URL = "https://api.vietqr.io/v2/"

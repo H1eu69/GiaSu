@@ -59,6 +59,7 @@ import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
+import com.projectprovip.h1eu.giasu.presentation.common.thangNguBECourseStatus
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.LearningCourseBundle
 import com.projectprovip.h1eu.giasu.presentation.profile.model.ListLearningCourseState
@@ -180,7 +181,7 @@ fun LearningCourseScreen(
     }) {
         if (state.isLoading)
             Column(
-                modifier = Modifier.padding(it),
+                modifier = Modifier.padding(it).padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 ShimmerCourse()
@@ -272,10 +273,12 @@ private fun SubTitle(subTitle: String, status: String, learningMode: String) {
     var statusBackgroundColor = EDSColors.waitingBackgroundColor
     var statusTextColor = EDSColors.waitingTextColor
 
-    if (status == "Available" || status == "Confirmed") {
+    val formattedStatus = status.thangNguBECourseStatus()
+
+    if (formattedStatus == "Available" || formattedStatus == "Confirmed") {
         statusBackgroundColor = EDSColors.teachingBackgroundColor
         statusTextColor = EDSColors.teachingTextColor
-    } else if(status == "Canceled") {
+    } else if(formattedStatus == "Canceled") {
         statusBackgroundColor = EDSColors.notScheduleBackgroundColor
         statusTextColor = EDSColors.notScheduleTextColor
     }
@@ -312,7 +315,7 @@ private fun SubTitle(subTitle: String, status: String, learningMode: String) {
                 .padding(8.dp)
         )
         Text(
-            text = status, style = TextStyle(
+            text = formattedStatus, style = TextStyle(
                 fontWeight = FontWeight.Medium, color = statusTextColor
             ), modifier = Modifier
                 .background(
