@@ -2,7 +2,7 @@ package com.projectprovip.h1eu.giasu.domain.course.usecase
 
 import android.util.Log
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.data.course.dto.toRequestedCourse
+import com.projectprovip.h1eu.giasu.data.course.dto.request_course.toRequestedCourse
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
 import com.projectprovip.h1eu.giasu.domain.course.repository.CoursesRepository
 import kotlinx.coroutines.flow.flow
@@ -17,14 +17,14 @@ class GetRequestedCourseUseCase @Inject constructor(
         try {
             emit(EDSResult.Loading())
             val body = repository.getRequestedCourse(token)
-            if (body.code() in 200..299) {
-                val requestedCourse = body.body()!!.requestedCourseDtoItem.map {
+            if (body.isSuccess) {
+                val requestedCourse = body.value.map {
                     it.toRequestedCourse()
                 }
                 emit(EDSResult.Success(requestedCourse))
             }
-            if(body.code() in 400..499) {
-                emit(EDSResult.Error("Error${body.code()} ${body.message()}"))
+            else {
+                emit(EDSResult.Error(body.error.description))
             }
         } catch (e: HttpException) {
             emit(EDSResult.Error(e.localizedMessage))

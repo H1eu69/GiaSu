@@ -10,7 +10,7 @@ data class Item(
     val contactNumber: String,
     val creationTime: String,
     val description: String,
-    val fee: Int,
+    val fee: Double,
     val genderRequirement: String,
     val id: String,
     val lastModificationTime: String,
@@ -29,7 +29,6 @@ fun Item.toNewCourse() = CourseDetail(
     academicLevelRequirement,
     address,
     chargeFee,
-    contactNumber,
     creationTime,
     description,
     fee,
@@ -43,5 +42,5 @@ fun Item.toNewCourse() = CourseDetail(
     status,
     subjectId,
     subjectName,
-    title
+    title,
 )

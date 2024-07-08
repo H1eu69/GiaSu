@@ -48,8 +48,14 @@ sealed class Screens(val route: String) {
             route = "profile", R.string.bottom_profile,
             icon = Icons.Outlined.AccountCircle, title = "Profile"
         ) {
-            object RequestClass : Screens(route = "request_class")
+            object RequestClass : Screens(route = "request_class") {
+                object LocationPick : Screens(route = "location_pick_profile")
+            }
+
             object TutorRegistration : Screens(route = "tutor_registration")
+            object CoursePayment : Screens(route = "course_payment") {
+                object CoursePaymentDetail : Screens(route = "course_payment_detail")
+            }
             object LearningCourses : Screens(route = "learning_courses") {
                 object TutorReview : Screens(route = "tutor_review")
             }

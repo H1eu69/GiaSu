@@ -16,17 +16,15 @@ class RegisterTutorUseCase @Inject constructor(
         try {
             emit(EDSResult.Loading())
             val response = tutorRepository.registerTutor(auth, input)
-            Log.d("Test state", response.code().toString())
-            Log.d("Test state", response.message().toString())
 
-            if(response.code() in 200..300) {
+            if(response.isSuccess) {
                 emit(EDSResult.Success(data = null))
             }
-            if(response.code() == 403) {
-                emit(EDSResult.Error(message = "You are already tutor"))
+            else if(response.isFailure) {
+                emit(EDSResult.Error(message = response.error.description))
             }
             else {
-                emit(EDSResult.Error(message = response.message()))
+                emit(EDSResult.Error(message = "Unexpected error"))
             }
         } catch (e: HttpException) {
             emit(EDSResult.Error(e.localizedMessage))

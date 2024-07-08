@@ -1,7 +1,7 @@
 package com.projectprovip.h1eu.giasu.presentation.common.composes
 
-import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,11 +18,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.DrawerState
@@ -31,6 +36,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -44,15 +50,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -62,13 +66,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.valentinilk.shimmer.shimmer
 import kotlinx.coroutines.delay
 
 
@@ -76,6 +83,9 @@ import kotlinx.coroutines.delay
 fun AppBarTitle(text: String, fontSize: Int = 20) {
     Text(
         text = text,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis,
+
         style = TextStyle(
             fontWeight = FontWeight.Bold,
             fontSize = fontSize.sp
@@ -100,6 +110,8 @@ fun MultiColorText(
                 append(text2)
             }
         },
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         modifier = modifier,
     )
 }
@@ -366,7 +378,7 @@ fun CharacterContainer(
                 },
                 shape = RoundedCornerShape(6.dp)
             )
-            .padding(2.dp),contentAlignment = Alignment.Center
+            .padding(2.dp), contentAlignment = Alignment.Center
     ) {
         Text(
 
@@ -387,4 +399,258 @@ fun CharacterContainer(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun ShimmerCoursePreview() {
+    Surface {
+        ShimmerCourse()
+    }
+}
+
+@Composable
+fun ShimmerCourse(modifier: Modifier = Modifier) {
+    Card(
+        shape = RoundedCornerShape(10),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = Color.LightGray
+        ),
+        border = BorderStroke(2.dp, Color.LightGray),
+        elevation = CardDefaults.outlinedCardElevation(3.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(
+                RoundedCornerShape(10)
+            )
+            .shimmer()
+
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(20.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .clip(
+                        RoundedCornerShape(16.dp)
+                    )
+                    .background(EDSColors.grayX2)
+
+            )
+            //SubTitle(text = "ID: ${data.id}")
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+
+                ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp).clip(
+                            RoundedCornerShape(16.dp)
+                        )
+
+                        .background(EDSColors.grayX2)
+
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+                )
+
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .clip(
+                        RoundedCornerShape(16.dp)
+                    )
+                    .background(EDSColors.grayX2)
+
+            )
+            Row(
+                modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(40.dp)
+                        .height(20.dp).clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+
+                )
+                Box(
+                    modifier = Modifier
+                        .width(40.dp)
+                        .height(20.dp).clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ShimmerTutorPreview() {
+
+    Surface {
+        ShimmerTutorList()
+    }
+}
+
+@Composable
+fun ShimmerTutorList() {
+
+    val listState = rememberLazyGridState()
+    val listCount = 10
+    LazyVerticalGrid(
+        state = listState,
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        items(count = listCount) { index ->
+            TutorShimmer()
+        }
+    }
+}
+
+@Composable
+fun TutorShimmer() {
+    Card(
+        shape = RoundedCornerShape(10),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = EDSColors.white
+        ),
+        border = BorderStroke(1.dp, EDSColors.gray),
+        elevation = CardDefaults.outlinedCardElevation(3.dp),
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .clip(
+                RoundedCornerShape(10)
+            )
+            .shimmer()
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .clip(RoundedCornerShape(20.dp))
+
+        ) {
+//            AsyncImage(
+//                model = tutor.image,
+//                contentDescription = null,
+//                contentScale = ContentScale.Fit,
+//                modifier = Modifier.clip(
+//                    RoundedCornerShape(
+//                        topStart = 20.dp,
+//                        topEnd = 20.dp
+//                    )
+//                )
+//            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .background(EDSColors.grayX2)
+
+            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(20.dp)
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .clip(
+                            RoundedCornerShape(16.dp)
+                        )
+                        .background(EDSColors.grayX2)
+                )
+            }
+        }
+    }
+
+}
+
+@Preview
+@Composable
+private fun test() {
+    Surface {
+        test2()
+    }
+}
+
+@Composable
+private fun test2() {
+    AsyncImage(
+        model = "https://img.vietqr.io/image/vietinbank-107867236970-compact2.jpg?amount=790000&addInfo=Register%20ES%201000&accountName=HieuPro",
+        contentDescription = null
+    )
 }

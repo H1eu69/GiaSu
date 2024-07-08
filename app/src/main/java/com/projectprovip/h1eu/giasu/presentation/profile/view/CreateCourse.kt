@@ -1,5 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.profile.view
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,9 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Search
@@ -29,15 +27,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,13 +57,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
+import com.projectprovip.h1eu.giasu.presentation.common.toEDSIntAcademicLevel
+import com.projectprovip.h1eu.giasu.presentation.common.toEDSIntGender
+import com.projectprovip.h1eu.giasu.presentation.common.toEDSIntLearningMode
+import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.presentation.common.composes.CommonRadioButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.MultiColorText
+import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.profile.model.CreateCourseState
-import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectChip
+import com.projectprovip.h1eu.giasu.presentation.profile.model.SubjectItem
 
 @Preview
 @Composable
@@ -73,7 +80,7 @@ fun CreateClassScreenPreview() {
 fun CreateClassScreen(
     navController: NavController,
     state: CreateCourseState,
-    onButtonClick: (CreateCourseInput) -> Unit
+    onButtonClick: (CreateCourseParams) -> Unit
 ) {
     val context = LocalContext.current
     LaunchedEffect(key1 = state) {
@@ -101,19 +108,19 @@ fun CreateClassScreen(
                         Icon(
                             Icons.Rounded.ArrowBack,
                             null,
-                            tint = Color.White
+                            tint = EDSColors.primaryColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.primaryColor
+                    containerColor = EDSColors.white
                 ),
                 title = {
                     Text(
                         text = "Create course",
                         style = TextStyle(
                             fontSize = 18.sp,
-                            color = Color.White,
+                            color = EDSColors.primaryColor,
                             fontFamily = FontFamily.SansSerif,
                             fontWeight = FontWeight.Bold
                         )
@@ -129,8 +136,9 @@ fun CreateClassScreen(
                 .fillMaxSize()
         ) {
             ClassRequestBody(
-
-                onButtonClick = onButtonClick
+                navController = navController,
+                onButtonClick = onButtonClick,
+                state = state
             )
         }
     }
@@ -140,88 +148,122 @@ fun CreateClassScreen(
 @Composable
 fun ClassRequestBody(
     modifier: Modifier = Modifier,
-    onButtonClick: (CreateCourseInput) -> Unit
+    navController: NavController,
+    state: CreateCourseState,
+    onButtonClick: (CreateCourseParams) -> Unit
 ) {
-    val title = remember {
+
+    val title = rememberSaveable {
         mutableStateOf("")
     }
-    val fee = remember {
+    val fee = rememberSaveable {
         mutableStateOf("")
     }
-    val chargeFee = remember {
+    val chargeFee = rememberSaveable {
         mutableStateOf("")
     }
-    val address = remember {
+    val address = rememberSaveable {
         mutableStateOf("")
     }
-    val numOfStudent = remember {
+    val houseNumber = rememberSaveable {
         mutableStateOf("")
     }
-    val contactNumber = remember {
+    val numOfStudent = rememberSaveable {
         mutableStateOf("")
     }
-    val description = remember {
+    val contactNumber = rememberSaveable {
         mutableStateOf("")
     }
-    val minutePerSession = remember {
+    val description = rememberSaveable {
         mutableStateOf("")
     }
-    val sessionPerWeek = remember {
+
+    val learnerName = rememberSaveable {
         mutableStateOf("")
     }
-    val academicLevel = remember {
+    val minutePerSession = rememberSaveable {
         mutableStateOf("")
     }
+    val sessionPerWeek = rememberSaveable {
+        mutableStateOf("")
+    }
+
     val subject = remember {
+        mutableStateOf(SubjectItem(name = ""))
+    }
+    val subjectName = rememberSaveable {
         mutableStateOf("")
     }
+    val subjectId = rememberSaveable {
+        mutableStateOf(-1)
+    }
+    val academicLevel = listOf("Ungraduated", "Graduated", "Lecturer")
+    val (academicLevelSelectedOption, academicOnOptionSelected) = rememberSaveable {
+        mutableStateOf(academicLevel[0])
+    }
+
     val genderOptions = listOf("Male", "Female", "Other")
-    val (studentSelectedOptions, studentOnOptionSelected) = remember {
+    val (studentSelectedOptions, studentOnOptionSelected) = rememberSaveable {
         mutableStateOf(genderOptions[0])
     }
 
-    val (tutorSelectedOptions, tutorOnOptionSelected) = remember {
+    val (tutorSelectedOptions, tutorOnOptionSelected) = rememberSaveable {
         mutableStateOf(genderOptions[0])
     }
 
     val learningModeOptions = listOf("Offline", "Online", "Hybrid")
-    val (learningModeSelectedOptions, learningModeOnOptionSelected) = remember {
+    val (learningModeSelectedOptions, learningModeOnOptionSelected) = rememberSaveable {
         mutableStateOf(learningModeOptions[0])
     }
     val openEditSubjectDialog = remember { mutableStateOf(false) }
 
-
     val localFocus = LocalFocusManager.current
+
+    val provinceResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("province")?.observeAsState()
+
+    val districtResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("district")?.observeAsState()
+
+    val wardResult = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("ward")?.observeAsState()
+
+    provinceResult?.value?.let { province ->
+        districtResult?.value?.let { district ->
+            wardResult?.value?.let { ward ->
+                address.value = "${ward}, ${district}, $province"
+            }
+        }
+    }
+
+    provinceResult?.value?.let {
+        Log.d("Read result", it)
+    }
+    districtResult?.value?.let {
+        Log.d("Read result", it)
+    }
+    wardResult?.value?.let {
+        Log.d("Read result", it)
+    }
     Box(modifier = modifier) {
         if (openEditSubjectDialog.value) {
             val dummySubjects = remember {
-                mutableStateOf(
-                    listOf(
-                        SubjectChip("Java"),
-                        SubjectChip("C++"),
-                        SubjectChip("Python"),
-                        SubjectChip("Piano"),
-                        SubjectChip("Thu dao"),
-                        SubjectChip("English Advanced"),
-                        SubjectChip("Toan cao cap"),
-                        SubjectChip("1235 anh danh roi so 4"),
-                        SubjectChip("You just want attention"),
-                        SubjectChip("You dont want my heart"),
-                        SubjectChip("Ngay co ay di theo chan me cha"),
-                        SubjectChip("1 2 3 zo"),
-                        SubjectChip(),
-                        SubjectChip(),
-                        SubjectChip(),
-                    )
-
-                )
+                mutableStateOf(state.subjects)
             }
+
             PickSubjectDialog(dummySubjects, onDisMiss = {
                 openEditSubjectDialog.value = false
             },
                 onConfirm = {
                     subject.value = it
                     openEditSubjectDialog.value = false
+                    subjectName.value = it.name
+                    subjectId.value = it.id
+                    Log.d("Test subject", subject.value.toString())
+                    Log.d("Test subject", subjectName.value.toString())
 
                 })
         }
@@ -258,6 +300,7 @@ fun ClassRequestBody(
                         androidx.compose.material3.Text(text = "Title", color = EDSColors.grayX2)
                     },
                     keyboardActions = KeyboardActions(),
+                    singleLine = true,
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
                         title.value = value
@@ -271,6 +314,20 @@ fun ClassRequestBody(
                 )
             }
 
+
+            item {
+                CommonRadioButton(
+                    title = "Academic Requirement",
+                    radioOptions = academicLevel,
+                    selectedOption = academicLevelSelectedOption,
+                    onOptionSelected = academicOnOptionSelected,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp)
+                        .background(Color.White)
+                )
+            }
+
             item {
                 OutlinedTextField(
                     modifier = Modifier
@@ -280,6 +337,7 @@ fun ClassRequestBody(
                     placeholder = {
                         androidx.compose.material3.Text(text = "Fee", color = EDSColors.grayX2)
                     },
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     shape = RoundedCornerShape(12.dp),
@@ -307,6 +365,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -334,6 +393,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -348,7 +408,32 @@ fun ClassRequestBody(
                     ),
                 )
             }
-
+            item {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                        .padding(horizontal = 20.dp),
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "Learner name",
+                            color = EDSColors.grayX2
+                        )
+                    },
+                    singleLine = true,
+                    keyboardActions = KeyboardActions(),
+                    shape = RoundedCornerShape(12.dp),
+                    onValueChange = { value ->
+                        learnerName.value = value
+                    },
+                    value = learnerName.value,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        cursorColor = EDSColors.primaryColor,
+                        focusedBorderColor = EDSColors.primaryColor,
+                        focusedLabelColor = EDSColors.primaryColor,
+                    ),
+                )
+            }
             item {
                 OutlinedTextField(
                     modifier = Modifier
@@ -361,6 +446,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -394,9 +480,12 @@ fun ClassRequestBody(
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
-                        subject.value = value
+                        subject.value = subject.value.copy(
+                            name = value
+                        )
+                        subjectName.value = value
                     },
-                    value = subject.value,
+                    value = subjectName.value,
                     colors = OutlinedTextFieldDefaults.colors(
                         disabledTextColor = EDSColors.myBlackColor,
                         cursorColor = EDSColors.primaryColor,
@@ -411,19 +500,60 @@ fun ClassRequestBody(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp)
-                        .padding(horizontal = 20.dp),
+                        .padding(horizontal = 20.dp)
+                        .clickable {
+                            navController.navigate(Screens.InApp.Profile.RequestClass.LocationPick.route) {
+//                                navController.graph.startDestinationRoute?.let { route ->
+//                                    popUpTo(route) {
+//                                        saveState = true
+//                                    }
+//                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
                     placeholder = {
                         androidx.compose.material3.Text(
                             text = "Location",
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
                         address.value = value
                     },
+                    enabled = false,
                     value = address.value,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = EDSColors.blackColor,
+                        disabledBorderColor = EDSColors.gray
+                    ),
+                )
+            }
+            item {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                        .padding(horizontal = 20.dp)
+                        .clickable {
+                            navController.navigate(Screens.InApp.Profile.RequestClass.LocationPick.route)
+                        },
+                    placeholder = {
+                        androidx.compose.material3.Text(
+                            text = "House number, street",
+                            color = EDSColors.grayX2
+                        )
+                    },
+                    singleLine = true,
+                    keyboardActions = KeyboardActions(),
+                    shape = RoundedCornerShape(12.dp),
+                    onValueChange = { value ->
+                        houseNumber.value = value
+                    },
+                    value = houseNumber.value,
                     colors = OutlinedTextFieldDefaults.colors(
                         cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
@@ -507,6 +637,7 @@ fun ClassRequestBody(
                             color = EDSColors.grayX2
                         )
                     },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
@@ -536,39 +667,13 @@ fun ClassRequestBody(
                         )
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-
+                    singleLine = true,
                     keyboardActions = KeyboardActions(),
                     shape = RoundedCornerShape(12.dp),
                     onValueChange = { value ->
                         sessionPerWeek.value = value
                     },
                     value = sessionPerWeek.value,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        cursorColor = EDSColors.primaryColor,
-                        focusedBorderColor = EDSColors.primaryColor,
-                        focusedLabelColor = EDSColors.primaryColor,
-                    ),
-                )
-            }
-
-            item {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
-                        .padding(horizontal = 20.dp),
-                    placeholder = {
-                        androidx.compose.material3.Text(
-                            text = "Academic Level",
-                            color = EDSColors.grayX2
-                        )
-                    },
-                    keyboardActions = KeyboardActions(),
-                    shape = RoundedCornerShape(12.dp),
-                    onValueChange = { value ->
-                        academicLevel.value = value
-                    },
-                    value = academicLevel.value,
                     colors = OutlinedTextFieldDefaults.colors(
                         cursorColor = EDSColors.primaryColor,
                         focusedBorderColor = EDSColors.primaryColor,
@@ -593,21 +698,21 @@ fun ClassRequestBody(
         EduSmartButton(
             onClick = {
                 onButtonClick(
-                    CreateCourseInput(
+                    CreateCourseParams(
                         title = title.value,
-                        fee = fee.value.toInt(),
-                        chargeFee = chargeFee.value.toInt(),
+                        fee = fee.value.toDouble(),
                         numberOfLearner = numOfStudent.value.toInt(),
                         contactNumber = contactNumber.value,
-                        subjectName = subject.value,
-                        address = address.value,
-                        academicLevel = academicLevel.value,
+                        subjectId = subjectId.value,
+                        address = "${houseNumber.value}, ${address.value}",
+                        academicLevelRequirement = academicLevelSelectedOption.toEDSIntAcademicLevel(),
                         sessionPerWeek = sessionPerWeek.value.toInt(),
                         minutePerSession = minutePerSession.value.toInt(),
                         description = description.value,
-                        learningMode = learningModeSelectedOptions,
-                        learnerGender = studentSelectedOptions,
-                        genderRequirement = tutorSelectedOptions
+                        learningMode = learningModeSelectedOptions.toEDSIntLearningMode(),
+                        learnerGender = studentSelectedOptions.toEDSIntGender(),
+                        learnerName = learnerName.value,
+                        genderRequirement = tutorSelectedOptions.toEDSIntGender()
                     )
                 )
             },
@@ -623,12 +728,12 @@ fun ClassRequestBody(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PickSubjectDialog(
-    subjects: MutableState<List<SubjectChip>>,
+    subjects: MutableState<List<SubjectItem>>,
     onDisMiss: () -> Unit = {},
-    onConfirm: (String) -> Unit = {}
+    onConfirm: (SubjectItem) -> Unit = {}
 ) {
     val searchText = remember { mutableStateOf("") }
-    val selectedText = remember { mutableStateOf("") }
+    val selectedText = remember { mutableStateOf(SubjectItem()) }
     AlertDialog(
         modifier = Modifier
             .fillMaxSize(),
@@ -668,16 +773,16 @@ fun PickSubjectDialog(
                         item {
                             FilterChip(
                                 modifier = Modifier.fillMaxWidth(),
-                                selected = chip.selected,
+                                selected = chip.isSelected,
                                 onClick = {
                                     val newList = subjects.value.toMutableList()
                                     newList.forEach {
-                                        it.selected = false
+                                        it.isSelected = false
                                     }
-                                    newList[index] = chip.copy(selected = !chip.selected)
+                                    newList[index] = chip.copy(isSelected = !chip.isSelected)
 
                                     subjects.value = newList
-                                    selectedText.value = newList[index].name
+                                    selectedText.value = newList[index]
                                 },
                                 label = {
                                     androidx.compose.material3.Text(
@@ -689,7 +794,7 @@ fun PickSubjectDialog(
                                     )
                                 },
                                 trailingIcon = {
-                                    if (chip.selected)
+                                    if (chip.isSelected)
                                         Icon(
                                             imageVector = Icons.Default.CheckCircle,
                                             contentDescription = null

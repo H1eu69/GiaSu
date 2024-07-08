@@ -8,3 +8,9 @@ data class TutorDetailState(
     val data: TutorDetail = TutorDetail(),
     val error: String = ""
 )
+
+data class RequestTutorState(
+    val isLoading: Boolean = false,
+    val isSuccess: Boolean = false,
+    val error: String = ""
+)

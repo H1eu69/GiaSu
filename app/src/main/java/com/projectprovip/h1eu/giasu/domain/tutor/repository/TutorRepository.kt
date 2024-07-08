@@ -1,12 +1,23 @@
 package com.projectprovip.h1eu.giasu.domain.tutor.repository
 
-import com.projectprovip.h1eu.giasu.data.tutor.dto.TutorDetailDto
-import com.projectprovip.h1eu.giasu.data.tutor.dto.TutorDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDetailDto.TutorDetailDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorDto.TutorDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRecDto.TutorRecDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRegisterDto.TutorRegisterDto
+import com.projectprovip.h1eu.giasu.data.tutor.dto.tutorRequestDto.TutorRequestDto
 import com.projectprovip.h1eu.giasu.data.tutor.model.TutorRegisterInput
+import com.projectprovip.h1eu.giasu.domain.tutor.usecase.RequestTutorParams
 import retrofit2.Response
 
 interface TutorRepository {
-    suspend fun getAllTutor(pageIndex: Int) : TutorDto
-    suspend fun getTutorDetail(tutorId: Int) : Response<TutorDetailDto>
-    suspend fun registerTutor(auth: String, tutorRegisterInput: TutorRegisterInput) : Response<Unit>
+    suspend fun getAllTutor(pageIndex: Int, subject: String?): TutorDto
+    suspend fun getTutorDetail(tutorId: String): TutorDetailDto
+    suspend fun registerTutor(
+        auth: String,
+        tutorRegisterInput: TutorRegisterInput
+    ): TutorRegisterDto
+
+    suspend fun requestTutor(auth: String, requestTutorParams: RequestTutorParams): TutorRequestDto
+    suspend fun getRecTutor(body: List<String>): TutorRecDto
+
 }

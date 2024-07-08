@@ -2,6 +2,7 @@ package com.projectprovip.h1eu.giasu.presentation.tutor.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,26 +54,17 @@ fun SearchSuggestTutorScreenPreview() {
         rememberNavController(),
         state = SearchSuggestState(
             data = listOf(
-                "Note 13 Pro",
-                "Lop hoc python",
-                "Hoc guitar",
+                "java programming",
+                "python programming",
+                "basic guitar",
                 "Nguyen Bao Chau",
-                "Goi om sieu mem",
-                "Note 13 Pro",
-                "Lop hoc python",
-                "Hoc guitar",
-                "Nguyen Bao Chau",
-                "Goi om sieu mem",
-                "Note 13 Pro",
-                "Lop hoc python",
-                "Hoc guitar",
-                "Nguyen Bao Chau",
-                "Goi om sieu mem",
-                "Note 13 Pro",
-                "Lop hoc python",
-                "Hoc guitar",
-                "Nguyen Bao Chau",
-                "Goi om sieu mem"
+                "swimming",
+                "karate",
+                "communicate english",
+                "piano",
+                "history",
+                "physics",
+                "advanced physics",
             )
         )
     )
@@ -82,34 +74,37 @@ fun SearchSuggestTutorScreenPreview() {
 @Composable
 fun SearchSuggestTutorScreen(
     navController: NavController,
+    searchText: String = "",
     state: SearchSuggestState = SearchSuggestState(
         data = listOf(
-            "Note 13 Pro",
-            "Lop hoc python",
-            "Hoc guitar",
+            "java programming",
+            "python programming",
+            "basic guitar",
             "Nguyen Bao Chau",
-            "Goi om sieu mem",
-            "Note 13 Pro",
-            "Lop hoc python",
-            "Hoc guitar",
+            "swimming",
+            "karate",
+            "communicate english",
+            "piano",
+            "history",
+            "physics",
+            "advanced physics",
+            "java programming",
+            "python programming",
+            "basic guitar",
             "Nguyen Bao Chau",
-            "Goi om sieu mem",
-            "Note 13 Pro",
-            "Lop hoc python",
-            "Hoc guitar",
-            "Nguyen Bao Chau",
-            "Goi om sieu mem",
-            "Note 13 Pro",
-            "Lop hoc python",
-            "Hoc guitar",
-            "Nguyen Bao Chau",
-            "Goi om sieu mem"
+            "swimming",
+            "karate",
+            "communicate english",
+            "piano",
+            "history",
+            "physics",
+            "advanced physics",
         )
     )
 ) {
     val focusManager = LocalFocusManager.current
     val searchTextField = remember {
-        mutableStateOf("")
+        mutableStateOf(searchText)
     }
 
     Scaffold(
@@ -119,7 +114,8 @@ fun SearchSuggestTutorScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 8.dp)
             ) {
-                IconButton(onClick = {                    navController.popBackStack()
+                IconButton(onClick = {
+                    navController.popBackStack()
                 }) {
                     Icon(
                         Icons.Rounded.ArrowBack,
@@ -219,6 +215,11 @@ fun SearchSuggestTutorScreen(
                             item {
                                 Box(modifier = Modifier) {
                                     SearchSuggestItem(
+                                        modifier = Modifier.clickable {
+                                            navController.navigate(
+                                                Screens.InApp.Tutor.SearchResult.route + "/${it}"
+                                            )
+                                        },
                                         data = it
                                     )
                                 }
@@ -253,7 +254,7 @@ fun SuggestChipRow(navController: NavController) {
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {
-                            navController.navigate(Screens.InApp.Tutor.SearchResult.route)
+                            navController.navigate("${Screens.InApp.Tutor.SearchResult.route}/$title")
                         }
                     )
                 }
@@ -273,7 +274,10 @@ fun SuggestChipRow(navController: NavController) {
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {
-
+                            navController.navigate(
+                                Screens.InApp.Tutor.SearchResult.route +
+                                        "/${title}",
+                            )
                         }
                     )
                 }
@@ -292,7 +296,10 @@ fun SuggestChipRow(navController: NavController) {
                             labelColor = EDSColors.chipTextColor,
                         ),
                         onClick = {
-
+                            navController.navigate(
+                                Screens.InApp.Tutor.SearchResult.route +
+                                        "/${title}",
+                            )
                         }
                     )
                 }
@@ -314,8 +321,9 @@ fun SearchSuggestItemPreview() {
 }
 
 @Composable
-fun SearchSuggestItem(data: String) {
+fun SearchSuggestItem(modifier: Modifier = Modifier,data: String) {
     Column(
+        modifier = modifier
     ) {
         Text(
             text = data, fontSize = 12.sp, fontWeight = FontWeight.W300,

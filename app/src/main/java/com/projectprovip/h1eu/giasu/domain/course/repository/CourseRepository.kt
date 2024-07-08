@@ -1,22 +1,43 @@
 package com.projectprovip.h1eu.giasu.domain.course.repository
 
-import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDetailDto
-import com.projectprovip.h1eu.giasu.data.course.dto.LearningCourseDto
-import com.projectprovip.h1eu.giasu.data.course.dto.RequestCourseDto
-import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDetailDto
-import com.projectprovip.h1eu.giasu.data.course.dto.RequestedCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.RegisterCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.learning_course.LearningCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.requested_course_detail.RequestedCourseDetailDto
+import com.projectprovip.h1eu.giasu.data.course.dto.course_by_id.CourseByIdDto
+import com.projectprovip.h1eu.giasu.data.course.dto.course_payment.CoursePaymentDto
+import com.projectprovip.h1eu.giasu.data.course.dto.learning_course_detail_dto.LearningCourseDetailDto
 import com.projectprovip.h1eu.giasu.data.course.dto.new_courses.NewCoursesDto
-import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseInput
+import com.projectprovip.h1eu.giasu.data.course.dto.notify_course_payment.NotifyCoursePaymentDto
+import com.projectprovip.h1eu.giasu.data.course.dto.request_course.RequestCourseDto
+import com.projectprovip.h1eu.giasu.data.course.dto.review_tutor.ReviewTutorDto
+import com.projectprovip.h1eu.giasu.data.course.model.CreateCourseParams
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
 import retrofit2.Response
 
 interface CoursesRepository {
-    suspend fun getAllClasses(): NewCoursesDto
-    suspend fun createCourse(token:String, input: CreateCourseInput): Response<Unit>
-    suspend fun registerCourse(id: String, token: String?): Response<RequestCourseDto>
-    suspend fun getRequestedCourse(token: String?): Response<RequestedCourseDto>
-    suspend fun getRequestedCourseDetail(id: Int, token: String?): Response<RequestedCourseDetailDto>
-    suspend fun getLearningCourses(token: String): Response<LearningCourseDto>
-    suspend fun getLearningCourseDetail(token: String, courseId: Int): Response<LearningCourseDetailDto>
-    suspend fun reviewTutorByCourseId(token: String, courseId: Int, input: ReviewTutorInput): Response<Unit>
+    suspend fun getAllClasses(page: Int, subjectName: String?, size: Int?): NewCoursesDto
+    suspend fun getCourseById(id: String, ): CourseByIdDto
+    suspend fun createCourse(token: String, input: CreateCourseParams): Response<Unit>
+    suspend fun registerCourse(id: String, tutorId: String, token: String?): RegisterCourseDto
+    suspend fun getRequestedCourse(token: String?): RequestCourseDto
+    suspend fun getRequestedCourseDetail(
+        id: String,
+        token: String?
+    ): RequestedCourseDetailDto
+
+    suspend fun getLearningCourses(token: String): LearningCourseDto
+    suspend fun getLearningCourseDetail(
+        token: String,
+        courseId: String
+    ): LearningCourseDetailDto
+
+    suspend fun reviewTutorByCourseId(
+        token: String,
+        courseId: String,
+        input: ReviewTutorInput
+    ): ReviewTutorDto
+
+    suspend fun getCoursePayment(token: String) : CoursePaymentDto
+    suspend fun notifyCoursePayment(courseId: String, token: String) : NotifyCoursePaymentDto
+
 }

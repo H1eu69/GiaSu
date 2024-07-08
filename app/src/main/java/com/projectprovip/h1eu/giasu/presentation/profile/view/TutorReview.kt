@@ -26,10 +26,9 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Face
+import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Reviews
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -52,7 +51,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -61,13 +59,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.projectprovip.h1eu.giasu.R
-import com.projectprovip.h1eu.giasu.common.DateFormat
+import com.projectprovip.h1eu.giasu.presentation.common.DateFormat
 import com.projectprovip.h1eu.giasu.data.course.model.ReviewTutorInput
-import com.projectprovip.h1eu.giasu.domain.course.model.isValid
+import com.projectprovip.h1eu.giasu.domain.course.model.LearningCourseDetail
 import com.projectprovip.h1eu.giasu.presentation.common.composes.EduSmartButton
 import com.projectprovip.h1eu.giasu.presentation.common.composes.RatingBar
+import com.projectprovip.h1eu.giasu.presentation.common.thangNguBECourseStatus
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
+import com.projectprovip.h1eu.giasu.presentation.home.view.SessionSection
 import com.projectprovip.h1eu.giasu.presentation.profile.model.LearningCourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.profile.model.ReviewTutorState
 
@@ -93,19 +92,19 @@ fun TutorReviewScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text("Review Tutor", color = EDSColors.white)
+                    Text("Review Tutor", color = EDSColors.primaryColor)
                 },
                 navigationIcon = {
                     IconButton(onClick = { onNavigationIconClick() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = null,
-                            tint = EDSColors.white
+                            tint = EDSColors.primaryColor
                         )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.primaryColor
+                    containerColor = EDSColors.white
                 )
             )
         }
@@ -132,7 +131,13 @@ fun TutorReviewScreen(
                     }
                 }
 
-                this.data.isValid() -> {
+                this.data != LearningCourseDetail() -> {
+                    val formattedStatus = learningCourseDetailState.data.status.replace("On", "")
+                    val newLearningCourseDetailState = learningCourseDetailState.copy(
+                        data = learningCourseDetailState.data.copy(
+                            status = formattedStatus
+                        )
+                    )
                     Column(
                         horizontalAlignment = Alignment.Start,
                         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -167,17 +172,18 @@ fun TutorReviewScreen(
                         }
                         var statusBackgroundColor = EDSColors.waitingBackgroundColor
                         var statusTextColor = EDSColors.waitingTextColor
+                        val formattedStatus = newLearningCourseDetailState.data.status.thangNguBECourseStatus()
 
-                        if (learningCourseDetailState.data.status == "Available" || learningCourseDetailState.data.status == "Confirmed") {
+                        if (formattedStatus == "Available" ||formattedStatus == "Confirmed") {
                             statusBackgroundColor = EDSColors.teachingBackgroundColor
                             statusTextColor = EDSColors.teachingTextColor
-                        } else if(learningCourseDetailState.data.status == "Canceled") {
+                        } else if (formattedStatus == "Canceled") {
                             statusBackgroundColor = EDSColors.notScheduleBackgroundColor
                             statusTextColor = EDSColors.notScheduleTextColor
                         }
 
                         androidx.compose.material.Text(
-                            text = learningCourseDetailState.data.title,
+                            text = newLearningCourseDetailState.data.title,
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 color = Color.Black,
@@ -185,23 +191,40 @@ fun TutorReviewScreen(
                                 fontWeight = FontWeight.Bold
                             )
                         )
-                        androidx.compose.material.Text(
-                            text = learningCourseDetailState.data.status,
-                            style = TextStyle(
-                                fontWeight = FontWeight.Medium,
-                                color = statusTextColor,
-                                fontSize = 14.sp
-                            ),
-                            modifier = Modifier
-                                .background(
-                                    statusBackgroundColor,
-                                    RoundedCornerShape(20.dp)
-                                )
-                                .padding(start = 8.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = formattedStatus,
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Medium,
+                                    color = statusTextColor
+                                ),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(statusBackgroundColor)
+                                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                            )
+
+                            androidx.compose.material3.Text(
+                                text = newLearningCourseDetailState.data.learningMode,
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Medium,
+                                    color = EDSColors.purpleText
+                                ),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(EDSColors.purpleBackground)
+                                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                            )
+                        }
+                        SessionSection(
+                            dayAWeek = newLearningCourseDetailState.data.sessionPerWeek,
+                            minPerDay = newLearningCourseDetailState.data.sessionDuration
                         )
 
                         androidx.compose.material.Text(
-                            text = learningCourseDetailState.data.description,
+                            text = newLearningCourseDetailState.data.description,
                             style = TextStyle(
                                 fontWeight = FontWeight.Medium,
                                 color = EDSColors.myBlackColor,
@@ -216,119 +239,90 @@ fun TutorReviewScreen(
                                 .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
                         )
                         BottomContent(
-                            fee = learningCourseDetailState.data.fee,
-                            createdDate = learningCourseDetailState.data.creationTime
+                            fee = newLearningCourseDetailState.data.chargeFee,
+                            createdDate = newLearningCourseDetailState.data.creationTime
                         )
 
                         DetailIconAndText(
                             Icons.Outlined.Info,
-                            "Subject: ", learningCourseDetailState.data.subjectName
+                            "Subject: ", newLearningCourseDetailState.data.subjectName
                         )
 
-
-                        DetailIconAndText(
-                            Icons.Outlined.Phone,
-                            "Contact number: ", learningCourseDetailState.data.contactNumber
-                        )
-
-                        DetailIconAndText(
-                            Icons.Outlined.Person,
-                            "Tutor gender requirement: ",
-                            learningCourseDetailState.data.genderRequirement
-                        )
-
-                        DetailIconAndText(
-                            Icons.Outlined.Face,
-                            "Student gender: ", learningCourseDetailState.data.learnerGender
-                        )
-
-                        DetailIconAndText(
-                            Icons.Outlined.Person,
-                            "Number of learner: ",
-                            learningCourseDetailState.data.numberOfLearner.toString()
-                        )
-
-                        DetailIconAndText(
-                            Icons.Outlined.Info,
-                            "Learning mode: ", learningCourseDetailState.data.learningMode
-                        )
-
-                        DetailIconAndText(
-                            Icons.Outlined.Info,
-                            "Academic Requirement: ",
-                            learningCourseDetailState.data.academicLevelRequirement
-                        )
+                        if (newLearningCourseDetailState.data.tutorName.isNotEmpty())
+                            DetailIconAndText(
+                                Icons.Outlined.Person,
+                                "Tutor name: ", newLearningCourseDetailState.data.tutorName
+                            )
+                        if (newLearningCourseDetailState.data.tutorEmail.isNotEmpty())
+                            DetailIconAndText(
+                                Icons.Outlined.Email,
+                                "Tutor email: ", newLearningCourseDetailState.data.tutorEmail
+                            )
 
                         DetailIconAndText(
                             Icons.Outlined.Place,
-                            "Address: ", learningCourseDetailState.data.address
+                            "Address: ", newLearningCourseDetailState.data.address
                         )
 
-                        DetailIconAndText(
-                            Icons.Outlined.Info,
-                            "Session: ", pluralStringResource(
-                                R.plurals.session_string,
-                                learningCourseDetailState.data.sessionPerWeek,
-                                learningCourseDetailState.data.sessionPerWeek,
-                                learningCourseDetailState.data.minutePerSession
-                            )
-                        )
                         Spacer(modifier = Modifier.height(12.dp))
-                        Row {
-                            Icon(
-                                Icons.Outlined.Reviews, null,
-                                tint = EDSColors.primaryColor
+
+                        if (newLearningCourseDetailState.data.status == "Confirmed") {
+                            Row {
+                                Icon(
+                                    Icons.Outlined.Reviews, null,
+                                    tint = EDSColors.primaryColor
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                androidx.compose.material.Text(
+                                    text = "How do you feel about this course?",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
+                            }
+                            RatingBar(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                rate = rate.intValue,
+                                onRateChange = { rates ->
+                                    rate.intValue = rates
+                                })
+                            OutlinedTextField(
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp),
+                                label = {
+                                    Text(text = "Your review")
+                                },
+                                keyboardActions = KeyboardActions(),
+                                maxLines = 4,
+                                shape = RoundedCornerShape(12.dp),
+                                onValueChange = { value ->
+                                    reviewDescription.value = value
+                                },
+                                value = reviewDescription.value,
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    focusedBorderColor = EDSColors.primaryColor,
+                                    focusedLabelColor = EDSColors.primaryColor,
+                                    cursorColor = EDSColors.primaryColor,
+                                ),
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            androidx.compose.material.Text(
-                                text = "How do you feel about this course?",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
+                            Spacer(modifier = Modifier.weight(1.0f)) // fill height with spacer
+                            EduSmartButton(
+                                text = "Review", onClick = {
+                                    onReviewButtonClick(
+                                        ReviewTutorInput(
+                                            rate = rate.intValue,
+                                            detail = reviewDescription.value
+                                        )
+                                    )
+                                },
+                                isLoading = reviewState.isLoading,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
                             )
                         }
-                        RatingBar(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            rate = rate.intValue,
-                            onRateChange = { rates ->
-                                rate.intValue = rates
-                            })
-                        OutlinedTextField(
-                            modifier = Modifier
-                                .height(100.dp)
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp),
-                            label = {
-                                Text(text = "Your review")
-                            },
-                            keyboardActions = KeyboardActions(),
-                            maxLines = 4,
-                            shape = RoundedCornerShape(12.dp),
-                            onValueChange = { value ->
-                                reviewDescription.value = value
-                            },
-                            value = reviewDescription.value,
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = EDSColors.primaryColor,
-                                focusedLabelColor = EDSColors.primaryColor,
-                                cursorColor = EDSColors.primaryColor,
-                            ),
-                        )
-                        Spacer(modifier = Modifier.weight(1.0f)) // fill height with spacer
-                        EduSmartButton(
-                            text = "Review", onClick = {
-                                onReviewButtonClick(
-                                    ReviewTutorInput(
-                                        rate = rate.intValue.toString(),
-                                        detail = reviewDescription.value
-                                    )
-                                )
-                            },
-                            isLoading = reviewState.isLoading,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        )
                     }
                     Spacer(modifier = Modifier.height(50.dp))
                 }
@@ -414,7 +408,7 @@ fun BottomContent(fee: Double, createdDate: String) {
         )
         com.projectprovip.h1eu.giasu.presentation.home.view.IconAndText(
             Icons.Outlined.DateRange,
-            DateFormat.DD_MM_YYYY(createdDate)
+            DateFormat.DD_MM_YYYY_ISO(createdDate)
         )
     }
 }

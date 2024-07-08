@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.rounded.ExitToApp
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.AttachMoney
 import androidx.compose.material.icons.rounded.Class
 import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.HowToReg
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -77,6 +79,7 @@ fun ProfileScreen(navController: NavController) {
     val useridKey = stringPreferencesKey(Constant.USERID_STRING)
     val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
     val userEmailKey = stringPreferencesKey(Constant.USER_EMAIL_STRING)
+    val userRoleKey = stringPreferencesKey(Constant.USER_ROLE_STRING)
 
     val userName = remember {
         mutableStateOf("")
@@ -91,16 +94,20 @@ fun ProfileScreen(navController: NavController) {
     val onShowDialog: (Boolean) -> Unit = {
         showDialog.value = it
     }
-    val isTutor = false
+    val role = remember {
+        mutableStateOf("")
+    }
     LaunchedEffect(key1 = "") {
         coroutine.launch {
             context.dataStore.data.collect {
                 userName.value = it[usernameKey].toString()
                 userImage.value = it[userImageKey].toString()
                 userEmail.value = it[userEmailKey].toString()
+                role.value = it[userRoleKey].toString()
             }
         }
     }
+    val isTutor = role.value == "Tutor"
     Scaffold(
         containerColor = EDSColors.mainBackground,
         topBar = {
@@ -141,9 +148,10 @@ fun ProfileScreen(navController: NavController) {
                         onClick = {
                             navController.navigate(Screens.InApp.Profile.RequestClass.route)
                         })
+
                     if (!isTutor) {
                         ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
-                            "Learning courses", true,
+                            "Your courses", true,
                             onClick = {
                                 navController.navigate(Screens.InApp.Profile.LearningCourses.route)
                             })
@@ -153,8 +161,14 @@ fun ProfileScreen(navController: NavController) {
                                 navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
                             })
                     } else {
+                        ButtonColumnItem(
+                            Icons.Rounded.AttachMoney, EDSColors.primaryColor,
+                            "Courses Payment", true,
+                            onClick = {
+                                navController.navigate(Screens.InApp.Profile.CoursePayment.route)
+                            })
                         ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
-                            "Course requested", true,
+                            "Your courses", true,
                             onClick = {
                                 navController.navigate(Screens.InApp.Profile.LearningCourses.route)
                             })
@@ -207,6 +221,7 @@ fun Profile(
             AsyncImage(
                 image,
                 contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)

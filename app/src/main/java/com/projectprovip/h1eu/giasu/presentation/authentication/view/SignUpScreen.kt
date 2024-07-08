@@ -67,7 +67,7 @@ import com.chargemap.compose.numberpicker.NumberPicker
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
-import com.projectprovip.h1eu.giasu.data.user.model.UserSignUpInput
+import com.projectprovip.h1eu.giasu.domain.authentication.model.UserSignUpParams
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceItem
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.ProvinceState
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.SignUpState
@@ -95,7 +95,7 @@ fun SignUpScreen(
     navController: NavController,
     validate: (String?, String?, String?, String?, String?, String?, String?, String?) -> Boolean,
     onRegisterClicked: (
-        UserSignUpInput
+        UserSignUpParams
     ) -> Unit,
     signUpState: SignUpState,
     provinceState: ProvinceState
@@ -108,6 +108,7 @@ fun SignUpScreen(
     val useridKey = stringPreferencesKey(Constant.USERID_STRING)
     val userImageKey = stringPreferencesKey(Constant.USER_IMAGE_STRING)
     val userEmailKey = stringPreferencesKey(Constant.USER_EMAIL_STRING)
+    val userRoleKey = stringPreferencesKey(Constant.USER_ROLE_STRING)
 
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
@@ -161,6 +162,7 @@ fun SignUpScreen(
                     preferences[useridKey] = signUpState.user!!.id.toString()
                     preferences[userImageKey] = signUpState.user!!.avatar
                     preferences[userEmailKey] = signUpState.user!!.email
+                    preferences[userRoleKey] = signUpState.user!!.role
 
                     Log.d("Token in Sign up", signUpState.token.toString())
                 }
@@ -232,15 +234,15 @@ fun SignUpScreen(
                         validate = validate,
                         onDone = {
                             onRegisterClicked(
-                                UserSignUpInput(
-                                    firstNameText.value,
-                                    lastNameText.value,
-                                    emailText.value,
-                                    passText.value,
-                                    usernameText.value,
-                                    phoneNumberText.value,
-                                    birthYearText.value,
-                                    cityText.value
+                                UserSignUpParams(
+                                    birthYear = birthYearText.value.toInt(),
+                                    city = cityText.value,
+                                    firstname = firstNameText.value,
+                                    lastName = lastNameText.value,
+                                    email = emailText.value,
+                                    password = passText.value,
+                                    username = usernameText.value,
+                                    phoneNumber = phoneNumberText.value,
                                 )
                             )
                         })
@@ -289,7 +291,6 @@ fun Phase1(
 
     Column(
         Modifier
-            .fillMaxWidth()
             .padding(horizontal = 64.dp)
     ) {
         OutlinedTextField(
@@ -664,7 +665,10 @@ fun Phase2(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
+                .clickable(
+                    interactionSource,
+                    null
+                ) {
                     openProvinceDialog.value = true
                 }
         )

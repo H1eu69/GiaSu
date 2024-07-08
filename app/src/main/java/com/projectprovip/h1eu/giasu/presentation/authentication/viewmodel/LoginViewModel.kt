@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.projectprovip.h1eu.giasu.common.EDSResult
-import com.projectprovip.h1eu.giasu.common.isEmailFormatted
-import com.projectprovip.h1eu.giasu.common.isPasswordFormatted
+import com.projectprovip.h1eu.giasu.presentation.common.isEmailFormatted
+import com.projectprovip.h1eu.giasu.presentation.common.isPasswordFormatted
 import com.projectprovip.h1eu.giasu.data.user.model.UserLoginInput
 import com.projectprovip.h1eu.giasu.domain.authentication.usecase.LoginUseCase
 import com.projectprovip.h1eu.giasu.presentation.authentication.model.LoginState

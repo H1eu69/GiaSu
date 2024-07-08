@@ -34,7 +34,6 @@ import androidx.compose.material.icons.sharp.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,6 +49,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -87,11 +87,12 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.domain.course.model.CourseDetail
+import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.VerticalGrid
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
-import com.projectprovip.h1eu.giasu.presentation.home.model.CourseDetailState
 import com.projectprovip.h1eu.giasu.presentation.home.model.FilterSelect
+import com.projectprovip.h1eu.giasu.presentation.home.model.SearchResultState
 import kotlinx.coroutines.launch
 
 @Preview
@@ -99,11 +100,19 @@ import kotlinx.coroutines.launch
 fun SearchResultHomeScreenPreview() {
     SearchResultHomeScreen(
         rememberNavController(),
-        state = CourseDetailState(
+        state = SearchResultState(
             data = listOf(
-                CourseDetail(),
-                CourseDetail(),
-                CourseDetail(),
+                CourseDetail(
+                    address = "Tây Ninh",
+                    fee = 200.0
+                ),
+                CourseDetail(
+                    address = "Hà Nội",
+                    fee = 100.0
+                ),
+                CourseDetail(
+                    fee = 2000.0
+                ),
                 CourseDetail(),
                 CourseDetail(),
                 CourseDetail(),
@@ -118,7 +127,7 @@ fun SearchResultHomeScreenPreview() {
 @Composable
 fun SearchResultHomeScreen(
     navController: NavController,
-    state: CourseDetailState = CourseDetailState(),
+    state: SearchResultState = SearchResultState(),
     searchText: String? = null,
 ) {
     val focusManager = LocalFocusManager.current
@@ -128,6 +137,56 @@ fun SearchResultHomeScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
+    val learningModeFilter = remember {
+        mutableStateOf(
+            listOf(
+                FilterSelect("Online"),
+                FilterSelect("Offline"),
+                FilterSelect("Hybrid"),
+            )
+        )
+    }
+
+    val academicFilter = remember {
+        mutableStateOf(
+            listOf(
+                FilterSelect("Ungraduated"),
+                FilterSelect("Graduated"),
+                FilterSelect("Lecturer"),
+            )
+        )
+    }
+
+    val budgetFilter = remember {
+        mutableStateOf(
+            Pair(0.0, 0.0)
+        )
+    }
+    val isLocationFilterSelected = remember {
+        mutableStateOf(false)
+    }
+
+    val isLearningModeFilterSelected = remember {
+        mutableStateOf(false)
+    }
+
+    val isBudgetRangeSelected = remember {
+        mutableStateOf(false)
+    }
+
+    val isAcademicFilterSelected = remember {
+        mutableStateOf(false)
+    }
+
+    val filteredList = remember {
+        mutableStateOf(
+            state.data
+        )
+    }
+
+    LaunchedEffect(state) {
+        filteredList.value = state.data
+    }
 
     CompositionLocalProvider(
         LocalLayoutDirection provides
@@ -171,53 +230,11 @@ fun SearchResultHomeScreen(
                             }
 
                             item {
-                                FilterItem(
-                                    modifier = Modifier.padding(8.dp),
-                                    title = "location",
-                                    filterItemsState = remember {
-                                        mutableStateOf(
-                                            listOf(
-                                                FilterSelect("Tay ninh 1"),
-                                                FilterSelect("Tay ninh2"),
-                                                FilterSelect("Tay ninh3"),
-                                                FilterSelect("Tay ninh4"),
-                                                FilterSelect("Tay ninh5"),
-                                                FilterSelect("Tay ninh6"),
-                                                FilterSelect("Tay ninh7"),
-                                                FilterSelect("Tay ninh8"),
-                                                FilterSelect("Tay ninh9"),
-
-                                                )
-                                        )
-                                    }
-
-                                )
-                            }
-
-                            item {
                                 BudgetRangeSection(
                                     modifier = Modifier.padding(8.dp),
-                                )
-                            }
-
-                            item {
-                                FilterItem(
-                                    modifier = Modifier.padding(8.dp),
-                                    title = "location",
-                                    filterItemsState = remember {
-                                        mutableStateOf(
-                                            listOf(
-                                                FilterSelect("Tay ninh 1"),
-                                                FilterSelect("Tay ninh2"),
-                                                FilterSelect("Tay ninh3"),
-                                                FilterSelect("Tay ninh4"),
-                                                FilterSelect("Tay ninh5"),
-                                                FilterSelect("Tay ninh6"),
-                                                FilterSelect("Tay ninh7"),
-                                                FilterSelect("Tay ninh8"),
-                                                FilterSelect("Tay ninh9"),
-                                            )
-                                        )
+                                    onSelected = { selected, minimum, maximum ->
+                                        isBudgetRangeSelected.value = selected
+                                        budgetFilter.value = Pair(minimum, maximum)
                                     }
                                 )
                             }
@@ -225,21 +242,11 @@ fun SearchResultHomeScreen(
                             item {
                                 FilterItem(
                                     modifier = Modifier.padding(8.dp),
-                                    title = "location",
-                                    filterItemsState = remember {
-                                        mutableStateOf(
-                                            listOf(
-                                                FilterSelect("Tay ninh 1"),
-                                                FilterSelect("Tay ninh2"),
-                                                FilterSelect("Tay ninh3"),
-                                                FilterSelect("Tay ninh4"),
-                                                FilterSelect("Tay ninh5"),
-                                                FilterSelect("Tay ninh6"),
-                                                FilterSelect("Tay ninh7"),
-                                                FilterSelect("Tay ninh8"),
-                                                FilterSelect("Tay ninh9"),
-                                            )
-                                        )
+                                    title = "Learning mode",
+                                    hasViewMore = false,
+                                    filterItemsState = learningModeFilter,
+                                    onSelected = {
+                                        isLearningModeFilterSelected.value = it
                                     }
                                 )
                             }
@@ -247,27 +254,80 @@ fun SearchResultHomeScreen(
                             item {
                                 FilterItem(
                                     modifier = Modifier.padding(8.dp),
-                                    title = "location",
-                                    filterItemsState = remember {
-                                        mutableStateOf(
-                                            listOf(
-                                                FilterSelect("Tay ninh 1"),
-                                                FilterSelect("Tay ninh2"),
-                                                FilterSelect("Tay ninh3"),
-                                                FilterSelect("Tay ninh4"),
-                                                FilterSelect("Tay ninh5"),
-                                                FilterSelect("Tay ninh6"),
-                                                FilterSelect("Tay ninh7"),
-                                                FilterSelect("Tay ninh8"),
-                                                FilterSelect("Tay ninh9"),
-                                            )
-                                        )
+                                    title = "Academic level requirement",
+                                    hasViewMore = false,
+                                    filterItemsState = academicFilter,
+                                    onSelected = {
+                                        isAcademicFilterSelected.value = it
                                     }
                                 )
                             }
-
                         }
-                        ApplyFilterButtons(Modifier.padding(8.dp))
+                        ApplyFilterButtons(
+                            Modifier.padding(8.dp),
+                            onFilterClick = {
+                                filteredList.value = state.data
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
+                                }
+
+                                Log.d("Test filter 1", filteredList.value.toString())
+                                if (isLearningModeFilterSelected.value)
+                                    filteredList.value = filteredList.value.filter { courseDetail ->
+                                        learningModeFilter.value.forEach { learningMode ->
+                                            Log.d(
+                                                "Test filter 5",
+                                                learningMode.title + learningMode.selected
+                                            )
+
+                                            if (learningMode.selected && courseDetail.learningMode.contains(
+                                                    learningMode.title
+                                                )
+                                            ) {
+                                                return@filter true
+                                            }
+                                        }
+                                        false
+                                    }
+                                Log.d("Test filter 2", filteredList.value.toString())
+
+                                if (isAcademicFilterSelected.value)
+                                    filteredList.value = filteredList.value.filter { courseDetail ->
+                                        academicFilter.value.forEach { academic ->
+                                            Log.d(
+                                                "Test filter 6",
+                                                academic.title + academic.selected
+                                            )
+
+                                            if (academic.selected && courseDetail.academicLevelRequirement.contains(
+                                                    academic.title
+                                                )
+                                            ) {
+                                                return@filter true
+                                            }
+                                        }
+                                        false
+                                    }
+                                Log.d("Test filter 3", filteredList.value.toString())
+
+                                if (isBudgetRangeSelected.value)
+                                    filteredList.value = filteredList.value.filter { courseDetail ->
+                                        if (courseDetail.fee in budgetFilter.value.first..budgetFilter.value.second)
+                                            return@filter true
+                                        false
+                                    }
+                                Log.d("Test filter 4", filteredList.value.toString())
+
+                                if (!isLocationFilterSelected.value &&
+                                    !isLearningModeFilterSelected.value &&
+                                    !isAcademicFilterSelected.value &&
+                                    !isBudgetRangeSelected.value
+                                ) {
+                                    filteredList.value = state.data
+                                }
+                            })
                     }
                 }
             },
@@ -292,61 +352,60 @@ fun SearchResultHomeScreen(
                     },
                     containerColor = EDSColors.white
                 ) { it ->
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(bottom = 30.dp),
-                        modifier = Modifier
-                            .padding(it)
-                    ) {
-                        item {
-                            ResultChip(navController, searchText!!)
-                        }
-                        state.apply {
-                            val filteredList = this.data.filter { courseDetail ->
-                                courseDetail.subjectName.contains(searchText!!)
+                    state.apply {
+                        when {
+                            this.isLoading -> {
+                                Column(
+                                    modifier = Modifier.padding(it),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    ShimmerCourse()
+                                    ShimmerCourse()
+                                    ShimmerCourse()
+                                    ShimmerCourse()
+                                    ShimmerCourse()
+                                }
                             }
-                            when {
-                                this.isLoading -> {
-                                    item {
-                                        CircularProgressIndicator(
-                                            color = EDSColors.primaryColor
+                            filteredList.value.isEmpty() -> {
+                                Box(modifier = Modifier.fillMaxSize()) {
+                                    val composition by rememberLottieComposition(
+                                        LottieCompositionSpec.RawRes(R.raw.empty_box),
+                                        onRetry = { failCount, exception ->
+                                            Log.d("LottieAnimation", failCount.toString())
+                                            Log.d("LottieAnimation", exception.toString())
+                                            // Continue retrying. Return false to stop trying.
+                                            false
+                                        })
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        LottieAnimation(
+                                            composition = composition,
+                                            iterations = LottieConstants.IterateForever,
                                         )
+                                        Text("No courses found")
                                     }
                                 }
+                            }
 
-                                filteredList.isEmpty() -> {
+                            else -> {
+                                LazyColumn(
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    contentPadding = PaddingValues(bottom = 30.dp),
+                                    modifier = Modifier
+                                        .padding(it)
+                                ) {
                                     item {
-                                        Box(modifier = Modifier.fillMaxSize()) {
-                                            val composition by rememberLottieComposition(
-                                                LottieCompositionSpec.RawRes(R.raw.empty_box),
-                                                onRetry = { failCount, exception ->
-                                                    Log.d("LottieAnimation", failCount.toString())
-                                                    Log.d("LottieAnimation", exception.toString())
-                                                    // Continue retrying. Return false to stop trying.
-                                                    false
-                                                })
-                                            Column(
-                                                horizontalAlignment = Alignment.CenterHorizontally
-                                            ) {
-                                                LottieAnimation(
-                                                    composition = composition,
-                                                    iterations = LottieConstants.IterateForever,
-                                                )
-                                                Text("No courses found")
-                                            }
-
-
-                                        }
+                                        ResultChip(navController, searchText ?: "")
                                     }
-                                }
-
-                                else -> {
-                                    filteredList.forEach {
+                                    filteredList.value.forEach { courseDetail ->
                                         item {
                                             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                                                 CourseItem(
-                                                    navController = navController,
-                                                    data = it
+                                                    data = courseDetail,
+                                                    onClick = {
+                                                        navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${courseDetail.id}")
+                                                    },
                                                 )
                                             }
                                         }
@@ -354,8 +413,10 @@ fun SearchResultHomeScreen(
                                 }
 
                             }
+
                         }
                     }
+
                 }
 
             }
@@ -614,6 +675,7 @@ fun FilterItem(
     filterItemsState: MutableState<List<FilterSelect>>,
     hasViewMore: Boolean = true,
     multipleSelection: Boolean = false,
+    onSelected: (Boolean) -> Unit = {},
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val wantViewMore = remember {
@@ -642,13 +704,18 @@ fun FilterItem(
                         val newList = filterItemsState.value.toMutableList()
                         newList[index] = filterItems[index].copy(selected = false)
                         filterItemsState.value = newList
+                        onSelected(false)
                     })
             else
                 UnselectItem(title = filterItems[index].title,
                     onClick = {
                         val newList = filterItemsState.value.toMutableList()
+                        newList.forEach {
+                            it.selected = false
+                        }
                         newList[index] = filterItems[index].copy(selected = true)
                         filterItemsState.value = newList
+                        onSelected(true)
                     })
 
         }
@@ -771,14 +838,20 @@ fun UnselectItem(title: String, onClick: () -> Unit) {
 fun BudgetSectionPreview() {
     Surface {
         BudgetRangeSection(
-            Modifier.padding(8.dp)
+            Modifier.padding(8.dp),
+            onSelected = { s1, s2, s3 ->
+            }
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = true) {
+fun BudgetRangeSection(
+    modifier: Modifier = Modifier,
+    hasViewMore: Boolean = true,
+    onSelected: (Boolean, Double, Double) -> Unit
+) {
     val minimum = remember {
         mutableStateOf("")
     }
@@ -793,7 +866,7 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            "Budget range (vnđ)", style = EDSTextStyle.H2Reg(),
+            "Budget range (USD)", style = EDSTextStyle.H2Reg(),
             modifier = Modifier.padding(vertical = 12.dp)
         )
         Row(
@@ -802,9 +875,16 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
             verticalAlignment = Alignment.CenterVertically
         ) {
             OutlinedTextField(
-                value = minimum.value, onValueChange = {
+                value = minimum.value,
+                onValueChange = {
                     minimum.value = it
-                }, singleLine = true,
+                    onSelected(
+                        true,
+                        if(minimum.value.isNotEmpty()) minimum.value.toDouble() else 0.0,
+                        if(maximum.value.isNotEmpty()) maximum.value.toDouble() else 0.0
+                    )
+                },
+                singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                 shape = RectangleShape,
 
@@ -836,6 +916,12 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
             OutlinedTextField(
                 value = maximum.value, onValueChange = {
                     maximum.value = it
+                    onSelected(
+                        true,
+                        if(minimum.value.isNotEmpty()) minimum.value.toDouble() else 0.0,
+                        if(maximum.value.isNotEmpty()) maximum.value.toDouble() else 0.0
+                    )
+
                 }, singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
 
@@ -868,12 +954,17 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                         interactionSource = interactionSource, indication = null
                     ) {
                         minimum.value = "0"
-                        maximum.value = "500000"
+                        maximum.value = "100"
+                        onSelected(
+                            true,
+                            minimum.value.toDouble(),
+                            maximum.value.toDouble()
+                        )
                     },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "0-500k", style = EDSTextStyle.H3Reg(),
+                    text = "0-100$", style = EDSTextStyle.H3Reg(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -887,13 +978,18 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                     .clickable(
                         interactionSource = interactionSource, indication = null
                     ) {
-                        minimum.value = "500000"
-                        maximum.value = "1000000"
+                        minimum.value = "100"
+                        maximum.value = "1000"
+                        onSelected(
+                            true,
+                            minimum.value.toDouble(),
+                            maximum.value.toDouble()
+                        )
                     },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "500k-1000k", style = EDSTextStyle.H3Reg(),
+                    text = "100$-1000$", style = EDSTextStyle.H3Reg(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -909,13 +1005,18 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
                     .clickable(
                         interactionSource = interactionSource, indication = null
                     ) {
-                        minimum.value = "1000000"
-                        maximum.value = "2000000"
+                        minimum.value = "1000"
+                        maximum.value = "3000"
+                        onSelected(
+                            true,
+                            minimum.value.toDouble(),
+                            maximum.value.toDouble()
+                        )
                     },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "1000k-2000k", style = EDSTextStyle.H3Reg(),
+                    text = "1000$-3000$", style = EDSTextStyle.H3Reg(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -932,14 +1033,18 @@ fun BudgetRangeSection(modifier: Modifier = Modifier, hasViewMore: Boolean = tru
 fun ApplyFilterButtonsPreview() {
     Surface {
         ApplyFilterButtons(
-            Modifier.padding(8.dp)
+            Modifier.padding(8.dp),
+            {}
         )
     }
 }
 
 
 @Composable
-fun ApplyFilterButtons(modifier: Modifier = Modifier) {
+fun ApplyFilterButtons(
+    modifier: Modifier = Modifier,
+    onFilterClick: () -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
@@ -961,7 +1066,7 @@ fun ApplyFilterButtons(modifier: Modifier = Modifier) {
             )
         }
         OutlinedButton(
-            onClick = { /*TODO*/ },
+            onClick = { onFilterClick() },
             shape = RoundedCornerShape(4.dp),
             border = null,
             colors = ButtonDefaults.outlinedButtonColors(
@@ -970,7 +1075,7 @@ fun ApplyFilterButtons(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(.5f)
         ) {
             Text(
-                text = "Apply Filters",
+                text = "Apply",
                 style = EDSTextStyle.H2Reg(
                     EDSColors.white
                 )

@@ -1,8 +1,6 @@
 package com.projectprovip.h1eu.giasu.presentation.splash
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,34 +13,31 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
-import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.auth0.android.jwt.JWT
 import com.projectprovip.h1eu.giasu.R
 import com.projectprovip.h1eu.giasu.common.Constant
+import com.projectprovip.h1eu.giasu.common.EDSTextStyle
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
-import io.jsonwebtoken.Jwts
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+
+@Preview
+@Composable
+fun SplashPreview() {
+    SplashScreen(
+        rememberNavController()
+    )
+}
 
 @Composable
 fun SplashScreen(navController: NavController) {
@@ -96,10 +91,8 @@ fun SplashScreen(navController: NavController) {
         ) {
             Text(
                 text = "EduSmart",
-                style = TextStyle(
+                style = EDSTextStyle.Logo(
                     Color(95, 207, 128, 255),
-                    fontSize = 30.sp,
-                    fontFamily = fontFamily
                 ),
                 textAlign = TextAlign.Center,
             )

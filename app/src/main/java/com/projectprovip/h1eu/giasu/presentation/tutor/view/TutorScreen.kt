@@ -1,5 +1,7 @@
 package com.projectprovip.h1eu.giasu.presentation.tutor.view
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,9 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -28,9 +34,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +58,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.projectprovip.h1eu.giasu.domain.tutor.model.Tutor
+import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerTutorList
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.home.view.SearchTextField
@@ -66,13 +76,10 @@ fun TutorPreview() {
                         2022,
                         "desdasdasas",
                         "hehe",
-                        "gender",
-                        4,
+                        "4",
                         "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
-                        false,
                         "last",
-                        "0967075340",
-                        3,
+                        3.0,
                         "UIT"
                     ),
                     Tutor(
@@ -80,13 +87,10 @@ fun TutorPreview() {
                         2022,
                         "desdasdasas",
                         "hehe",
-                        "gender",
-                        4,
-                        "https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg",
-                        false,
+                        "4",
+                        "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
                         "last",
-                        "0967075340",
-                        3,
+                        3.0,
                         "UIT"
                     ),
                     Tutor(
@@ -94,13 +98,10 @@ fun TutorPreview() {
                         2022,
                         "desdasdasas",
                         "hehe",
-                        "gender",
-                        4,
-                        "https://cdn-icons-png.flaticon.com/512/5556/5556499.png",
-                        false,
+                        "4",
+                        "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
                         "last",
-                        "0967075340",
-                        3,
+                        3.0,
                         "UIT"
                     )
                 )
@@ -119,22 +120,21 @@ fun TutorPreview() {
 @Preview
 @Composable
 fun TutorItemPreview() {
-    TutorItem(
-        tutor = Tutor(
-            "he",
-            2022,
-            "desdasdasas",
-            "hehe",
-            "gender",
-            4,
-            "dsadas",
-            false,
-            "last",
-            "0967075340",
-            3,
-            "UIT"
+    Surface {
+        TutorItem(
+            tutor = Tutor(
+                "he",
+                2022,
+                "desdasdasas",
+                "hehe",
+                "4",
+                "https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=",
+                "last",
+                3.0,
+                "UIT"
+            )
         )
-    )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -143,55 +143,63 @@ fun TutorScreen(
     state: State<TutorListState>,
     navController: NavController,
     loadMore: (() -> Unit),
+    lazyListState: LazyGridState = rememberLazyGridState()
 ) {
-
+    val context = LocalContext.current
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(text = "Tutors",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp)
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = EDSColors.white,
-                    titleContentColor = EDSColors.primaryColor
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Tutors",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = EDSColors.primaryColor
                 )
-            )
+                SearchTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    onTap = {
+                        navController.navigate(Screens.InApp.Tutor.SearchSuggest.route)
+                    })
+            }
+//            CenterAlignedTopAppBar(
+//                title = {
+//
+//                },
+//                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+//                    containerColor = EDSColors.white,
+//                    titleContentColor = EDSColors.primaryColor
+//                )
+//            )
         },
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
 
+        when {
+            state.value.isLoading -> {
+                ShimmerTutorList()
+            }
 
-            when {
-                state.value.isLoading -> {
-                    Box(
-                        modifier = Modifier
-                            .padding(it)
-                            .fillMaxSize()
-                    ) {
-                        CircularProgressIndicator(Modifier.align(Alignment.Center))
-                    }
-
+            state.value.error.isNotEmpty() -> {
+                LaunchedEffect(key1 = state.value.error) {
+                    Toast.makeText(context, state.value.error, Toast.LENGTH_SHORT).show()
                 }
+            }
 
-                state.value.data.isNotEmpty() -> {
-                    SearchTextField(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                        onTap = {
-                            navController.navigate(Screens.InApp.Tutor.SearchSuggest.route)
-                        })
-                    InfiniteStaggeredList(state.value.data,
-                        modifier = Modifier.padding(it),
-                        onItemClick = { tutorId ->
-                            navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$tutorId")
-                        },
-                        onLoadMore = {
-                            loadMore()
-                        })
-                }
+            state.value.data.isNotEmpty() -> {
+                InfiniteStaggeredList(state.value.data,
+                    modifier = Modifier
+                        .padding(it)
+                        .fillMaxSize(),
+                    onItemClick = { tutorId ->
+                        navController.navigate("${Screens.InApp.Tutor.TutorDetail.route}/$tutorId")
+                    },
+                    listState = lazyListState,
+                    onLoadMore = {
+                        loadMore()
+                    })
             }
         }
 
@@ -202,10 +210,10 @@ fun TutorScreen(
 fun InfiniteStaggeredList(
     data: List<Tutor>,
     modifier: Modifier,
-    onItemClick: (Int) -> Unit,
+    onItemClick: (String) -> Unit,
+    listState: LazyGridState,
     onLoadMore: (() -> Unit)
 ) {
-    val listState = rememberLazyGridState()
     val listCount = data.count()
     LazyVerticalGrid(
         state = listState,
@@ -223,7 +231,9 @@ fun InfiniteStaggeredList(
 }
 
 @Composable
-fun TutorItem(tutor: Tutor, onItemClick: (Int) -> Unit = {}) {
+fun TutorItem(tutor: Tutor, onItemClick: (String) -> Unit = {}) {
+    val academicLevel =
+        if (tutor.academicLevel != "UnderGraduated") tutor.academicLevel else "Student"
     Card(shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(
             containerColor = EDSColors.white
@@ -232,31 +242,26 @@ fun TutorItem(tutor: Tutor, onItemClick: (Int) -> Unit = {}) {
         elevation = CardDefaults.outlinedCardElevation(3.dp),
         modifier = Modifier
             .padding(8.dp)
-            .fillMaxWidth()
             .clip(
                 RoundedCornerShape(10)
             )
             .clickable {
                 onItemClick(tutor.id)
+                Log.d("Test tutor id clicked", tutor.id)
                 //navController.navigate("${Screens.InApp.Home.ClassDetail.route}/${data.id}")
             }) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
-                .clip(RoundedCornerShape(20.dp))
 
         ) {
             AsyncImage(
                 model = tutor.image,
                 contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.clip(
-                    RoundedCornerShape(
-                        topStart = 20.dp,
-                        topEnd = 20.dp
-                    )
-                )
-
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
             )
             IconAndText(
                 Icons.Outlined.Person,
@@ -265,7 +270,7 @@ fun TutorItem(tutor: Tutor, onItemClick: (Int) -> Unit = {}) {
             )
             IconAndText(
                 Icons.Outlined.Info,
-                tutor.academicLevel,
+                academicLevel,
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
             IconAndText(
