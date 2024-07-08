@@ -58,6 +58,7 @@ import androidx.navigation.compose.rememberNavController
 import com.projectprovip.h1eu.giasu.common.Constant
 import com.projectprovip.h1eu.giasu.common.dataStore
 import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourseDetail
+import com.projectprovip.h1eu.giasu.presentation.common.thangNguBECourseStatus
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.course_management.model.RequestedCourseDetailState
 import kotlinx.coroutines.launch
@@ -118,12 +119,16 @@ fun RequestedCourseDetailBody(
     course: RequestedCourseDetail
 ) {
     val context = LocalContext.current
-    var statusTextColor = EDSColors.notScheduleTextColor
+    var statusTextColor = EDSColors.waitingTextColor
+    var statusBackgroundColor = EDSColors.waitingBackgroundColor
+    val formattedStatus = course.requestStatus.thangNguBECourseStatus()
 
-    if (course.requestStatus == "Done") {
+    if (formattedStatus == "Done" ) {
+        statusBackgroundColor = EDSColors.teachingBackgroundColor
         statusTextColor = EDSColors.teachingTextColor
-    } else if (course.requestStatus == "Verifying") {
-        statusTextColor = EDSColors.waitingBackgroundColor
+    } else if (formattedStatus == "Canceled" ) {
+        statusBackgroundColor = EDSColors.notScheduleBackgroundColor
+        statusTextColor = EDSColors.notScheduleTextColor
     }
 
     LazyColumn(
@@ -147,14 +152,14 @@ fun RequestedCourseDetailBody(
                 modifier = modifier
             ) {
                 androidx.compose.material3.Text(
-                    text = course.requestStatus,
+                    text = formattedStatus,
                     style = TextStyle(
                         fontWeight = FontWeight.Medium,
                         color = statusTextColor
                     ),
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .background(EDSColors.greenBackground)
+                        .background(statusBackgroundColor)
                         .padding(vertical = 8.dp, horizontal = 16.dp)
                 )
 

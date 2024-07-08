@@ -196,6 +196,7 @@ fun CoursePaymentDetailScreen(
                             course = course,
                             paymentStatus = status,
                         )
+                        if(status == "Pending")
                         Button(
                             onClick = {
                                 showBottomSheet.value = true

@@ -64,9 +64,9 @@ fun String.toEDSIntGender(): Int {
 
 fun String.toEDSIntLearningMode(): Int {
     return when (this) {
-        "Offline" -> 1
-        "Online" -> 2
-        else -> 3
+        "Offline" -> 0
+        "Online" -> 1
+        else -> 2
     }
 }
 
@@ -88,6 +88,9 @@ fun String.thangNguBECourseStatus(): String {
         "UnverifiedPayment" -> "Unverified Payment"
         "CanceledWithRefund" -> "Canceled With Refund"
         "Pending" -> "Pending"
+        "Done" -> "Done"
+        "Verifying" -> "Verifying"
+        "Completed" -> "Completed"
         else -> "None"
     }
 }

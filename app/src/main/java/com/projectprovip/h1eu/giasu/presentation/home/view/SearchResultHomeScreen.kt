@@ -136,26 +136,6 @@ fun SearchResultHomeScreen(
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val locationFilter = remember {
-        mutableStateOf(
-            listOf(
-                FilterSelect("Hà Nội"),
-                FilterSelect("Hà Tĩnh"),
-                FilterSelect("Hà Giang"),
-                FilterSelect("Hồ Chí Minh"),
-                FilterSelect("Quận 1"),
-                FilterSelect("Quận 2"),
-                FilterSelect("Quận 3"),
-                FilterSelect("Quận 4"),
-                FilterSelect("Quận 5"),
-                FilterSelect("Quận 6"),
-                FilterSelect("Quận 7"),
-                FilterSelect("Quận 8"),
-                FilterSelect("Quận 9"),
-                FilterSelect("Quận 10"),
-                )
-        )
-    }
 
     val learningModeFilter = remember {
         mutableStateOf(
@@ -250,17 +230,6 @@ fun SearchResultHomeScreen(
                             }
 
                             item {
-                                FilterItem(
-                                    modifier = Modifier.padding(8.dp),
-                                    title = "location",
-                                    filterItemsState = locationFilter,
-                                    onSelected = {
-                                        isLocationFilterSelected.value = it
-                                    }
-                                )
-                            }
-
-                            item {
                                 BudgetRangeSection(
                                     modifier = Modifier.padding(8.dp),
                                     onSelected = { selected, minimum, maximum ->
@@ -304,23 +273,6 @@ fun SearchResultHomeScreen(
                                     }
                                 }
 
-                                if (isLocationFilterSelected.value)
-                                    filteredList.value = filteredList.value.filter { courseDetail ->
-                                        locationFilter.value.forEach { location ->
-                                            Log.d(
-                                                "Test filter 4",
-                                                location.title + location.selected
-                                            )
-
-                                            if (location.selected && courseDetail.address.contains(
-                                                    location.title
-                                                )
-                                            ) {
-                                                return@filter true
-                                            }
-                                        }
-                                        false
-                                    }
                                 Log.d("Test filter 1", filteredList.value.toString())
                                 if (isLearningModeFilterSelected.value)
                                     filteredList.value = filteredList.value.filter { courseDetail ->
@@ -914,7 +866,7 @@ fun BudgetRangeSection(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            "Budget range (vnđ)", style = EDSTextStyle.H2Reg(),
+            "Budget range (USD)", style = EDSTextStyle.H2Reg(),
             modifier = Modifier.padding(vertical = 12.dp)
         )
         Row(
@@ -1002,7 +954,7 @@ fun BudgetRangeSection(
                         interactionSource = interactionSource, indication = null
                     ) {
                         minimum.value = "0"
-                        maximum.value = "500000"
+                        maximum.value = "100"
                         onSelected(
                             true,
                             minimum.value.toDouble(),
@@ -1012,7 +964,7 @@ fun BudgetRangeSection(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "0-500k", style = EDSTextStyle.H3Reg(),
+                    text = "0-100$", style = EDSTextStyle.H3Reg(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -1026,8 +978,8 @@ fun BudgetRangeSection(
                     .clickable(
                         interactionSource = interactionSource, indication = null
                     ) {
-                        minimum.value = "500000"
-                        maximum.value = "1000000"
+                        minimum.value = "100"
+                        maximum.value = "1000"
                         onSelected(
                             true,
                             minimum.value.toDouble(),
@@ -1037,7 +989,7 @@ fun BudgetRangeSection(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "500k-1000k", style = EDSTextStyle.H3Reg(),
+                    text = "100$-1000$", style = EDSTextStyle.H3Reg(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(vertical = 8.dp)
@@ -1053,8 +1005,8 @@ fun BudgetRangeSection(
                     .clickable(
                         interactionSource = interactionSource, indication = null
                     ) {
-                        minimum.value = "1000000"
-                        maximum.value = "2000000"
+                        minimum.value = "1000"
+                        maximum.value = "3000"
                         onSelected(
                             true,
                             minimum.value.toDouble(),
@@ -1064,7 +1016,7 @@ fun BudgetRangeSection(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "1000k-2000k", style = EDSTextStyle.H3Reg(),
+                    text = "1000$-3000$", style = EDSTextStyle.H3Reg(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(vertical = 8.dp)

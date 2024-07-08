@@ -63,6 +63,7 @@ import com.projectprovip.h1eu.giasu.domain.course.model.RequestedCourse
 import com.projectprovip.h1eu.giasu.presentation.common.composes.AppBarTitle
 import com.projectprovip.h1eu.giasu.presentation.common.composes.ShimmerCourse
 import com.projectprovip.h1eu.giasu.presentation.common.navigation.Screens
+import com.projectprovip.h1eu.giasu.presentation.common.thangNguBECourseStatus
 import com.projectprovip.h1eu.giasu.presentation.common.theme.EDSColors
 import com.projectprovip.h1eu.giasu.presentation.course_management.model.RequestedCourseState
 
@@ -89,7 +90,7 @@ fun ClassManagementScreen(
     val tabSelectedIndex = remember {
         mutableIntStateOf(0)
     }
-    val list = listOf("All", "Done", "Canceled", "Verifying")
+    val list = listOf("All", "Done", "Cancel", "Pending")
     val context = LocalContext.current
 
     LaunchedEffect(key1 = "") {
@@ -312,13 +313,13 @@ fun ClassItem(data: RequestedCourse, navController: NavController) {
 fun SubTitle(subTitle: String, status: String) {
     var backgroundColor = EDSColors.notScheduleBackgroundColor
     var textColor = EDSColors.notScheduleTextColor
-
+    val formattedStatus = status.thangNguBECourseStatus()
     if (status == "Done") {
         backgroundColor = EDSColors.teachingBackgroundColor
         textColor = EDSColors.teachingTextColor
-    } else if (status == "Verifying") {
-        backgroundColor = EDSColors.waitingTextColor
-        textColor = EDSColors.waitingBackgroundColor
+    } else if (status == "Pending") {
+        backgroundColor = EDSColors.waitingBackgroundColor
+        textColor = EDSColors.waitingTextColor
     }
 
     Row(
@@ -345,7 +346,7 @@ fun SubTitle(subTitle: String, status: String) {
                 .weight(.9f)
         )
         Text(
-            text = status,
+            text = formattedStatus,
             style = TextStyle(
                 fontWeight = FontWeight.Medium,
                 color = textColor

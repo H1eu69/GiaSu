@@ -148,12 +148,7 @@ fun ProfileScreen(navController: NavController) {
                         onClick = {
                             navController.navigate(Screens.InApp.Profile.RequestClass.route)
                         })
-                    ButtonColumnItem(
-                        Icons.Rounded.AttachMoney, EDSColors.primaryColor,
-                        "Courses Payment", true,
-                        onClick = {
-                            navController.navigate(Screens.InApp.Profile.CoursePayment.route)
-                        })
+
                     if (!isTutor) {
                         ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
                             "Your courses", true,
@@ -166,6 +161,12 @@ fun ProfileScreen(navController: NavController) {
                                 navController.navigate(Screens.InApp.Profile.TutorRegistration.route)
                             })
                     } else {
+                        ButtonColumnItem(
+                            Icons.Rounded.AttachMoney, EDSColors.primaryColor,
+                            "Courses Payment", true,
+                            onClick = {
+                                navController.navigate(Screens.InApp.Profile.CoursePayment.route)
+                            })
                         ButtonColumnItem(Icons.Rounded.Note, EDSColors.primaryColor,
                             "Your courses", true,
                             onClick = {

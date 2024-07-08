@@ -88,14 +88,12 @@ import com.projectprovip.h1eu.giasu.presentation.profile.view.CircularLoading
 @Preview
 @Composable
 fun PreviewScreen() {
-    CourseDetailScreen(
-        rememberNavController(),
+    CourseDetailScreen(rememberNavController(),
         recommendCourseState = RecommendCoursesState(),
         courseDetailState = CourseDetailState(),
         courseRegisterState = CourseRegisterState(),
         false,
-        onRegisterClicked = {}
-    )
+        onRegisterClicked = {})
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,33 +115,25 @@ fun CourseDetailScreen(
     }
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = EDSColors.white
-                ),
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.AutoMirrored.Rounded.ArrowBack,
-                            "",
-                            tint = EDSColors.primaryColor
-                        )
-                    }
-                },
-                title = {
-                    Text(
-                        text = "Course Detail",
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            color = EDSColors.primaryColor,
-                            fontFamily = FontFamily.SansSerif,
-                            fontWeight = FontWeight.Bold
-                        )
+            CenterAlignedTopAppBar(colors = TopAppBarDefaults.largeTopAppBarColors(
+                containerColor = EDSColors.white
+            ), navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        Icons.AutoMirrored.Rounded.ArrowBack, "", tint = EDSColors.primaryColor
                     )
                 }
-            )
-        },
-        containerColor = EDSColors.white
+            }, title = {
+                Text(
+                    text = "Course Detail", style = TextStyle(
+                        fontSize = 18.sp,
+                        color = EDSColors.primaryColor,
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            })
+        }, containerColor = EDSColors.white
     ) {
         courseDetailState.apply {
             when {
@@ -159,8 +149,7 @@ fun CourseDetailScreen(
 
                 else -> {
                     if (showBottomSheet.value) {
-                        CourseRegisterPaymentBottomSheet(
-                            modifier = Modifier.padding(16.dp),
+                        CourseRegisterPaymentBottomSheet(modifier = Modifier.padding(16.dp),
                             onDismissRequest = {
                                 showBottomSheet.value = false
                             },
@@ -180,49 +169,46 @@ fun CourseDetailScreen(
                             )
                     ) {
                         CourseDetailBody(
-                            navController = navController, course = course,
-                            recommendedCourseState = recommendCourseState
+                            navController = navController,
+                            course = course,
+                            recommendedCourseState = recommendCourseState,
+                            isTutor = isTutor
                         )
-                        if (isTutor)
-                            Button(
-                                onClick = {
-                                    onRegisterClicked()
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp)
-                                    .align(Alignment.BottomCenter),
-                                colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
-                            ) {
-                                if (courseRegisterState.isLoading) {
-                                    CircularProgressIndicator()
-                                } else {
-                                    Text(
-                                        text = "Tax: $${course.chargeFee} Register now",
-                                        color = EDSColors.white
-                                    )
-                                }
-                                LaunchedEffect(key1 = courseRegisterState) {
-
-                                    if (courseRegisterState.error) {
-                                        Toast.makeText(
-                                            context,
-                                            courseRegisterState.message,
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
-                                    } else if (courseRegisterState.isSuccess) {
-                                        Toast.makeText(
-                                            context,
-                                            courseRegisterState.message,
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
-                                        navController.popBackStack()
-                                    }
-
-                                }
+                        if (isTutor) Button(
+                            onClick = {
+                                onRegisterClicked()
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp)
+                                .align(Alignment.BottomCenter),
+                            colors = ButtonDefaults.buttonColors(containerColor = EDSColors.primaryColor)
+                        ) {
+                            if (courseRegisterState.isLoading) {
+                                CircularProgressIndicator(
+                                    color = EDSColors.white,
+                                )
+                            } else {
+                                Text(
+                                    text = "Tax: $${course.chargeFee} Register now",
+                                    color = EDSColors.white
+                                )
                             }
+                            LaunchedEffect(key1 = courseRegisterState) {
+
+                                if (courseRegisterState.error) {
+                                    Toast.makeText(
+                                        context, courseRegisterState.message, Toast.LENGTH_SHORT
+                                    ).show()
+                                } else if (courseRegisterState.isSuccess) {
+                                    Toast.makeText(
+                                        context, courseRegisterState.message, Toast.LENGTH_SHORT
+                                    ).show()
+                                    navController.popBackStack()
+                                }
+
+                            }
+                        }
                     }
                 }
             }
@@ -236,7 +222,8 @@ fun CourseDetailBody(
     modifier: Modifier = Modifier,
     navController: NavController,
     recommendedCourseState: RecommendCoursesState,
-    course: CourseDetail
+    course: CourseDetail,
+    isTutor: Boolean,
 ) {
     val pagerState = rememberPagerState(pageCount = {
         recommendedCourseState.data.size
@@ -256,10 +243,22 @@ fun CourseDetailBody(
             .background(EDSColors.white),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+//        if(isTutor)
+//        item {
+//            Text(
+//                text = "Please enroll as tutor to request courses", modifier = modifier
+//                    .padding(horizontal = 20.dp),
+//                style = TextStyle(
+//                    fontSize = 16.sp,
+//                    color = EDSColors.notScheduleTextColor,
+//                    fontFamily = FontFamily.SansSerif,
+//                )
+//            )
+//        }
         item {
             Text(
-                text = course.title, modifier = modifier
-                    .padding(horizontal = 20.dp),
+                text = course.title,
+                modifier = modifier.padding(horizontal = 20.dp),
                 style = TextStyle(
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -271,14 +270,12 @@ fun CourseDetailBody(
         item {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = modifier
-                    .padding(horizontal = 20.dp),
+                modifier = modifier.padding(horizontal = 20.dp),
             ) {
                 androidx.compose.material3.Text(
                     text = course.status,
                     style = TextStyle(
-                        fontWeight = FontWeight.Medium,
-                        color = statusTextColor
+                        fontWeight = FontWeight.Medium, color = statusTextColor
                     ),
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -289,8 +286,7 @@ fun CourseDetailBody(
                 androidx.compose.material3.Text(
                     text = course.learningMode,
                     style = TextStyle(
-                        fontWeight = FontWeight.Medium,
-                        color = EDSColors.purpleText
+                        fontWeight = FontWeight.Medium, color = EDSColors.purpleText
                     ),
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -304,24 +300,20 @@ fun CourseDetailBody(
         item {
             SessionSection(
                 course.sessionPerWeek, course.sessionDuration,
-                modifier = modifier
-                    .padding(horizontal = 20.dp),
+                modifier = modifier.padding(horizontal = 20.dp),
             )
         }
         item {
             Text(
                 text = course.description,
                 style = TextStyle(
-                    fontWeight = FontWeight.Medium,
-                    color = EDSColors.myBlackColor,
-                    fontSize = 14.sp
+                    fontWeight = FontWeight.Medium, color = EDSColors.myBlackColor, fontSize = 14.sp
                 ),
                 modifier = modifier
                     .padding(horizontal = 20.dp)
                     .padding(top = 8.dp, bottom = 8.dp)
                     .background(
-                        EDSColors.idClassBackgroundColor,
-                        RoundedCornerShape(20.dp)
+                        EDSColors.idClassBackgroundColor, RoundedCornerShape(20.dp)
                     )
                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 8.dp)
             )
@@ -329,57 +321,59 @@ fun CourseDetailBody(
         item {
             BottomContent(
                 fee = course.fee, createdDate = course.creationTime,
-                modifier = modifier
-                    .padding(horizontal = 20.dp),
+                modifier = modifier.padding(horizontal = 20.dp),
             )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Info,
-                "Subject: ", course.subjectName,
-                modifier = Modifier
-                    .padding(horizontal = 20.dp),
+                "Subject: ", course.subjectName, textColor = EDSColors.costTextColor,
+
+                modifier = Modifier.padding(horizontal = 20.dp),
             )
         }
 
         item {
             DetailIconAndText(
                 Icons.Outlined.Person,
-                "Tutor gender: ", course.genderRequirement,
-                modifier = modifier
-                    .padding(horizontal = 20.dp),
+                "Tutor gender: ", course.genderRequirement, textColor = EDSColors.costTextColor,
+
+                modifier = modifier.padding(horizontal = 20.dp),
             )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Face,
-                "Student gender: ", course.learnerGender,
-                modifier = modifier
-                    .padding(horizontal = 20.dp),
+                "Student gender: ", course.learnerGender, textColor = EDSColors.costTextColor,
+
+                modifier = modifier.padding(horizontal = 20.dp),
             )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Person,
-                "Number of learner: ", course.numberOfLearner.toString(),
-                modifier = modifier
-                    .padding(horizontal = 20.dp),
+                "Number of learner: ",
+                course.numberOfLearner.toString(),
+                textColor = EDSColors.costTextColor,
+
+                modifier = modifier.padding(horizontal = 20.dp),
             )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Info,
-                "Academic: ", course.academicLevelRequirement,
-                modifier = modifier
-                    .padding(horizontal = 20.dp),
+                "Academic: ", course.academicLevelRequirement, textColor = EDSColors.costTextColor,
+
+                modifier = modifier.padding(horizontal = 20.dp),
             )
         }
         item {
             DetailIconAndText(
                 Icons.Outlined.Place,
                 "Address: ", course.address,
-                modifier = modifier
-                    .padding(horizontal = 20.dp),
+                textColor = EDSColors.costTextColor,
+
+                modifier = modifier.padding(horizontal = 20.dp),
             )
         }
         item {
@@ -387,16 +381,14 @@ fun CourseDetailBody(
                 text = "You may like",
                 color = EDSColors.primaryColor,
                 fontSize = 16.sp,
-                modifier = modifier
-                    .padding(horizontal = 20.dp, vertical = 8.dp),
+                modifier = modifier.padding(horizontal = 20.dp, vertical = 8.dp),
             )
         }
         when {
             recommendedCourseState.isLoading -> {
                 item {
                     ShimmerCourse(
-                        modifier
-                            .padding(horizontal = 20.dp, vertical = 8.dp)
+                        modifier.padding(horizontal = 20.dp, vertical = 8.dp)
                     )
                 }
             }
@@ -437,9 +429,7 @@ private fun PreviewRelatedCourses() {
     })
     Surface {
         HorizontalPager(
-            state = pagerState,
-            contentPadding = PaddingValues(20.dp),
-            pageSpacing = 12.dp
+            state = pagerState, contentPadding = PaddingValues(20.dp), pageSpacing = 12.dp
         ) {
             // Our page content
 
@@ -453,12 +443,9 @@ private fun PreviewRelatedCourses() {
 
 @Composable
 private fun RelatedCourses(
-    data: CourseDetail,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    data: CourseDetail, onClick: () -> Unit, modifier: Modifier = Modifier
 ) {
-    Card(
-        shape = RoundedCornerShape(10),
+    Card(shape = RoundedCornerShape(10),
         colors = CardDefaults.elevatedCardColors(),
         border = BorderStroke(2.dp, Color.LightGray),
         elevation = CardDefaults.outlinedCardElevation(3.dp),
@@ -468,8 +455,7 @@ private fun RelatedCourses(
             )
             .clickable {
                 onClick()
-            }
-    ) {
+            }) {
         Column(
             modifier = Modifier
                 .background(Color.White)
@@ -484,8 +470,7 @@ private fun RelatedCourses(
                 location = data.address
             )
             BottomContent(
-                fee = data.fee,
-                createdDate = data.creationTime
+                fee = data.fee, createdDate = data.creationTime
             )
         }
     }
@@ -501,19 +486,15 @@ fun DetailIconAndText(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row {
             Icon(
-                imageVector, null,
-                tint = EDSColors.primaryColor
+                imageVector, null, tint = EDSColors.primaryColor
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = boldedText,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                text = boldedText, fontWeight = FontWeight.Bold, fontSize = 16.sp
             )
         }
         Text(
@@ -529,16 +510,14 @@ fun DetailIconAndText(
 @Composable
 fun SessionSectionPreview() {
     SessionSection(
-        dayAWeek = 1,
-        minPerDay = 45
+        dayAWeek = 1, minPerDay = 45
     )
 }
 
 @Composable
 fun SessionSection(dayAWeek: Int, minPerDay: Int, modifier: Modifier = Modifier) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier
+        horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier
     ) {
         Column(
             modifier = Modifier
@@ -548,8 +527,7 @@ fun SessionSection(dayAWeek: Int, minPerDay: Int, modifier: Modifier = Modifier)
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = dayAWeek.toString(), color = EDSColors.greenText,
-                fontSize = 24.sp
+                text = dayAWeek.toString(), color = EDSColors.greenText, fontSize = 24.sp
             )
             Text(text = pluralStringResource(id = R.plurals.day_per_week_string, count = dayAWeek))
         }
@@ -562,9 +540,7 @@ fun SessionSection(dayAWeek: Int, minPerDay: Int, modifier: Modifier = Modifier)
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = minPerDay.toString(),
-                color = EDSColors.orangeText,
-                fontSize = 24.sp
+                text = minPerDay.toString(), color = EDSColors.orangeText, fontSize = 24.sp
             )
             Text(text = "minutes / day")
         }
@@ -576,9 +552,9 @@ fun SessionSection(dayAWeek: Int, minPerDay: Int, modifier: Modifier = Modifier)
 @Preview
 fun CourseRegisterPaymentDialogPreview() {
     Surface {
-        CourseRegisterPaymentBottomSheet(
-            modifier = Modifier.padding(16.dp),
-            code = CodeGenerator.generate(), onDismissRequest = {
+        CourseRegisterPaymentBottomSheet(modifier = Modifier.padding(16.dp),
+            code = CodeGenerator.generate(),
+            onDismissRequest = {
 
             })
     }
@@ -605,8 +581,7 @@ fun CourseRegisterPaymentBottomSheet(
         containerColor = EDSColors.white
     ) {
         LazyColumn(
-            modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
                 Text(
@@ -616,8 +591,7 @@ fun CourseRegisterPaymentBottomSheet(
             }
             item {
                 Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()
                 ) {
                     AsyncImage(
                         model = Instants.getVietQrImage(
@@ -708,7 +682,8 @@ fun CourseRegisterPaymentBottomSheet(
 //                        )
 //                        startActivity(context, deepLinkIntent, null)
                         onDismissRequest()
-                        Toast.makeText(context,"Please wait for confirmation" , Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Please wait for confirmation", Toast.LENGTH_SHORT)
+                            .show()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
